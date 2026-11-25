@@ -59,7 +59,9 @@ namespace Duck
                     if (d.x * d.x + d.z * d.z > r * r) continue;
 
                     hit.Add(e);
+                    Enemy.HitFromDuckGun = true;
                     e.TakeHit(damage, dir, crit, knock);
+                    Enemy.HitFromDuckGun = false;
                     Sfx.Play(SfxId.Hit, 0.3f, 0.2f, 0.03f);
                     if (crit) CameraFollow.Shake(0.06f);
                     if (pierce-- <= 0)

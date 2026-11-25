@@ -11,6 +11,12 @@ namespace Duck
         /// <summary>Global speed multiplier ("Rage moment" when a night drags on).</summary>
         public static float SpeedMultiplier = 1f;
 
+        /// <summary>Set by Bullet around TakeHit: the hit comes from the duck's own gun.</summary>
+        public static bool HitFromDuckGun;
+
+        /// <summary>True if the killing blow was the duck's bullet (skills, towers and airstrike don't count).</summary>
+        public bool KilledByDuckGun { get; private set; }
+
         public Transform visual;
 
         public EnemyConfig Config { get; private set; }
@@ -101,7 +107,11 @@ namespace Duck
             if (direction.sqrMagnitude > 0.0001f)
                 knock += direction.normalized * knockback * (1f - Config.knockResist);
             if (bar != null) bar.Set(Hp / MaxHp);
-            if (Hp <= 0f) Die();
+            if (Hp <= 0f)
+            {
+                KilledByDuckGun = HitFromDuckGun;
+                Die();
+            }
         }
 
         void Flash()

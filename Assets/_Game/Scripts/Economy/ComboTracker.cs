@@ -3,14 +3,20 @@ using UnityEngine;
 namespace Duck
 {
     /// <summary>
-    /// Coins come from the base and mines at dawn, like in the original. Enemies drop coins only as a reward
-    /// for a combo: several kills in one quick burst (multi-shot, blades, meteor, airstrike).
+    /// Coins come from the base and mines at dawn, like in the original. The only extra is a small reward
+    /// for a combo: 3+ kills by the duck's own gun in one quick burst. Airstrike, skills and towers don't count,
+    /// and combo coins are capped per night so dawn income stays the main source.
     /// </summary>
     public class ComboTracker : MonoBehaviour
     {
         [Tooltip("A burst ends when no enemy dies for this long.")]
         public float window = 0.45f;
         public int minCombo = 3;
+        [Tooltip("Max coins from combos per night.")]
+        public int maxCoinsPerNight = 4;
+
+        int coinsThisNight;
+        GamePhase lastPhase;
 
         int count;
         float timer;
@@ -21,6 +27,7 @@ namespace Duck
 
         void OnKill(Enemy e)
         {
+            if (!e.KilledByDuckGun) return;
             count++;
             timer = window;
             lastPos = e.transform.position;
@@ -28,6 +35,12 @@ namespace Duck
 
         void Update()
         {
+            var gm = GameManager.Instance;
+            if (gm != null && gm.Phase != lastPhase)
+            {
+                lastPhase = gm.Phase;
+                if (lastPhase == GamePhase.Night) coinsThisNight = 0;
+            }
             if (count == 0) return;
             timer -= Time.deltaTime;
             if (timer > 0f) return;
@@ -35,9 +48,11 @@ namespace Duck
             count = 0;
             if (n < minCombo) return;
 
-            int coins = n >= 10 ? 4 : n >= 5 ? 2 : 1;
+            int coins = Mathf.Min(n >= 5 ? 2 : 1, maxCoinsPerNight - coinsThisNight);
+            if (coins <= 0) return;
+            coinsThisNight += coins;
             for (int i = 0; i < coins; i++) CoinPickup.Drop(lastPos, 1);
-            Color c = n >= 10 ? new Color(1f, 0.35f, 0.2f) : n >= 5 ? new Color(1f, 0.6f, 0.2f) : new Color(1f, 0.85f, 0.25f);
+            Color c = n >= 5 ? new Color(1f, 0.6f, 0.2f) : new Color(1f, 0.85f, 0.25f);
             DamageNumbers.ShowText(lastPos + Vector3.up * 1.5f, Loc.F("fx.combo", n, coins), c, n >= 5 ? 64 : 52);
             Sfx.Play(SfxId.Coin, 1f, 0f, 0f);
             if (n >= 5) CameraFollow.Shake(0.15f);
