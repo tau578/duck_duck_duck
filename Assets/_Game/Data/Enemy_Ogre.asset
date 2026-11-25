@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Duck.EnemyConfig
   displayName: "\u041E\u0433\u0440"
   displayNameEn: Ogre
-  maxHp: 1800
+  maxHp: 6000
   speed: 1
-  damage: 45
+  damage: 60
   attackInterval: 1.5
   attackRange: 1.6
   aggroRange: 3.5
@@ -28,5 +28,5 @@ MonoBehaviour:
   bodyColor: {r: 0.3, g: 0.45, b: 0.25, a: 1}
   coinChance: 1
   coinValue: 5
-  xp: 1
+  xp: 20
   modelOverride: {fileID: 0}

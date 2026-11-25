@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Duck.EnemyConfig
   displayName: "\u0411\u0435\u0433\u0443\u043D"
   displayNameEn: Runner
-  maxHp: 18
+  maxHp: 14
   speed: 3.2
-  damage: 5
+  damage: 6
   attackInterval: 0.8
   attackRange: 0.9
   aggroRange: 2.5

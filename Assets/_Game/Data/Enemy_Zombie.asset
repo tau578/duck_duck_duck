@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Duck.EnemyConfig
   displayName: "\u0417\u043E\u043C\u0431\u0438"
   displayNameEn: Zombie
-  maxHp: 30
-  speed: 1.6
-  damage: 8
+  maxHp: 22
+  speed: 1.8
+  damage: 10
   attackInterval: 1
   attackRange: 0.9
   aggroRange: 2.5
@@ -26,7 +26,7 @@ MonoBehaviour:
   scale: 1
   knockResist: 0
   bodyColor: {r: 0.45, g: 0.65, b: 0.35, a: 1}
-  coinChance: 0.3
+  coinChance: 0.2
   coinValue: 1
   xp: 1
   modelOverride: {fileID: 0}
