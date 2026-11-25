@@ -179,16 +179,20 @@ namespace Duck
             BuildSlot best = null;
             if (duck != null && PlayerHealth.Instance != null && PlayerHealth.Instance.IsAlive)
             {
-                float bestSq = buildReach * buildReach;
+                // Eligible if the duck is within buildReach of the building's edge. Rank by edge
+                // distance, tie-broken by centre distance: inside a big footprint (the base) the
+                // edge distance is 0, which used to beat the empty slot the duck stands on.
+                float bestScore = float.MaxValue;
                 foreach (var s in slots)
                 {
                     if (!s.CanUpgrade) continue;
                     Vector3 d = s.transform.position - duck.transform.position;
                     d.y = 0f;
-                    float reach = s.Current != null ? s.Current.Config.halfExtents.magnitude : 0f;
-                    float sq = Mathf.Max(0f, d.magnitude - reach);
-                    sq *= sq;
-                    if (sq < bestSq) { bestSq = sq; best = s; }
+                    float reach = s.config != null ? s.config.halfExtents.magnitude : 0f;
+                    float edge = Mathf.Max(0f, d.magnitude - reach);
+                    if (edge > buildReach) continue;
+                    float score = edge + 0.01f * d.magnitude;
+                    if (score < bestScore) { bestScore = score; best = s; }
                 }
             }
             buildTarget = best;
