@@ -87,6 +87,7 @@ namespace Duck
             ["fx.built"] = ("Построено!", "Built!"),
             ["fx.level"] = ("Ур. {0}!", "Lv. {0}!"),
             ["fx.destroyed"] = ("{0}: разрушено", "{0} destroyed"),
+            ["fx.combo"] = ("КОМБО x{0}!  +{1}", "COMBO x{0}!  +{1}"),
             ["fx.back"] = ("Снова в строю!", "Back in action!"),
             ["slot.empty"] = ("{0}\n{1} мон.", "{0}\n{1} coins"),
             ["slot.upgrade"] = ("ур.{0}: {1}", "lv.{0}: {1}"),

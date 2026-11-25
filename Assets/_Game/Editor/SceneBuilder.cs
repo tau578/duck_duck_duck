@@ -58,6 +58,7 @@ namespace Duck.EditorTools
             game.AddComponent<EnemyManager>();
             var spawner = game.AddComponent<WaveSpawner>();
             game.AddComponent<Sfx>();
+            game.AddComponent<ComboTracker>();
             var skills = game.AddComponent<SkillSystem>();
             var air = game.AddComponent<Airstrike>();
             gm.assets = assets;

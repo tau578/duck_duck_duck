@@ -125,10 +125,9 @@ namespace Duck
             if (bar != null) bar.gameObject.SetActive(false);
             Sfx.Play(SfxId.EnemyDie, 0.5f, 0.15f, 0.04f);
 
-            if (Random.value < Config.coinChance) CoinPickup.Drop(transform.position, Config.coinValue);
+            // No regular coin drops: coins come from the base/mines at dawn and from kill combos (ComboTracker).
             if (Config.isBoss)
             {
-                for (int i = 0; i < 8; i++) CoinPickup.Drop(transform.position, 1);
                 HitStop.Do(0.15f);
                 CameraFollow.Shake(0.8f);
                 Sfx.Play(SfxId.Explosion, 1f, 0.05f, 0f);
