@@ -15,8 +15,26 @@ namespace Duck
         /// <summary>Price of the next level (levels[Level] is level Level+1).</summary>
         public int NextCost => CanUpgrade ? config.levels[Level].cost : 0;
 
+        [Tooltip("Price label is shown only when the duck is this close (keeps the screen clean).")]
+        public float labelRadius = 7f;
+
         WorldLabel label;
         bool isDay = true;
+        bool labelNear = true;
+
+        void Update()
+        {
+            var duck = DuckController.Instance;
+            if (duck == null || label == null) return;
+            Vector3 d = duck.transform.position - transform.position;
+            d.y = 0f;
+            bool near = d.sqrMagnitude < labelRadius * labelRadius;
+            if (near != labelNear)
+            {
+                labelNear = near;
+                Refresh();
+            }
+        }
 
         void Start()
         {
@@ -74,7 +92,7 @@ namespace Duck
         {
             if (marker != null) marker.SetActive(Level == 0);
             if (label == null) return;
-            label.SetVisible(isDay && CanUpgrade);
+            label.SetVisible(isDay && CanUpgrade && labelNear);
             label.offset = Vector3.up * (Level == 0 ? 1.0f : BuildingFactory.Height(config.type, Level) + 0.9f);
             label.Set(Level == 0 ? $"{config.displayName}\n{NextCost} мон." : $"ур.{Level + 1}: {NextCost}");
         }
