@@ -25,6 +25,13 @@ namespace Duck
         Enemy target;
         float fireTimer, retarget, flashTimer, recoil;
         Vector3 gunRest;
+        RangeRing ring;
+
+        void Start()
+        {
+            // Always-visible gun radius on the ground; brighter while an enemy is inside.
+            ring = RangeRing.Create(transform, "GunRange", new Color(1f, 0.95f, 0.7f, 1f), false, 0.1f);
+        }
 
         void Awake()
         {
@@ -35,6 +42,7 @@ namespace Duck
 
         void OnDisable()
         {
+            if (ring != null) ring.Hide();
             if (duck != null) duck.aimTarget = null;
             if (muzzleFlash != null) muzzleFlash.SetActive(false);
             target = null;
@@ -52,6 +60,7 @@ namespace Duck
                 target = EnemyManager.Instance != null ? EnemyManager.Instance.Nearest(transform.position, range) : null;
                 duck.aimTarget = target != null ? target.transform : null;
             }
+            if (ring != null) ring.Show(range, target != null ? 0.55f : 0.2f);
 
             if (target != null && fireTimer <= 0f)
             {

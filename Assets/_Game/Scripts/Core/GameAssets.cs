@@ -11,6 +11,7 @@ namespace Duck
 
         public Material litTemplate;
         public Material flashMaterial;
+        public Material lineMaterial;
         public GameObject bulletPrefab;
         public GameObject enemyPrefab;
         public GameObject coinPrefab;

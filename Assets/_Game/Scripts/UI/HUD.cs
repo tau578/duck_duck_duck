@@ -35,6 +35,8 @@ namespace Duck
         float coinPunch, coinDenied, baseAlert;
         int shownCoins = -1;
         BuildSlot buildTarget;
+        /// <summary>Slot the build button currently points at (null at night).</summary>
+        public BuildSlot BuildTarget => buildTarget;
 
         void Awake()
         {

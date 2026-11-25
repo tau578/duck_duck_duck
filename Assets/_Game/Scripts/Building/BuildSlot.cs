@@ -21,11 +21,13 @@ namespace Duck
         public float labelRadius = 7f;
 
         WorldLabel label;
+        RangeRing currentRing, nextRing;
         bool isDay = true;
         bool labelNear = true;
 
         void Update()
         {
+            UpdateRangeRings();
             var duck = DuckController.Instance;
             if (duck == null || label == null) return;
             Vector3 d = duck.transform.position - transform.position;
@@ -44,6 +46,11 @@ namespace Duck
         void Start()
         {
             label = WorldLabel.Create(transform, Vector3.up * 1.2f, 56, new Color(1f, 0.88f, 0.25f));
+            if (config.type == BuildingType.Tower)
+            {
+                currentRing = RangeRing.Create(transform, "RangeNow", new Color(1f, 1f, 1f, 1f), false, 0.12f);
+                nextRing = RangeRing.Create(transform, "RangeNext", new Color(0.45f, 1f, 0.45f, 1f), true, 0.14f);
+            }
             if (startLevel > 0) SetLevel(startLevel, false);
             Refresh();
         }
@@ -78,6 +85,20 @@ namespace Duck
             Destroy(b.gameObject, 0.05f);
             if (config.type == BuildingType.Base && GameManager.Instance != null) GameManager.Instance.OnBaseDestroyed();
             Refresh();
+        }
+
+        /// <summary>
+        /// Day, duck at this tower slot: solid ring = current range, dashed green ring = range after building/upgrading.
+        /// Hidden at night so the battlefield stays readable.
+        /// </summary>
+        void UpdateRangeRings()
+        {
+            if (currentRing == null) return;
+            bool selected = isDay && HUD.Instance != null && HUD.Instance.BuildTarget == this;
+            float now = Level > 0 ? config.levels[Level - 1].range : 0f;
+            float next = CanUpgrade ? config.levels[Level].range : 0f;
+            if (selected && now > 0f) currentRing.Show(now, 0.6f); else currentRing.Hide();
+            if (selected && next > 0f) nextRing.Show(next, 0.85f); else nextRing.Hide();
         }
 
         public void SetDayMode(bool day)

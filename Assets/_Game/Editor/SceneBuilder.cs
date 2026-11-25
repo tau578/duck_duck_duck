@@ -118,6 +118,7 @@ namespace Duck.EditorTools
             var assets = LoadOrCreate<GameAssets>($"{DataFolder}/GameAssets.asset", true, a => { });
             assets.litTemplate = Mat("Template_Lit", Color.white);
             assets.flashMaterial = Mat("FX_Flash", Color.white, "Universal Render Pipeline/Unlit");
+            assets.lineMaterial = LineMat();
             assets.bulletPrefab = CreateBulletPrefab();
             assets.enemyPrefab = CreateEnemyPrefab();
             assets.coinPrefab = CreateCoinPrefab();
