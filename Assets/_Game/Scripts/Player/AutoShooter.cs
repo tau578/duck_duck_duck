@@ -5,8 +5,8 @@ namespace Duck
     /// <summary>Duck auto-fire at the nearest enemy with muzzle flash, gun recoil and crits.</summary>
     public class AutoShooter : MonoBehaviour
     {
-        public float damage = 10f;
-        public float fireRate = 4f;
+        public float damage = 9f;
+        public float fireRate = 3.5f;
         public float range = 9f;
         [Range(0f, 1f)] public float critChance = 0.12f;
         public float critMultiplier = 2f;

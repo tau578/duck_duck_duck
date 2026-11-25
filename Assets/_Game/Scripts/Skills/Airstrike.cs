@@ -13,7 +13,7 @@ namespace Duck
     {
         public static Airstrike Instance { get; private set; }
 
-        public int killsToCharge = 20;
+        public int killsToCharge = 25;
         public int passes = 1;
         public int bombsPerPass = 9;
         public float stripLength = 14f;
