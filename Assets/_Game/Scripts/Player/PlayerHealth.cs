@@ -47,6 +47,19 @@ namespace Duck
 
         public void TakeDamage(float amount) => hp.TakeDamage(amount);
 
+        /// <summary>New max HP (Vitality skill). Heals to full if alive.</summary>
+        public void SetMaxHp(float value)
+        {
+            maxHp = value;
+            if (hp.IsAlive)
+            {
+                hp.ResetTo(value);
+                bar.Set(1f);
+                DamageVignette.SetHealth(1f);
+            }
+            else hp.max = value;
+        }
+
         public void HealFull()
         {
             if (!hp.IsAlive) return;

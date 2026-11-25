@@ -25,6 +25,8 @@ namespace Duck
         public Text resultSubtitle;
         public Button restartButton;
         public Text baseAlertText;
+        public RectTransform xpFill;
+        public Text levelText;
 
         float bannerTimer, bannerDuration;
         float coinPunch, coinDenied, baseAlert;
@@ -152,6 +154,15 @@ namespace Duck
                 playerHpText.text = ph.IsAlive
                     ? Loc.F("hud.duck_hp", Mathf.CeilToInt(ph.Current), Mathf.CeilToInt(ph.Max))
                     : Loc.F("hud.duck_respawn", Mathf.CeilToInt(ph.RespawnIn));
+            }
+
+            // XP / hero level.
+            var sk = SkillSystem.Instance;
+            if (sk != null && xpFill != null)
+            {
+                bool max = sk.Level >= sk.maxLevel;
+                xpFill.localScale = new Vector3(max ? 1f : Mathf.Clamp01(sk.Xp / (float)sk.XpToNext), 1f, 1f);
+                levelText.text = max ? $"Lv. MAX" : Loc.F("hud.level", sk.Level, sk.Xp, sk.XpToNext);
             }
 
             // Base HP.

@@ -29,7 +29,7 @@ namespace Duck
             Level = level;
             Slot = slot;
             Health = gameObject.AddComponent<Health>();
-            Health.ResetTo(cfg.Level(level).hp);
+            Health.ResetTo(cfg.Level(level).hp * SkillSystem.BuildingHpMultiplier);
             Health.Damaged += OnDamaged;
             Health.Died += OnDied;
             bar = WorldBar.Create(transform, barHeight, cfg.type == BuildingType.Base ? 2.4f : 1.5f, new Color(0.3f, 0.85f, 0.3f), true);
@@ -70,6 +70,13 @@ namespace Duck
         }
 
         public void RefreshBar() => bar.Set(Health.Normalized);
+
+        /// <summary>Re-reads the Fortify multiplier: new max HP, fully repaired.</summary>
+        public void ApplyHpMultiplier()
+        {
+            Health.ResetTo(Config.Level(Level).hp * SkillSystem.BuildingHpMultiplier);
+            bar.Set(1f);
+        }
 
         void Update()
         {

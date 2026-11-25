@@ -58,6 +58,7 @@ namespace Duck.EditorTools
             game.AddComponent<EnemyManager>();
             var spawner = game.AddComponent<WaveSpawner>();
             game.AddComponent<Sfx>();
+            var skills = game.AddComponent<SkillSystem>();
             gm.assets = assets;
             gm.chapter = data.chapter1;
             gm.spawner = spawner;
@@ -84,7 +85,8 @@ namespace Duck.EditorTools
 
             GameObject duck = CreateDuck();
             CreateCamera(duck.transform);
-            VirtualJoystick stick = CreateUI();
+            VirtualJoystick stick = CreateUI(out SkillPicker picker);
+            skills.picker = picker;
             duck.GetComponent<DuckController>().joystick = stick;
 
             RenderSettings.ambientMode = AmbientMode.Trilight;
@@ -234,8 +236,8 @@ namespace Duck.EditorTools
             d.zombie = MakeEnemy("Enemy_Zombie", reset, "Зомби", "Zombie", 30, 1.6f, 8, 1f, 0.9f, 1f, new Color(0.45f, 0.65f, 0.35f), 0.3f, 1);
             d.runner = MakeEnemy("Enemy_Runner", reset, "Бегун", "Runner", 18, 3.2f, 5, 0.8f, 0.9f, 0.8f, new Color(0.85f, 0.55f, 0.25f), 0.2f, 1);
             d.bat = MakeEnemy("Enemy_Bat", reset, "Летучая мышь", "Bat", 15, 2.6f, 6, 1f, 0.9f, 0.7f, new Color(0.5f, 0.3f, 0.6f), 0.2f, 1, c => c.flying = true);
-            d.brute = MakeEnemy("Enemy_Brute", reset, "Громила в бочке", "Barrel Brute", 400, 1.1f, 20, 1.2f, 1.2f, 1.6f, new Color(0.4f, 0.4f, 0.45f), 1f, 3, c => { c.isElite = true; c.knockResist = 0.7f; });
-            d.ogre = MakeEnemy("Enemy_Ogre", reset, "Огр", "Ogre", 1800, 1.0f, 45, 1.5f, 1.6f, 2.6f, new Color(0.3f, 0.45f, 0.25f), 1f, 5, c => { c.isBoss = true; c.knockResist = 0.95f; c.aggroRange = 3.5f; });
+            d.brute = MakeEnemy("Enemy_Brute", reset, "Громила в бочке", "Barrel Brute", 400, 1.1f, 20, 1.2f, 1.2f, 1.6f, new Color(0.4f, 0.4f, 0.45f), 1f, 3, c => { c.isElite = true; c.knockResist = 0.7f; c.xp = 5; });
+            d.ogre = MakeEnemy("Enemy_Ogre", reset, "Огр", "Ogre", 1800, 1.0f, 45, 1.5f, 1.6f, 2.6f, new Color(0.3f, 0.45f, 0.25f), 1f, 5, c => { c.isBoss = true; c.knockResist = 0.95f; c.aggroRange = 3.5f; c.xp = 20; });
 
             d.chapter1 = LoadOrCreate<ChapterConfig>($"{DataFolder}/Chapter_1.asset", reset, c =>
             {
@@ -500,7 +502,7 @@ namespace Duck.EditorTools
 
         // ================= UI =================
 
-        static VirtualJoystick CreateUI()
+        static VirtualJoystick CreateUI(out SkillPicker picker)
         {
             var es = new GameObject("EventSystem");
             es.AddComponent<EventSystem>();
@@ -610,6 +612,27 @@ namespace Duck.EditorTools
             var langBtn = MakeButton(c, "LanguageToggle", new Vector2(1f, 1f), new Vector2(-150f, -165f), new Vector2(240f, 70f), new Color(0.2f, 0.2f, 0.25f, 0.8f), rounded, "RU → EN", 30, Color.white, out var langLabel, out _);
             langBtn.gameObject.AddComponent<LanguageToggle>().label = langLabel;
 
+            // XP bar at the bottom of the top band.
+            var xpBg = UIRect("XP", c, new Vector2(0f, 1f), new Vector2(1f, 1f));
+            xpBg.pivot = new Vector2(0.5f, 1f);
+            xpBg.offsetMin = new Vector2(40f, -300f);
+            xpBg.offsetMax = new Vector2(-40f, -282f);
+            var xpBgImg = xpBg.gameObject.AddComponent<Image>();
+            xpBgImg.color = new Color(0f, 0f, 0f, 0.6f);
+            xpBgImg.raycastTarget = false;
+            var xpFill = UIRect("Fill", xpBg, Vector2.zero, Vector2.one);
+            xpFill.pivot = new Vector2(0f, 0.5f);
+            xpFill.offsetMin = new Vector2(2f, 2f);
+            xpFill.offsetMax = new Vector2(-2f, -2f);
+            var xpFillImg = xpFill.gameObject.AddComponent<Image>();
+            xpFillImg.color = new Color(0.35f, 0.65f, 1f);
+            xpFillImg.raycastTarget = false;
+            hud.xpFill = xpFill;
+            hud.levelText = Label(c, "Level", new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(190f, -320f), new Vector2(300f, 40f), 26, TextAnchor.MiddleLeft, new Color(0.7f, 0.85f, 1f));
+
+            // Skill choice overlay.
+            picker = CreateSkillPicker(c, rounded);
+
             // Result panel.
             var panel = UIRect("ResultPanel", c, Vector2.zero, Vector2.one);
             panel.gameObject.AddComponent<Image>().color = new Color(0f, 0f, 0f, 0.7f);
@@ -620,6 +643,47 @@ namespace Duck.EditorTools
             restartLabel.gameObject.AddComponent<LocalizedText>().key = "hud.restart";
 
             return stick;
+        }
+
+        static SkillPicker CreateSkillPicker(Transform c, Sprite rounded)
+        {
+            var panel = UIRect("SkillPicker", c, Vector2.zero, Vector2.one);
+            panel.gameObject.AddComponent<Image>().color = new Color(0f, 0f, 0.05f, 0.8f);
+            var title = Label(panel, "Title", new Vector2(0.5f, 0.82f), new Vector2(0.5f, 0.82f), Vector2.zero, new Vector2(1000f, 120f), 60, TextAnchor.MiddleCenter, new Color(1f, 0.9f, 0.4f));
+
+            const int n = 3;
+            var cards = new Button[n];
+            var images = new Image[n];
+            var names = new Text[n];
+            var levels = new Text[n];
+            var descs = new Text[n];
+            for (int i = 0; i < n; i++)
+            {
+                float y = 0.63f - i * 0.17f;
+                var rt = UIRect($"Card{i}", panel, new Vector2(0.5f, y), new Vector2(0.5f, y));
+                rt.sizeDelta = new Vector2(900f, 290f);
+                var img = rt.gameObject.AddComponent<Image>();
+                img.sprite = rounded;
+                img.type = Image.Type.Sliced;
+                img.color = new Color(0.15f, 0.15f, 0.2f);
+                var btn = rt.gameObject.AddComponent<Button>();
+                btn.targetGraphic = img;
+                names[i] = Label(rt, "Name", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -55f), new Vector2(840f, 70f), 50, TextAnchor.MiddleLeft, Color.white);
+                levels[i] = Label(rt, "Level", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -55f), new Vector2(840f, 70f), 34, TextAnchor.MiddleRight, new Color(1f, 0.9f, 0.5f));
+                descs[i] = Label(rt, "Desc", new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, -40f), new Vector2(840f, 150f), 38, TextAnchor.MiddleLeft, new Color(0.9f, 0.9f, 0.9f));
+                descs[i].fontStyle = FontStyle.Normal;
+                cards[i] = btn;
+                images[i] = img;
+            }
+
+            var picker = panel.gameObject.AddComponent<SkillPicker>();
+            picker.title = title;
+            picker.cards = cards;
+            picker.cardImages = images;
+            picker.cardNames = names;
+            picker.cardLevels = levels;
+            picker.cardDescs = descs;
+            return picker;
         }
 
         static RectTransform Bar(Transform parent, string name, Vector2 pos, Vector2 size, Color color, Sprite sprite,
