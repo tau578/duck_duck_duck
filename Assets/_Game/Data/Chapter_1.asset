@@ -15,6 +15,10 @@ MonoBehaviour:
   displayName: "\u0413\u043B\u0430\u0432\u0430 1. \u041F\u0443\u0441\u0442\u043E\u0448\u044C"
   displayNameEn: Chapter 1. Wasteland
   startCoins: 6
+  enemyHpMultiplier: 1
+  rewardGears: 60
+  newsRu: 
+  newsEn: 
   waves:
   - kind: 0
     groups:
