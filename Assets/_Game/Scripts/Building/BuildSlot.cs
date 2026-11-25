@@ -96,7 +96,8 @@ namespace Duck
             if (marker != null) marker.SetActive(Level == 0);
             if (label == null) return;
             label.SetVisible(isDay && CanUpgrade && labelNear);
-            label.offset = Vector3.up * (Level == 0 ? 1.0f : BuildingFactory.Height(config.type, Level) + 0.9f);
+            // Below the slot (towards the camera) so it never covers the ring or the roof.
+            label.offset = new Vector3(0f, 0.3f, -(config.halfExtents.y + 0.9f));
             label.Set(Level == 0 ? Loc.F("slot.empty", config.Name, NextCost) : Loc.F("slot.upgrade", Level + 1, NextCost));
         }
     }

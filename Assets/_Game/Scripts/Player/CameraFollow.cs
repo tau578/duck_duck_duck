@@ -12,6 +12,8 @@ namespace Duck
         public Vector2 clampHalfSize = new Vector2(8f, 14f);
 
         public float maxShake = 0.6f;
+        [Tooltip("Shifts the view forward so the duck sits lower on screen and the top HUD covers less of the battlefield.")]
+        public float lookAhead = 2f;
         public static CameraFollow Instance { get; private set; }
 
         Vector3 velocity;
@@ -47,7 +49,7 @@ namespace Duck
             Vector3 focus = target.position;
             focus.x = Mathf.Clamp(focus.x, -clampHalfSize.x, clampHalfSize.x);
             focus.z = Mathf.Clamp(focus.z, -clampHalfSize.y, clampHalfSize.y);
-            return focus + offset;
+            return focus + Vector3.forward * lookAhead + offset;
         }
     }
 }

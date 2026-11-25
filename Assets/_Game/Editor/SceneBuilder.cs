@@ -551,6 +551,14 @@ namespace Duck.EditorTools
             stick.handle = handle;
             stick.radius = 120f;
 
+            // Dark band behind the top HUD so text never sits on top of the battlefield.
+            var band = UIRect("TopBand", c, new Vector2(0f, 1f), new Vector2(1f, 1f));
+            band.pivot = new Vector2(0.5f, 1f);
+            band.sizeDelta = new Vector2(0f, 300f);
+            var bandImg = band.gameObject.AddComponent<Image>();
+            bandImg.color = new Color(0f, 0f, 0f, 0.45f);
+            bandImg.raycastTarget = false;
+
             // Top-left: duck HP and base HP.
             var hpBar = Bar(c, "DuckHP", new Vector2(40f, -60f), new Vector2(420f, 56f), new Color(0.3f, 0.85f, 0.3f), rounded, out var hpFill, out var hpFillImg);
             hud.playerHpFill = hpFill;
@@ -580,8 +588,8 @@ namespace Duck.EditorTools
             hud.coinsText.text = "0";
 
             // Top-center: wave track and phase.
-            hud.waveText = Label(c, "Wave", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -200f), new Vector2(900f, 70f), 46, TextAnchor.MiddleCenter, Color.white);
-            hud.phaseText = Label(c, "Phase", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -260f), new Vector2(900f, 56f), 34, TextAnchor.MiddleCenter, new Color(1f, 1f, 1f, 0.85f));
+            hud.waveText = Label(c, "Wave", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -195f), new Vector2(900f, 64f), 42, TextAnchor.MiddleCenter, Color.white);
+            hud.phaseText = Label(c, "Phase", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -252f), new Vector2(900f, 50f), 30, TextAnchor.MiddleCenter, new Color(1f, 1f, 1f, 0.85f));
 
             // FPS (for device testing).
             var fps = Label(c, "FPS", new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(170f, -185f), new Vector2(260f, 44f), 28, TextAnchor.MiddleLeft, new Color(1f, 1f, 1f, 0.6f));
@@ -589,7 +597,7 @@ namespace Duck.EditorTools
 
             // Banner and base alert.
             hud.bannerText = Label(c, "Banner", new Vector2(0.5f, 0.66f), new Vector2(0.5f, 0.66f), Vector2.zero, new Vector2(1000f, 260f), 64, TextAnchor.MiddleCenter, Color.white);
-            hud.baseAlertText = Label(c, "BaseAlert", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -330f), new Vector2(900f, 60f), 40, TextAnchor.MiddleCenter, new Color(1f, 0.3f, 0.25f));
+            hud.baseAlertText = Label(c, "BaseAlert", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -340f), new Vector2(900f, 60f), 40, TextAnchor.MiddleCenter, new Color(1f, 0.3f, 0.25f));
             hud.baseAlertText.text = "База под атакой!";
             hud.baseAlertText.gameObject.AddComponent<LocalizedText>().key = "hud.base_attack";
 
