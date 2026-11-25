@@ -26,7 +26,7 @@ namespace Duck
 
         public static Building Create(BuildingConfig cfg, int level, BuildSlot slot)
         {
-            var root = new GameObject($"{cfg.displayName} ур.{level}");
+            var root = new GameObject($"{cfg.name}_L{level}");
             root.transform.SetParent(slot.transform, false);
             var visual = new GameObject("Visual").transform;
             visual.SetParent(root.transform, false);

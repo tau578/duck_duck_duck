@@ -24,6 +24,8 @@ namespace Duck
     {
         public BuildingType type;
         public string displayName = "Башня";
+        public string displayNameEn = "Tower";
+        public string Name => Loc.Pick(displayName, displayNameEn);
         [Tooltip("Half size of the footprint on XZ, used for enemy contact.")]
         public Vector2 halfExtents = new Vector2(0.8f, 0.8f);
         [Tooltip("Ground enemies stop at it, flying ignore it.")]

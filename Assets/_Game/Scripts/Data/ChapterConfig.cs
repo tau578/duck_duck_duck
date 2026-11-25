@@ -34,6 +34,8 @@ namespace Duck
     public class ChapterConfig : ScriptableObject
     {
         public string displayName = "Глава 1. Пустошь";
+        public string displayNameEn = "Chapter 1. Wasteland";
+        public string Name => Loc.Pick(displayName, displayNameEn);
         public int startCoins = 7;
         public WaveConfig[] waves;
     }

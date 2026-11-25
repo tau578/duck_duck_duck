@@ -45,6 +45,7 @@ namespace Duck
             buildButton.onClick.AddListener(() => GameManager.Instance.BuildPressed());
             restartButton.onClick.AddListener(() => GameManager.Instance.Restart());
             Wallet.Instance.Changed += OnCoins;
+            Loc.Changed += OnLanguage;
             OnCoins(Wallet.Instance.Coins);
             buildButton.gameObject.SetActive(false);
         }
@@ -52,6 +53,12 @@ namespace Duck
         void OnDestroy()
         {
             if (Wallet.Instance != null) Wallet.Instance.Changed -= OnCoins;
+            Loc.Changed -= OnLanguage;
+        }
+
+        void OnLanguage()
+        {
+            if (buildTarget != null) SetBuildTarget(buildTarget);
         }
 
         void OnCoins(int coins)
@@ -88,22 +95,22 @@ namespace Duck
             if (buildButton.gameObject.activeSelf != on) buildButton.gameObject.SetActive(on);
             if (!on) return;
             bool afford = Wallet.Instance.Coins >= slot.NextCost;
-            string name = slot.config.displayName;
+            string name = slot.config.Name;
             buildButtonText.text = slot.Level == 0
-                ? $"Построить «{name}» за {slot.NextCost}"
-                : $"Улучшить «{name}» до ур.{slot.Level + 1} за {slot.NextCost}";
+                ? Loc.F("hud.build", name, slot.NextCost)
+                : Loc.F("hud.upgrade", name, slot.Level + 1, slot.NextCost);
             buildButtonImage.color = afford ? new Color(1f, 0.8f, 0.2f) : new Color(0.55f, 0.55f, 0.55f);
         }
 
         public void ShowResult(bool victory)
         {
             resultPanel.SetActive(true);
-            resultTitle.text = victory ? "Победа!" : "База разрушена";
+            resultTitle.text = Loc.T(victory ? "hud.victory" : "hud.defeat");
             resultTitle.color = victory ? new Color(1f, 0.85f, 0.2f) : new Color(1f, 0.35f, 0.3f);
             var gm = GameManager.Instance;
             resultSubtitle.text = victory
-                ? $"Все {gm.WaveCount} волны отбиты"
-                : $"Продержались {gm.WaveIndex} из {gm.WaveCount} волн";
+                ? Loc.F("hud.victory_sub", gm.WaveCount)
+                : Loc.F("hud.defeat_sub", gm.WaveIndex, gm.WaveCount);
             buildButton.gameObject.SetActive(false);
             fightButton.gameObject.SetActive(false);
         }
@@ -117,16 +124,16 @@ namespace Duck
             // Wave track and phase.
             int shownWave = Mathf.Min(gm.WaveIndex + 1, gm.WaveCount);
             var wave = gm.CurrentWave;
-            string kind = wave == null ? "" : wave.kind == WaveKind.Boss ? "  · БОСС" : wave.kind == WaveKind.Elite ? "  · элита" : "";
-            waveText.text = $"Волна {shownWave}/{gm.WaveCount}{kind}";
+            string kind = wave == null ? "" : wave.kind == WaveKind.Boss ? Loc.T("hud.wave_boss") : wave.kind == WaveKind.Elite ? Loc.T("hud.wave_elite") : "";
+            waveText.text = Loc.F("hud.wave", shownWave, gm.WaveCount, kind);
 
             if (gm.Phase == GamePhase.Day)
-                phaseText.text = $"День {gm.WaveIndex + 1}: строй оборону";
+                phaseText.text = Loc.F("hud.day", gm.WaveIndex + 1);
             else if (gm.Phase == GamePhase.Night)
             {
                 int t = Mathf.FloorToInt(gm.NightTime);
                 int alive = EnemyManager.Instance != null ? EnemyManager.Instance.AliveCount : 0;
-                phaseText.text = $"Ночь {gm.WaveIndex + 1}   {t / 60:00}:{t % 60:00}   врагов: {alive}";
+                phaseText.text = Loc.F("hud.night", gm.WaveIndex + 1, t / 60, t % 60, alive);
             }
             else phaseText.text = "";
 
@@ -143,8 +150,8 @@ namespace Duck
                     ? Color.Lerp(new Color(0.9f, 0.15f, 0.1f), new Color(1f, 0.5f, 0.4f), Mathf.PingPong(Time.unscaledTime * 3f, 1f))
                     : new Color(0.3f, 0.85f, 0.3f);
                 playerHpText.text = ph.IsAlive
-                    ? $"Утка {Mathf.CeilToInt(ph.Current)}/{Mathf.CeilToInt(ph.Max)}"
-                    : $"Утка вернётся через {Mathf.CeilToInt(ph.RespawnIn)} с";
+                    ? Loc.F("hud.duck_hp", Mathf.CeilToInt(ph.Current), Mathf.CeilToInt(ph.Max))
+                    : Loc.F("hud.duck_respawn", Mathf.CeilToInt(ph.RespawnIn));
             }
 
             // Base HP.

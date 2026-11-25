@@ -65,7 +65,7 @@ namespace Duck
         {
             Sfx.Play(SfxId.Explosion, 0.8f, 0.1f, 0.1f);
             CameraFollow.Shake(0.35f);
-            DamageNumbers.ShowText(transform.position, $"{Config.displayName} разрушена", new Color(1f, 0.4f, 0.3f), 40);
+            DamageNumbers.ShowText(transform.position, Loc.F("fx.destroyed", Config.Name), new Color(1f, 0.4f, 0.3f), 40);
             if (Slot != null) Slot.OnBuildingDestroyed(this);
         }
 

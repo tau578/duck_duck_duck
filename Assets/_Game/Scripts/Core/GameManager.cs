@@ -74,7 +74,7 @@ namespace Duck
 
             if (first)
             {
-                HUD.Instance?.Banner($"{chapter.displayName}\nСтрой оборону и жми «В бой!»", Color.white, 3.5f);
+                HUD.Instance?.Banner(Loc.F("banner.start", chapter.Name), Color.white, 3.5f);
                 return;
             }
 
@@ -93,7 +93,7 @@ namespace Duck
             Wallet.Instance.Add(income);
             PlayerHealth.Instance?.HealFull();
             Sfx.Play(SfxId.Coin, 1f, 0f, 0f);
-            HUD.Instance?.Banner($"Рассвет! +{income} монет\nВолна {WaveIndex + 1} из {WaveCount} впереди", new Color(1f, 0.9f, 0.4f), 3f);
+            HUD.Instance?.Banner(Loc.F("banner.dawn", income, WaveIndex + 1, WaveCount), new Color(1f, 0.9f, 0.4f), 3f);
         }
 
         public void StartNight()
@@ -110,14 +110,14 @@ namespace Duck
             switch (CurrentWave.kind)
             {
                 case WaveKind.Boss:
-                    HUD.Instance?.Banner("БОСС!", new Color(1f, 0.2f, 0.2f), 2.5f);
+                    HUD.Instance?.Banner(Loc.T("banner.boss"), new Color(1f, 0.2f, 0.2f), 2.5f);
                     CameraFollow.Shake(0.5f);
                     break;
                 case WaveKind.Elite:
-                    HUD.Instance?.Banner("Элитный враг приближается!", new Color(0.8f, 0.4f, 1f), 2.5f);
+                    HUD.Instance?.Banner(Loc.T("banner.elite"), new Color(0.8f, 0.4f, 1f), 2.5f);
                     break;
                 default:
-                    HUD.Instance?.Banner("Монстры атакуют!", new Color(1f, 0.4f, 0.3f), 2f);
+                    HUD.Instance?.Banner(Loc.T("banner.attack"), new Color(1f, 0.4f, 0.3f), 2f);
                     break;
             }
         }
