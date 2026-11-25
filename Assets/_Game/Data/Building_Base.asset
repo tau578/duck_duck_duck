@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Duck.BuildingConfig
   type: 0
   displayName: "\u0411\u0430\u0437\u0430"
+  displayNameEn: Base
   halfExtents: {x: 1.5, y: 1.4}
   wallOnly: 0
   levels:

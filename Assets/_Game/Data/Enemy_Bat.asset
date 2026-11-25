@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Enemy_Bat
   m_EditorClassIdentifier: Assembly-CSharp::Duck.EnemyConfig
   displayName: "\u041B\u0435\u0442\u0443\u0447\u0430\u044F \u043C\u044B\u0448\u044C"
+  displayNameEn: Bat
   maxHp: 15
   speed: 2.6
   damage: 6

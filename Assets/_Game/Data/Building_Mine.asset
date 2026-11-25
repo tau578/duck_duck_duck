@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Duck.BuildingConfig
   type: 1
   displayName: "\u0428\u0430\u0445\u0442\u0430"
+  displayNameEn: Gold Mine
   halfExtents: {x: 0.8, y: 0.8}
   wallOnly: 0
   levels:
