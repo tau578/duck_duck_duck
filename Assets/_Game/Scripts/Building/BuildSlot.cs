@@ -36,6 +36,9 @@ namespace Duck
             }
         }
 
+        void OnEnable() { Loc.Changed += Refresh; }
+        void OnDisable() { Loc.Changed -= Refresh; }
+
         void Start()
         {
             label = WorldLabel.Create(transform, Vector3.up * 1.2f, 56, new Color(1f, 0.88f, 0.25f));
@@ -60,7 +63,7 @@ namespace Duck
             {
                 Sfx.Play(SfxId.Build, 0.8f, 0.05f, 0f);
                 CameraFollow.Shake(0.12f);
-                DamageNumbers.ShowText(transform.position + Vector3.up, level == 1 ? "Построено!" : $"Ур. {level}!", new Color(0.5f, 1f, 0.5f), 48);
+                DamageNumbers.ShowText(transform.position + Vector3.up, level == 1 ? Loc.T("fx.built") : Loc.F("fx.level", level), new Color(0.5f, 1f, 0.5f), 48);
             }
             Refresh();
         }
@@ -94,7 +97,7 @@ namespace Duck
             if (label == null) return;
             label.SetVisible(isDay && CanUpgrade && labelNear);
             label.offset = Vector3.up * (Level == 0 ? 1.0f : BuildingFactory.Height(config.type, Level) + 0.9f);
-            label.Set(Level == 0 ? $"{config.displayName}\n{NextCost} мон." : $"ур.{Level + 1}: {NextCost}");
+            label.Set(Level == 0 ? Loc.F("slot.empty", config.Name, NextCost) : Loc.F("slot.upgrade", Level + 1, NextCost));
         }
     }
 }

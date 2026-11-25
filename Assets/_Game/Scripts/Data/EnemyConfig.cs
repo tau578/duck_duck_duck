@@ -7,6 +7,8 @@ namespace Duck
     public class EnemyConfig : ScriptableObject
     {
         public string displayName = "Зомби";
+        public string displayNameEn = "Zombie";
+        public string Name => Loc.Pick(displayName, displayNameEn);
         public float maxHp = 30f;
         public float speed = 1.6f;
         public float damage = 8f;

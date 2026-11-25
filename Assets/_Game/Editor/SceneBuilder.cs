@@ -193,7 +193,7 @@ namespace Duck.EditorTools
 
             d.baseCfg = LoadOrCreate<BuildingConfig>($"{DataFolder}/Building_Base.asset", reset, c =>
             {
-                c.type = BuildingType.Base; c.displayName = "База"; c.halfExtents = new Vector2(1.5f, 1.4f); c.wallOnly = false;
+                c.type = BuildingType.Base; c.displayName = "База"; c.displayNameEn = "Base"; c.halfExtents = new Vector2(1.5f, 1.4f); c.wallOnly = false;
                 c.levels = new[]
                 {
                     new BuildingLevel { cost = 0, hp = 400, income = 4 },
@@ -203,7 +203,7 @@ namespace Duck.EditorTools
             });
             d.mine = LoadOrCreate<BuildingConfig>($"{DataFolder}/Building_Mine.asset", reset, c =>
             {
-                c.type = BuildingType.Mine; c.displayName = "Шахта"; c.halfExtents = new Vector2(0.8f, 0.8f); c.wallOnly = false;
+                c.type = BuildingType.Mine; c.displayName = "Шахта"; c.displayNameEn = "Gold Mine"; c.halfExtents = new Vector2(0.8f, 0.8f); c.wallOnly = false;
                 c.levels = new[]
                 {
                     new BuildingLevel { cost = 3, hp = 150, income = 3 },
@@ -212,7 +212,7 @@ namespace Duck.EditorTools
             });
             d.tower = LoadOrCreate<BuildingConfig>($"{DataFolder}/Building_Tower.asset", reset, c =>
             {
-                c.type = BuildingType.Tower; c.displayName = "Башня"; c.halfExtents = new Vector2(0.6f, 0.6f); c.wallOnly = false;
+                c.type = BuildingType.Tower; c.displayName = "Башня"; c.displayNameEn = "Tower"; c.halfExtents = new Vector2(0.6f, 0.6f); c.wallOnly = false;
                 c.levels = new[]
                 {
                     new BuildingLevel { cost = 1, hp = 150, damage = 8, fireRate = 2f, range = 8f, shots = 1 },
@@ -222,7 +222,7 @@ namespace Duck.EditorTools
             });
             d.wall = LoadOrCreate<BuildingConfig>($"{DataFolder}/Building_Wall.asset", reset, c =>
             {
-                c.type = BuildingType.Wall; c.displayName = "Стена"; c.halfExtents = new Vector2(3f, 0.45f); c.wallOnly = true;
+                c.type = BuildingType.Wall; c.displayName = "Стена"; c.displayNameEn = "Wall"; c.halfExtents = new Vector2(3f, 0.45f); c.wallOnly = true;
                 c.levels = new[]
                 {
                     new BuildingLevel { cost = 1, hp = 300 },
@@ -231,15 +231,16 @@ namespace Duck.EditorTools
                 };
             });
 
-            d.zombie = MakeEnemy("Enemy_Zombie", reset, "Зомби", 30, 1.6f, 8, 1f, 0.9f, 1f, new Color(0.45f, 0.65f, 0.35f), 0.3f, 1);
-            d.runner = MakeEnemy("Enemy_Runner", reset, "Бегун", 18, 3.2f, 5, 0.8f, 0.9f, 0.8f, new Color(0.85f, 0.55f, 0.25f), 0.2f, 1);
-            d.bat = MakeEnemy("Enemy_Bat", reset, "Летучая мышь", 15, 2.6f, 6, 1f, 0.9f, 0.7f, new Color(0.5f, 0.3f, 0.6f), 0.2f, 1, c => c.flying = true);
-            d.brute = MakeEnemy("Enemy_Brute", reset, "Громила в бочке", 400, 1.1f, 20, 1.2f, 1.2f, 1.6f, new Color(0.4f, 0.4f, 0.45f), 1f, 3, c => { c.isElite = true; c.knockResist = 0.7f; });
-            d.ogre = MakeEnemy("Enemy_Ogre", reset, "Огр", 1800, 1.0f, 45, 1.5f, 1.6f, 2.6f, new Color(0.3f, 0.45f, 0.25f), 1f, 5, c => { c.isBoss = true; c.knockResist = 0.95f; c.aggroRange = 3.5f; });
+            d.zombie = MakeEnemy("Enemy_Zombie", reset, "Зомби", "Zombie", 30, 1.6f, 8, 1f, 0.9f, 1f, new Color(0.45f, 0.65f, 0.35f), 0.3f, 1);
+            d.runner = MakeEnemy("Enemy_Runner", reset, "Бегун", "Runner", 18, 3.2f, 5, 0.8f, 0.9f, 0.8f, new Color(0.85f, 0.55f, 0.25f), 0.2f, 1);
+            d.bat = MakeEnemy("Enemy_Bat", reset, "Летучая мышь", "Bat", 15, 2.6f, 6, 1f, 0.9f, 0.7f, new Color(0.5f, 0.3f, 0.6f), 0.2f, 1, c => c.flying = true);
+            d.brute = MakeEnemy("Enemy_Brute", reset, "Громила в бочке", "Barrel Brute", 400, 1.1f, 20, 1.2f, 1.2f, 1.6f, new Color(0.4f, 0.4f, 0.45f), 1f, 3, c => { c.isElite = true; c.knockResist = 0.7f; });
+            d.ogre = MakeEnemy("Enemy_Ogre", reset, "Огр", "Ogre", 1800, 1.0f, 45, 1.5f, 1.6f, 2.6f, new Color(0.3f, 0.45f, 0.25f), 1f, 5, c => { c.isBoss = true; c.knockResist = 0.95f; c.aggroRange = 3.5f; });
 
             d.chapter1 = LoadOrCreate<ChapterConfig>($"{DataFolder}/Chapter_1.asset", reset, c =>
             {
                 c.displayName = "Глава 1. Пустошь";
+                c.displayNameEn = "Chapter 1. Wasteland";
                 c.startCoins = 7;
                 c.waves = new[]
                 {
@@ -265,12 +266,12 @@ namespace Duck.EditorTools
             return d;
         }
 
-        static EnemyConfig MakeEnemy(string file, bool reset, string name, float hp, float speed, float dmg, float interval,
+        static EnemyConfig MakeEnemy(string file, bool reset, string name, string nameEn, float hp, float speed, float dmg, float interval,
             float range, float scale, Color color, float coinChance, int coinValue, Action<EnemyConfig> extra = null)
         {
             return LoadOrCreate<EnemyConfig>($"{DataFolder}/{file}.asset", reset, c =>
             {
-                c.displayName = name; c.maxHp = hp; c.speed = speed; c.damage = dmg; c.attackInterval = interval;
+                c.displayName = name; c.displayNameEn = nameEn; c.maxHp = hp; c.speed = speed; c.damage = dmg; c.attackInterval = interval;
                 c.attackRange = range; c.scale = scale; c.bodyColor = color; c.coinChance = coinChance; c.coinValue = coinValue;
                 c.flying = false; c.isElite = false; c.isBoss = false; c.knockResist = 0f; c.aggroRange = 2.5f; c.xp = 1;
                 extra?.Invoke(c);
@@ -561,6 +562,7 @@ namespace Duck.EditorTools
             hud.baseHpFill = baseFill;
             var baseLabel = Label(baseBar, "Text", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, 26, TextAnchor.MiddleCenter, Color.white);
             baseLabel.text = "База";
+            baseLabel.gameObject.AddComponent<LocalizedText>().key = "hud.base";
 
             // Top-right: coins.
             var coinIcon = UIRect("CoinIcon", c, new Vector2(1f, 1f), new Vector2(1f, 1f));
@@ -589,10 +591,16 @@ namespace Duck.EditorTools
             hud.bannerText = Label(c, "Banner", new Vector2(0.5f, 0.66f), new Vector2(0.5f, 0.66f), Vector2.zero, new Vector2(1000f, 260f), 64, TextAnchor.MiddleCenter, Color.white);
             hud.baseAlertText = Label(c, "BaseAlert", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -330f), new Vector2(900f, 60f), 40, TextAnchor.MiddleCenter, new Color(1f, 0.3f, 0.25f));
             hud.baseAlertText.text = "База под атакой!";
+            hud.baseAlertText.gameObject.AddComponent<LocalizedText>().key = "hud.base_attack";
 
             // Buttons.
             hud.buildButton = MakeButton(c, "BuildButton", new Vector2(0.5f, 0f), new Vector2(0f, 700f), new Vector2(760f, 130f), new Color(1f, 0.8f, 0.2f), rounded, "Построить", 38, new Color(0.2f, 0.12f, 0f), out hud.buildButtonText, out hud.buildButtonImage);
-            hud.fightButton = MakeButton(c, "FightButton", new Vector2(1f, 0f), new Vector2(-190f, 880f), new Vector2(320f, 150f), new Color(0.85f, 0.2f, 0.15f), rounded, "В БОЙ!", 52, Color.white, out _, out _);
+            hud.fightButton = MakeButton(c, "FightButton", new Vector2(1f, 0f), new Vector2(-190f, 880f), new Vector2(320f, 150f), new Color(0.85f, 0.2f, 0.15f), rounded, "В БОЙ!", 52, Color.white, out var fightLabel, out _);
+            fightLabel.gameObject.AddComponent<LocalizedText>().key = "hud.fight";
+
+            // Dev: language toggle RU/EN.
+            var langBtn = MakeButton(c, "LanguageToggle", new Vector2(1f, 1f), new Vector2(-150f, -165f), new Vector2(240f, 70f), new Color(0.2f, 0.2f, 0.25f, 0.8f), rounded, "RU → EN", 30, Color.white, out var langLabel, out _);
+            langBtn.gameObject.AddComponent<LanguageToggle>().label = langLabel;
 
             // Result panel.
             var panel = UIRect("ResultPanel", c, Vector2.zero, Vector2.one);
@@ -600,7 +608,8 @@ namespace Duck.EditorTools
             hud.resultPanel = panel.gameObject;
             hud.resultTitle = Label(panel, "Title", new Vector2(0.5f, 0.6f), new Vector2(0.5f, 0.6f), Vector2.zero, new Vector2(1000f, 160f), 110, TextAnchor.MiddleCenter, Color.white);
             hud.resultSubtitle = Label(panel, "Subtitle", new Vector2(0.5f, 0.52f), new Vector2(0.5f, 0.52f), Vector2.zero, new Vector2(1000f, 80f), 44, TextAnchor.MiddleCenter, Color.white);
-            hud.restartButton = MakeButton(panel, "Restart", new Vector2(0.5f, 0.4f), Vector2.zero, new Vector2(520f, 140f), new Color(1f, 0.8f, 0.2f), rounded, "Ещё раз", 50, new Color(0.2f, 0.12f, 0f), out _, out _);
+            hud.restartButton = MakeButton(panel, "Restart", new Vector2(0.5f, 0.4f), Vector2.zero, new Vector2(520f, 140f), new Color(1f, 0.8f, 0.2f), rounded, "Ещё раз", 50, new Color(0.2f, 0.12f, 0f), out var restartLabel, out _);
+            restartLabel.gameObject.AddComponent<LocalizedText>().key = "hud.restart";
 
             return stick;
         }

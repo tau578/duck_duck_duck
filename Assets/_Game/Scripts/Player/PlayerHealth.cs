@@ -75,7 +75,7 @@ namespace Duck
             DamageVignette.Flash(0.9f);
             CameraFollow.Shake(0.5f);
             Sfx.Play(SfxId.Explosion, 0.6f, 0.05f, 0f);
-            if (HUD.Instance != null) HUD.Instance.Banner($"Утку подбили!\nВозвращение через {Mathf.CeilToInt(respawnDelay)} с", new Color(1f, 0.4f, 0.3f), 2.5f);
+            if (HUD.Instance != null) HUD.Instance.Banner(Loc.F("banner.duck_down", Mathf.CeilToInt(respawnDelay)), new Color(1f, 0.4f, 0.3f), 2.5f);
         }
 
         void Update()
@@ -107,7 +107,7 @@ namespace Duck
             controller.visual.gameObject.SetActive(true);
             controller.inputEnabled = true;
             if (shooter != null) shooter.enabled = true;
-            DamageNumbers.ShowText(transform.position, "Снова в строю!", new Color(0.5f, 1f, 0.5f), 44);
+            DamageNumbers.ShowText(transform.position, Loc.T("fx.back"), new Color(0.5f, 1f, 0.5f), 44);
         }
     }
 }
