@@ -14,7 +14,7 @@ namespace Duck
         Image fillImage;
         Canvas canvas;
         Color fullColor, lowColor;
-        float shown = 1f, value = 1f;
+        float value = 1f;
         float flash;
 
         public static WorldBar Create(Transform target, float height, float width, Color color, bool hideWhenFull)
@@ -85,7 +85,6 @@ namespace Duck
             var cam = Camera.main;
             if (cam != null) transform.rotation = cam.transform.rotation;
 
-            shown = Mathf.MoveTowards(shown, value, Time.deltaTime * 1.5f);
             fill.localScale = new Vector3(value, 1f, 1f);
             flash = Mathf.MoveTowards(flash, 0f, Time.deltaTime * 6f);
             Color baseColor = value < 0.3f ? lowColor : fullColor;

@@ -58,7 +58,7 @@ namespace Duck
             else instance.Spawn(world, s, Color.white, 40, 1f);
         }
 
-        public static void Text(Vector3 world, string s, Color color, int size = 48)
+        public static void ShowText(Vector3 world, string s, Color color, int size = 48)
         {
             if (instance == null) return;
             instance.Spawn(world, s, color, size, 1.4f);
