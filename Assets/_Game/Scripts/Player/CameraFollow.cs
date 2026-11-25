@@ -11,18 +11,35 @@ namespace Duck
         public float smoothTime = 0.15f;
         public Vector2 clampHalfSize = new Vector2(8f, 14f);
 
+        public float maxShake = 0.6f;
+        public static CameraFollow Instance { get; private set; }
+
         Vector3 velocity;
+        Vector3 smoothPos;
+        float trauma;
+
+        void Awake() { Instance = this; }
+
+        /// <summary>Adds screen shake (0..1). Strength grows with the square of trauma.</summary>
+        public static void Shake(float amount)
+        {
+            if (Instance != null) Instance.trauma = Mathf.Min(1f, Instance.trauma + amount);
+        }
 
         void Start()
         {
             transform.rotation = Quaternion.Euler(pitch, 0f, 0f);
             if (target != null) transform.position = Desired();
+            smoothPos = transform.position;
         }
 
         void LateUpdate()
         {
             if (target == null) return;
-            transform.position = Vector3.SmoothDamp(transform.position, Desired(), ref velocity, smoothTime);
+            smoothPos = Vector3.SmoothDamp(smoothPos, Desired(), ref velocity, smoothTime);
+            trauma = Mathf.MoveTowards(trauma, 0f, Time.unscaledDeltaTime * 1.8f);
+            Vector3 shake = trauma > 0f ? Random.insideUnitSphere * (trauma * trauma * maxShake) : Vector3.zero;
+            transform.position = smoothPos + shake;
         }
 
         Vector3 Desired()
