@@ -318,13 +318,6 @@ namespace Duck.EditorTools
                         new SpawnGroup { enemy = d.brute, count = 2, pathIndex = 0, interval = 4f, delay = 8f },
                         new SpawnGroup { enemy = d.bat, count = 15, pathIndex = 1, interval = 0.3f, delay = 12f },
                     }},
-                    new WaveConfig { kind = WaveKind.Normal, groups = new[]
-                    {
-                        new SpawnGroup { enemy = d.zombie, count = 70, pathIndex = 0, interval = 0.22f },
-                        new SpawnGroup { enemy = d.zombie, count = 60, pathIndex = 1, interval = 0.22f, delay = 3f },
-                        new SpawnGroup { enemy = d.runner, count = 25, pathIndex = 0, interval = 0.25f, delay = 10f },
-                        new SpawnGroup { enemy = d.bat, count = 20, pathIndex = 1, interval = 0.3f, delay = 14f },
-                    }},
                     new WaveConfig { kind = WaveKind.Boss, groups = new[]
                     {
                         new SpawnGroup { enemy = d.zombie, count = 70, pathIndex = 0, interval = 0.22f },
@@ -364,13 +357,6 @@ namespace Duck.EditorTools
                         new SpawnGroup { enemy = d.zombie, count = 60, pathIndex = 2, interval = 0.25f, delay = 2f },
                         new SpawnGroup { enemy = d.brute, count = 3, pathIndex = 0, interval = 4f, delay = 6f },
                         new SpawnGroup { enemy = d.bat, count = 20, pathIndex = 0, interval = 0.3f, delay = 12f },
-                    }},
-                    new WaveConfig { kind = WaveKind.Normal, groups = new[]
-                    {
-                        new SpawnGroup { enemy = d.zombie, count = 60, pathIndex = 0, interval = 0.22f },
-                        new SpawnGroup { enemy = d.beetle, count = 20, pathIndex = 1, interval = 0.6f, delay = 3f },
-                        new SpawnGroup { enemy = d.zombie, count = 60, pathIndex = 2, interval = 0.22f, delay = 6f },
-                        new SpawnGroup { enemy = d.bat, count = 25, pathIndex = 1, interval = 0.3f, delay = 12f },
                     }},
                     new WaveConfig { kind = WaveKind.Elite, groups = new[]
                     {

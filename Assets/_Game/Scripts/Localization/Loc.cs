@@ -71,7 +71,7 @@ namespace Duck
             ["hud.upgrade"] = ("Улучшить «{0}» до ур.{1} за {2}", "Upgrade {0} to lv.{1} for {2}"),
             ["hud.victory"] = ("Победа!", "Victory!"),
             ["hud.defeat"] = ("База разрушена", "Base destroyed"),
-            ["hud.victory_sub"] = ("Все {0} волны отбиты", "All {0} waves repelled"),
+            ["hud.victory_sub"] = ("Отбито волн: {0} из {0}", "All {0} waves repelled"),
             ["hud.defeat_sub"] = ("Продержались {0} из {1} волн", "Survived {0} of {1} waves"),
 
             // Banners
