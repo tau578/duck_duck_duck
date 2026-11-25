@@ -34,8 +34,8 @@ namespace Duck.EditorTools
         class Data
         {
             public BuildingConfig baseCfg, mine, tower, wall;
-            public EnemyConfig zombie, runner, bat, brute, ogre;
-            public ChapterConfig chapter1;
+            public EnemyConfig zombie, runner, bat, brute, ogre, beetle, queen;
+            public ChapterConfig chapter1, chapter2, chapter3;
         }
 
         static void Build(bool resetData)
@@ -62,6 +62,7 @@ namespace Duck.EditorTools
             var air = game.AddComponent<Airstrike>();
             gm.assets = assets;
             gm.chapter = data.chapter1;
+            gm.chapters = new[] { data.chapter1, data.chapter2, data.chapter3 };
             gm.spawner = spawner;
 
             gm.sun = CreateLight();
@@ -70,8 +71,9 @@ namespace Duck.EditorTools
             // Roads: 0 = north, 1 = east (used from chapter 2).
             var north = CreatePath("Path_North", new[] { new Vector3(0, 0, 22f), new Vector3(0, 0, 12f), new Vector3(0, 0, 0f) });
             var east = CreatePath("Path_East", new[] { new Vector3(15f, 0, 15f), new Vector3(7f, 0, 15f), new Vector3(1.5f, 0, 12.5f), new Vector3(0, 0, 0f) });
-            spawner.paths = new List<EnemyPath> { north, east };
-            gm.indicators = new List<SpawnIndicator> { CreateIndicator(north), CreateIndicator(east) };
+            var west = CreatePath("Path_West", new[] { new Vector3(-15f, 0, 15f), new Vector3(-7f, 0, 15f), new Vector3(-1.5f, 0, 12.5f), new Vector3(0, 0, 0f) });
+            spawner.paths = new List<EnemyPath> { north, east, west };
+            gm.indicators = new List<SpawnIndicator> { CreateIndicator(north), CreateIndicator(east), CreateIndicator(west) };
 
             // Building slots (fixed places like in the original).
             var slotsRoot = new GameObject("Slots").transform;
@@ -83,6 +85,13 @@ namespace Duck.EditorTools
             CreateSlot(slotsRoot, data.tower, new Vector3(-3f, 0, 8f), 0);
             CreateSlot(slotsRoot, data.tower, new Vector3(3f, 0, 8f), 0);
             CreateSlot(slotsRoot, data.wall, new Vector3(0, 0, 10.5f), 0);
+            // Chapter 2 opens the east road: more tower spots there.
+            CreateSlot(slotsRoot, data.tower, new Vector3(6f, 0, 12f), 0, 2);
+            CreateSlot(slotsRoot, data.tower, new Vector3(9f, 0, 17.5f), 0, 2);
+            // Chapter 3 opens the west road.
+            CreateSlot(slotsRoot, data.tower, new Vector3(-6f, 0, 12f), 0, 3);
+            CreateSlot(slotsRoot, data.tower, new Vector3(-9f, 0, 17.5f), 0, 3);
+            CreateSlot(slotsRoot, data.mine, new Vector3(0f, 0, -5f), 0, 2);
 
             GameObject duck = CreateDuck();
             CreateCamera(duck.transform);
@@ -241,11 +250,18 @@ namespace Duck.EditorTools
             d.brute = MakeEnemy("Enemy_Brute", reset, "Громила в бочке", "Barrel Brute", 420, 1.1f, 25, 1.2f, 1.2f, 1.6f, new Color(0.4f, 0.4f, 0.45f), 1f, 3, c => { c.isElite = true; c.knockResist = 0.7f; c.xp = 5; });
             d.ogre = MakeEnemy("Enemy_Ogre", reset, "Огр", "Ogre", 6000, 1.0f, 60, 1.5f, 1.6f, 2.6f, new Color(0.3f, 0.45f, 0.25f), 1f, 5, c => { c.isBoss = true; c.knockResist = 0.95f; c.aggroRange = 3.5f; c.xp = 20; });
 
+            d.beetle = MakeEnemy("Enemy_Beetle", reset, "Бронежук", "Armored Beetle", 70, 1.3f, 14, 1.2f, 1f, 1.3f, new Color(0.35f, 0.3f, 0.25f), 0.3f, 1, c => { c.knockResist = 0.6f; c.xp = 2; });
+            d.queen = MakeEnemy("Enemy_Queen", reset, "Матка роя", "Swarm Queen", 9000, 0.9f, 70, 1.4f, 1.8f, 3f, new Color(0.5f, 0.25f, 0.55f), 1f, 8, c => { c.isBoss = true; c.knockResist = 0.97f; c.aggroRange = 3.5f; c.xp = 30; });
+
             d.chapter1 = LoadOrCreate<ChapterConfig>($"{DataFolder}/Chapter_1.asset", reset, c =>
             {
                 c.displayName = "Глава 1. Пустошь";
                 c.displayNameEn = "Chapter 1. Wasteland";
                 c.startCoins = 6;
+                c.enemyHpMultiplier = 1f;
+                c.rewardGears = 60;
+                c.newsRu = "";
+                c.newsEn = "";
                 c.waves = new[]
                 {
                     new WaveConfig { kind = WaveKind.Normal, groups = new[]
@@ -267,6 +283,109 @@ namespace Duck.EditorTools
                         new SpawnGroup { enemy = d.brute, count = 2, pathIndex = 0, interval = 3f, delay = 8f },
                         new SpawnGroup { enemy = d.runner, count = 20, pathIndex = 0, interval = 0.25f, delay = 12f },
                         new SpawnGroup { enemy = d.zombie, count = 40, pathIndex = 0, interval = 0.25f, delay = 18f },
+                    }},
+                };
+            });
+
+            d.chapter2 = LoadOrCreate<ChapterConfig>($"{DataFolder}/Chapter_2.asset", reset, c =>
+            {
+                c.displayName = "Глава 2. Ночь мышей";
+                c.displayNameEn = "Chapter 2. Night of Bats";
+                c.startCoins = 8;
+                c.enemyHpMultiplier = 1.3f;
+                c.rewardGears = 90;
+                c.newsRu = "вторая дорога с востока, летучие мыши летят над стеной, навык «Вращающиеся лезвия», 3 новых места для построек";
+                c.newsEn = "a second road from the east, bats fly over the wall, Spinning Blades skill, 3 new build spots";
+                c.waves = new[]
+                {
+                    new WaveConfig { kind = WaveKind.Normal, groups = new[]
+                    {
+                        new SpawnGroup { enemy = d.zombie, count = 25, pathIndex = 0, interval = 0.5f },
+                        new SpawnGroup { enemy = d.zombie, count = 20, pathIndex = 1, interval = 0.5f, delay = 4f },
+                    }},
+                    new WaveConfig { kind = WaveKind.Normal, groups = new[]
+                    {
+                        new SpawnGroup { enemy = d.zombie, count = 45, pathIndex = 0, interval = 0.3f },
+                        new SpawnGroup { enemy = d.zombie, count = 35, pathIndex = 1, interval = 0.3f, delay = 3f },
+                        new SpawnGroup { enemy = d.runner, count = 20, pathIndex = 1, interval = 0.3f, delay = 10f },
+                        new SpawnGroup { enemy = d.bat, count = 12, pathIndex = 0, interval = 0.4f, delay = 14f },
+                    }},
+                    new WaveConfig { kind = WaveKind.Elite, groups = new[]
+                    {
+                        new SpawnGroup { enemy = d.zombie, count = 60, pathIndex = 0, interval = 0.25f },
+                        new SpawnGroup { enemy = d.zombie, count = 50, pathIndex = 1, interval = 0.25f, delay = 3f },
+                        new SpawnGroup { enemy = d.brute, count = 2, pathIndex = 0, interval = 4f, delay = 8f },
+                        new SpawnGroup { enemy = d.bat, count = 15, pathIndex = 1, interval = 0.3f, delay = 12f },
+                    }},
+                    new WaveConfig { kind = WaveKind.Normal, groups = new[]
+                    {
+                        new SpawnGroup { enemy = d.zombie, count = 70, pathIndex = 0, interval = 0.22f },
+                        new SpawnGroup { enemy = d.zombie, count = 60, pathIndex = 1, interval = 0.22f, delay = 3f },
+                        new SpawnGroup { enemy = d.runner, count = 25, pathIndex = 0, interval = 0.25f, delay = 10f },
+                        new SpawnGroup { enemy = d.bat, count = 20, pathIndex = 1, interval = 0.3f, delay = 14f },
+                    }},
+                    new WaveConfig { kind = WaveKind.Boss, groups = new[]
+                    {
+                        new SpawnGroup { enemy = d.zombie, count = 70, pathIndex = 0, interval = 0.22f },
+                        new SpawnGroup { enemy = d.ogre, count = 1, pathIndex = 0, interval = 0f, delay = 6f },
+                        new SpawnGroup { enemy = d.zombie, count = 70, pathIndex = 1, interval = 0.22f, delay = 3f },
+                        new SpawnGroup { enemy = d.brute, count = 2, pathIndex = 1, interval = 4f, delay = 10f },
+                        new SpawnGroup { enemy = d.bat, count = 25, pathIndex = 0, interval = 0.3f, delay = 16f },
+                    }},
+                };
+            });
+
+            d.chapter3 = LoadOrCreate<ChapterConfig>($"{DataFolder}/Chapter_3.asset", reset, c =>
+            {
+                c.displayName = "Глава 3. Двойной фронт";
+                c.displayNameEn = "Chapter 3. Two Fronts";
+                c.startCoins = 8;
+                c.enemyHpMultiplier = 1.7f;
+                c.rewardGears = 120;
+                c.newsRu = "третья дорога с запада, бронежуки держат удар, босс Матка роя, навык «Метеор»";
+                c.newsEn = "a third road from the west, armored beetles, the Swarm Queen boss, Meteor skill";
+                c.waves = new[]
+                {
+                    new WaveConfig { kind = WaveKind.Normal, groups = new[]
+                    {
+                        new SpawnGroup { enemy = d.zombie, count = 30, pathIndex = 1, interval = 0.45f },
+                        new SpawnGroup { enemy = d.zombie, count = 30, pathIndex = 2, interval = 0.45f, delay = 3f },
+                    }},
+                    new WaveConfig { kind = WaveKind.Normal, groups = new[]
+                    {
+                        new SpawnGroup { enemy = d.zombie, count = 50, pathIndex = 0, interval = 0.3f },
+                        new SpawnGroup { enemy = d.beetle, count = 12, pathIndex = 2, interval = 0.8f, delay = 4f },
+                        new SpawnGroup { enemy = d.runner, count = 25, pathIndex = 1, interval = 0.3f, delay = 8f },
+                    }},
+                    new WaveConfig { kind = WaveKind.Elite, groups = new[]
+                    {
+                        new SpawnGroup { enemy = d.zombie, count = 60, pathIndex = 1, interval = 0.25f },
+                        new SpawnGroup { enemy = d.zombie, count = 60, pathIndex = 2, interval = 0.25f, delay = 2f },
+                        new SpawnGroup { enemy = d.brute, count = 3, pathIndex = 0, interval = 4f, delay = 6f },
+                        new SpawnGroup { enemy = d.bat, count = 20, pathIndex = 0, interval = 0.3f, delay = 12f },
+                    }},
+                    new WaveConfig { kind = WaveKind.Normal, groups = new[]
+                    {
+                        new SpawnGroup { enemy = d.zombie, count = 60, pathIndex = 0, interval = 0.22f },
+                        new SpawnGroup { enemy = d.beetle, count = 20, pathIndex = 1, interval = 0.6f, delay = 3f },
+                        new SpawnGroup { enemy = d.zombie, count = 60, pathIndex = 2, interval = 0.22f, delay = 6f },
+                        new SpawnGroup { enemy = d.bat, count = 25, pathIndex = 1, interval = 0.3f, delay = 12f },
+                    }},
+                    new WaveConfig { kind = WaveKind.Elite, groups = new[]
+                    {
+                        new SpawnGroup { enemy = d.zombie, count = 70, pathIndex = 0, interval = 0.2f },
+                        new SpawnGroup { enemy = d.zombie, count = 70, pathIndex = 1, interval = 0.2f, delay = 3f },
+                        new SpawnGroup { enemy = d.beetle, count = 20, pathIndex = 2, interval = 0.5f, delay = 6f },
+                        new SpawnGroup { enemy = d.brute, count = 3, pathIndex = 2, interval = 3f, delay = 10f },
+                    }},
+                    new WaveConfig { kind = WaveKind.Boss, groups = new[]
+                    {
+                        new SpawnGroup { enemy = d.zombie, count = 70, pathIndex = 0, interval = 0.2f },
+                        new SpawnGroup { enemy = d.queen, count = 1, pathIndex = 0, interval = 0f, delay = 6f },
+                        new SpawnGroup { enemy = d.zombie, count = 60, pathIndex = 1, interval = 0.22f, delay = 4f },
+                        new SpawnGroup { enemy = d.zombie, count = 60, pathIndex = 2, interval = 0.22f, delay = 8f },
+                        new SpawnGroup { enemy = d.bat, count = 30, pathIndex = 1, interval = 0.3f, delay = 14f },
+                        new SpawnGroup { enemy = d.beetle, count = 20, pathIndex = 2, interval = 0.5f, delay = 18f },
                     }},
                 };
             });
@@ -407,7 +526,7 @@ namespace Duck.EditorTools
             return ind;
         }
 
-        static BuildSlot CreateSlot(Transform parent, BuildingConfig cfg, Vector3 pos, int startLevel)
+        static BuildSlot CreateSlot(Transform parent, BuildingConfig cfg, Vector3 pos, int startLevel, int minChapter = 1)
         {
             var go = new GameObject($"Slot_{cfg.displayName}");
             go.transform.SetParent(parent);
@@ -431,6 +550,7 @@ namespace Duck.EditorTools
             var slot = go.AddComponent<BuildSlot>();
             slot.config = cfg;
             slot.startLevel = startLevel;
+            slot.minChapter = minChapter;
             slot.marker = marker.gameObject;
             return slot;
         }
@@ -667,10 +787,79 @@ namespace Duck.EditorTools
             hud.resultPanel = panel.gameObject;
             hud.resultTitle = Label(panel, "Title", new Vector2(0.5f, 0.6f), new Vector2(0.5f, 0.6f), Vector2.zero, new Vector2(1000f, 160f), 110, TextAnchor.MiddleCenter, Color.white);
             hud.resultSubtitle = Label(panel, "Subtitle", new Vector2(0.5f, 0.52f), new Vector2(0.5f, 0.52f), Vector2.zero, new Vector2(1000f, 80f), 44, TextAnchor.MiddleCenter, Color.white);
-            hud.restartButton = MakeButton(panel, "Restart", new Vector2(0.5f, 0.4f), Vector2.zero, new Vector2(520f, 140f), new Color(1f, 0.8f, 0.2f), rounded, "Ещё раз", 50, new Color(0.2f, 0.12f, 0f), out var restartLabel, out _);
+            hud.rewardText = Label(panel, "Reward", new Vector2(0.5f, 0.47f), new Vector2(0.5f, 0.47f), Vector2.zero, new Vector2(1000f, 70f), 40, TextAnchor.MiddleCenter, new Color(0.7f, 0.85f, 1f));
+            hud.nextButton = MakeButton(panel, "Next", new Vector2(0.5f, 0.39f), Vector2.zero, new Vector2(620f, 140f), new Color(0.3f, 0.75f, 0.35f), rounded, "Следующая глава", 46, Color.white, out var nextLabel, out _);
+            nextLabel.gameObject.AddComponent<LocalizedText>().key = "hud.next";
+            hud.menuButton = MakeButton(panel, "Menu", new Vector2(0.5f, 0.22f), Vector2.zero, new Vector2(520f, 120f), new Color(0.3f, 0.35f, 0.45f), rounded, "В меню", 44, Color.white, out var menuLabel, out _);
+            menuLabel.gameObject.AddComponent<LocalizedText>().key = "hud.menu";
+            hud.restartButton = MakeButton(panel, "Restart", new Vector2(0.5f, 0.305f), Vector2.zero, new Vector2(520f, 120f), new Color(1f, 0.8f, 0.2f), rounded, "Ещё раз", 50, new Color(0.2f, 0.12f, 0f), out var restartLabel, out _);
             restartLabel.gameObject.AddComponent<LocalizedText>().key = "hud.restart";
 
+            // Main menu (chapters + workshop), on top of everything except the language toggle.
+            CreateMenu(c, rounded);
+            langBtn.transform.SetAsLastSibling();
+
             return stick;
+        }
+
+        static void CreateMenu(Transform c, Sprite rounded)
+        {
+            var panel = UIRect("Menu", c, Vector2.zero, Vector2.one);
+            panel.gameObject.AddComponent<Image>().color = new Color(0.08f, 0.1f, 0.12f, 0.97f);
+            var menu = panel.gameObject.AddComponent<MenuUI>();
+            menu.title = Label(panel, "Title", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -150f), new Vector2(1000f, 120f), 76, TextAnchor.MiddleCenter, new Color(1f, 0.85f, 0.2f));
+            menu.gearsText = Label(panel, "Gears", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -240f), new Vector2(1000f, 60f), 40, TextAnchor.MiddleCenter, new Color(0.7f, 0.85f, 1f));
+            menu.chaptersHeader = Label(panel, "ChaptersHeader", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -320f), new Vector2(960f, 60f), 38, TextAnchor.MiddleLeft, Color.white);
+
+            const int chapters = 3;
+            menu.chapterButtons = new Button[chapters];
+            menu.chapterImages = new Image[chapters];
+            menu.chapterNames = new Text[chapters];
+            menu.chapterInfo = new Text[chapters];
+            for (int i = 0; i < chapters; i++)
+            {
+                var rt = UIRect($"Chapter{i + 1}", panel, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f));
+                rt.anchoredPosition = new Vector2(0f, -470f - i * 230f);
+                rt.sizeDelta = new Vector2(960f, 210f);
+                var img = rt.gameObject.AddComponent<Image>();
+                img.sprite = rounded;
+                img.type = Image.Type.Sliced;
+                var btn = rt.gameObject.AddComponent<Button>();
+                btn.targetGraphic = img;
+                menu.chapterButtons[i] = btn;
+                menu.chapterImages[i] = img;
+                menu.chapterNames[i] = Label(rt, "Name", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -45f), new Vector2(900f, 60f), 44, TextAnchor.MiddleLeft, Color.white);
+                menu.chapterInfo[i] = Label(rt, "Info", new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, -30f), new Vector2(900f, 130f), 28, TextAnchor.MiddleLeft, new Color(0.92f, 0.92f, 0.92f));
+                menu.chapterInfo[i].fontStyle = FontStyle.Normal;
+            }
+
+            menu.workshopHeader = Label(panel, "WorkshopHeader", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -1170f), new Vector2(960f, 60f), 38, TextAnchor.MiddleLeft, Color.white);
+            int ups = MetaUpgrades.All.Length;
+            menu.upgradeButtons = new Button[ups];
+            menu.upgradeImages = new Image[ups];
+            menu.upgradeNames = new Text[ups];
+            menu.upgradeInfo = new Text[ups];
+            for (int i = 0; i < ups; i++)
+            {
+                int col = i % 2, row = i / 2;
+                var rt = UIRect($"Upgrade{i}", panel, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f));
+                rt.anchoredPosition = new Vector2(col == 0 ? -242f : 242f, -1310f - row * 210f);
+                rt.sizeDelta = new Vector2(470f, 190f);
+                var img = rt.gameObject.AddComponent<Image>();
+                img.sprite = rounded;
+                img.type = Image.Type.Sliced;
+                var btn = rt.gameObject.AddComponent<Button>();
+                btn.targetGraphic = img;
+                menu.upgradeButtons[i] = btn;
+                menu.upgradeImages[i] = img;
+                menu.upgradeNames[i] = Label(rt, "Name", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -38f), new Vector2(430f, 50f), 32, TextAnchor.MiddleLeft, Color.white);
+                menu.upgradeInfo[i] = Label(rt, "Info", new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, -25f), new Vector2(430f, 110f), 26, TextAnchor.MiddleLeft, new Color(0.92f, 0.92f, 0.92f));
+                menu.upgradeInfo[i].fontStyle = FontStyle.Normal;
+            }
+
+            menu.resetButton = MakeButton(panel, "Reset", new Vector2(0f, 0f), new Vector2(170f, 70f), new Vector2(280f, 80f), new Color(0.35f, 0.15f, 0.15f), rounded, "Сброс (dev)", 28, Color.white, out var resetLabel, out _);
+            resetLabel.gameObject.AddComponent<LocalizedText>().key = "menu.reset";
+            menu.cheatButton = MakeButton(panel, "Cheat", new Vector2(1f, 0f), new Vector2(-170f, 70f), new Vector2(280f, 80f), new Color(0.2f, 0.3f, 0.2f), rounded, "+100 (dev)", 28, Color.white, out _, out _);
         }
 
         static SkillPicker CreateSkillPicker(Transform c, Sprite rounded)

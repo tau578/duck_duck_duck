@@ -10,6 +10,7 @@ namespace Duck
         public Vector3 offset;
         Text text;
         Canvas canvas;
+        bool visible = true;
 
         public static WorldLabel Create(Transform target, Vector3 offset, int fontSize, Color color)
         {
@@ -53,12 +54,16 @@ namespace Duck
 
         public void SetVisible(bool v)
         {
-            if (canvas != null) canvas.enabled = v;
+            visible = v;
+            if (canvas != null) canvas.enabled = v && target != null && target.gameObject.activeInHierarchy;
         }
 
         void LateUpdate()
         {
             if (target == null) { Destroy(gameObject); return; }
+            bool on = visible && target.gameObject.activeInHierarchy;
+            if (canvas.enabled != on) canvas.enabled = on;
+            if (!on) return;
             transform.position = target.position + offset;
             var cam = Camera.main;
             if (cam != null) transform.rotation = cam.transform.rotation;

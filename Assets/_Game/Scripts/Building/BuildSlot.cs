@@ -7,6 +7,8 @@ namespace Duck
     {
         public BuildingConfig config;
         public int startLevel;
+        [Tooltip("Slot appears from this chapter on.")]
+        public int minChapter = 1;
         public GameObject marker;
 
         public int Level { get; private set; }

@@ -37,6 +37,13 @@ namespace Duck
         public string displayNameEn = "Chapter 1. Wasteland";
         public string Name => Loc.Pick(displayName, displayNameEn);
         public int startCoins = 7;
+        [Tooltip("Enemy HP multiplier for this chapter (x1.6-1.8 per chapter in the original).")]
+        public float enemyHpMultiplier = 1f;
+        [Tooltip("Gears for a victory; a defeat gives a share by waves survived.")]
+        public int rewardGears = 60;
+        [TextArea] public string newsRu;
+        [TextArea] public string newsEn;
+        public string News => Loc.Pick(newsRu, newsEn);
         public WaveConfig[] waves;
     }
 }
