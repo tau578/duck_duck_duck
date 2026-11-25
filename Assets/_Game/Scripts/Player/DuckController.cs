@@ -14,14 +14,22 @@ namespace Duck
         public float bobHeight = 0.18f;
         public float bobSpeed = 14f;
 
+        public static DuckController Instance { get; private set; }
+
+        [Tooltip("When set (by AutoShooter), the duck faces this point instead of its move direction.")]
+        public Transform aimTarget;
+        public bool inputEnabled = true;
+
         public Vector3 MoveDirection { get; private set; }
         public bool IsMoving => MoveDirection.sqrMagnitude > 0.0001f;
 
         float bobPhase;
 
+        void Awake() { Instance = this; }
+
         void Update()
         {
-            Vector2 input = ReadInput();
+            Vector2 input = inputEnabled ? ReadInput() : Vector2.zero;
             Vector3 dir = new Vector3(input.x, 0f, input.y);
             MoveDirection = dir;
 
@@ -30,9 +38,15 @@ namespace Duck
             p.z = Mathf.Clamp(p.z, -mapHalfSize.y, mapHalfSize.y);
             transform.position = p;
 
-            if (IsMoving)
+            Vector3 face = dir;
+            if (aimTarget != null && aimTarget.gameObject.activeInHierarchy)
             {
-                Quaternion look = Quaternion.LookRotation(dir, Vector3.up);
+                face = aimTarget.position - transform.position;
+                face.y = 0f;
+            }
+            if (face.sqrMagnitude > 0.0001f)
+            {
+                Quaternion look = Quaternion.LookRotation(face, Vector3.up);
                 transform.rotation = Quaternion.Slerp(transform.rotation, look, 15f * Time.deltaTime);
             }
 
