@@ -1,0 +1,183 @@
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace Duck
+{
+    /// <summary>Battle HUD: coins, wave track, phase/timer, duck and base HP, banners, build and fight buttons, result.</summary>
+    public class HUD : MonoBehaviour
+    {
+        public static HUD Instance { get; private set; }
+
+        public Text coinsText;
+        public Text waveText;
+        public Text phaseText;
+        public Text playerHpText;
+        public RectTransform playerHpFill;
+        public Image playerHpFillImage;
+        public RectTransform baseHpFill;
+        public Text bannerText;
+        public Button fightButton;
+        public Button buildButton;
+        public Text buildButtonText;
+        public Image buildButtonImage;
+        public GameObject resultPanel;
+        public Text resultTitle;
+        public Text resultSubtitle;
+        public Button restartButton;
+        public Text baseAlertText;
+
+        float bannerTimer, bannerDuration;
+        float coinPunch, coinDenied, baseAlert;
+        int shownCoins = -1;
+        BuildSlot buildTarget;
+
+        void Awake()
+        {
+            Instance = this;
+            if (resultPanel != null) resultPanel.SetActive(false);
+            if (bannerText != null) bannerText.gameObject.SetActive(false);
+            if (baseAlertText != null) baseAlertText.gameObject.SetActive(false);
+        }
+
+        void Start()
+        {
+            fightButton.onClick.AddListener(() => GameManager.Instance.StartNight());
+            buildButton.onClick.AddListener(() => GameManager.Instance.BuildPressed());
+            restartButton.onClick.AddListener(() => GameManager.Instance.Restart());
+            Wallet.Instance.Changed += OnCoins;
+            OnCoins(Wallet.Instance.Coins);
+            buildButton.gameObject.SetActive(false);
+        }
+
+        void OnDestroy()
+        {
+            if (Wallet.Instance != null) Wallet.Instance.Changed -= OnCoins;
+        }
+
+        void OnCoins(int coins)
+        {
+            if (shownCoins >= 0 && coins > shownCoins) coinPunch = 1f;
+            shownCoins = coins;
+            coinsText.text = coins.ToString();
+            if (buildTarget != null) SetBuildTarget(buildTarget);
+        }
+
+        public void Banner(string text, Color color, float duration = 2.2f)
+        {
+            bannerText.text = text;
+            bannerText.color = color;
+            bannerText.gameObject.SetActive(true);
+            bannerTimer = duration;
+            bannerDuration = duration;
+        }
+
+        public void BaseUnderAttack()
+        {
+            baseAlert = 1.5f;
+        }
+
+        public void NotEnoughCoins()
+        {
+            coinDenied = 1f;
+        }
+
+        public void SetBuildTarget(BuildSlot slot)
+        {
+            buildTarget = slot;
+            bool on = slot != null;
+            if (buildButton.gameObject.activeSelf != on) buildButton.gameObject.SetActive(on);
+            if (!on) return;
+            bool afford = Wallet.Instance.Coins >= slot.NextCost;
+            string name = slot.config.displayName;
+            buildButtonText.text = slot.Level == 0
+                ? $"Построить «{name}» за {slot.NextCost}"
+                : $"Улучшить «{name}» до ур.{slot.Level + 1} за {slot.NextCost}";
+            buildButtonImage.color = afford ? new Color(1f, 0.8f, 0.2f) : new Color(0.55f, 0.55f, 0.55f);
+        }
+
+        public void ShowResult(bool victory)
+        {
+            resultPanel.SetActive(true);
+            resultTitle.text = victory ? "Победа!" : "База разрушена";
+            resultTitle.color = victory ? new Color(1f, 0.85f, 0.2f) : new Color(1f, 0.35f, 0.3f);
+            var gm = GameManager.Instance;
+            resultSubtitle.text = victory
+                ? $"Все {gm.WaveCount} волны отбиты"
+                : $"Продержались {gm.WaveIndex} из {gm.WaveCount} волн";
+            buildButton.gameObject.SetActive(false);
+            fightButton.gameObject.SetActive(false);
+        }
+
+        void Update()
+        {
+            var gm = GameManager.Instance;
+            if (gm == null) return;
+            float dt = Time.unscaledDeltaTime;
+
+            // Wave track and phase.
+            int shownWave = Mathf.Min(gm.WaveIndex + 1, gm.WaveCount);
+            var wave = gm.CurrentWave;
+            string kind = wave == null ? "" : wave.kind == WaveKind.Boss ? "  · БОСС" : wave.kind == WaveKind.Elite ? "  · элита" : "";
+            waveText.text = $"Волна {shownWave}/{gm.WaveCount}{kind}";
+
+            if (gm.Phase == GamePhase.Day)
+                phaseText.text = $"День {gm.WaveIndex + 1}: строй оборону";
+            else if (gm.Phase == GamePhase.Night)
+            {
+                int t = Mathf.FloorToInt(gm.NightTime);
+                int alive = EnemyManager.Instance != null ? EnemyManager.Instance.AliveCount : 0;
+                phaseText.text = $"Ночь {gm.WaveIndex + 1}   {t / 60:00}:{t % 60:00}   врагов: {alive}";
+            }
+            else phaseText.text = "";
+
+            bool showFight = gm.Phase == GamePhase.Day;
+            if (fightButton.gameObject.activeSelf != showFight) fightButton.gameObject.SetActive(showFight);
+
+            // Duck HP.
+            var ph = PlayerHealth.Instance;
+            if (ph != null)
+            {
+                float n = ph.Normalized;
+                playerHpFill.localScale = new Vector3(n, 1f, 1f);
+                playerHpFillImage.color = n < 0.3f
+                    ? Color.Lerp(new Color(0.9f, 0.15f, 0.1f), new Color(1f, 0.5f, 0.4f), Mathf.PingPong(Time.unscaledTime * 3f, 1f))
+                    : new Color(0.3f, 0.85f, 0.3f);
+                playerHpText.text = ph.IsAlive
+                    ? $"Утка {Mathf.CeilToInt(ph.Current)}/{Mathf.CeilToInt(ph.Max)}"
+                    : $"Утка вернётся через {Mathf.CeilToInt(ph.RespawnIn)} с";
+            }
+
+            // Base HP.
+            var baseB = gm.baseSlot != null ? gm.baseSlot.Current : null;
+            baseHpFill.localScale = new Vector3(baseB != null ? baseB.Health.Normalized : 0f, 1f, 1f);
+
+            // Coin punch / denied shake.
+            coinPunch = Mathf.MoveTowards(coinPunch, 0f, dt * 4f);
+            coinDenied = Mathf.MoveTowards(coinDenied, 0f, dt * 3f);
+            coinsText.rectTransform.localScale = Vector3.one * (1f + coinPunch * 0.35f);
+            coinsText.rectTransform.anchoredPosition = new Vector2(Mathf.Sin(Time.unscaledTime * 60f) * 12f * coinDenied, 0f);
+            coinsText.color = Color.Lerp(Color.white, new Color(1f, 0.3f, 0.3f), coinDenied);
+
+            // Base alert.
+            if (baseAlertText != null)
+            {
+                baseAlert = Mathf.MoveTowards(baseAlert, 0f, dt);
+                bool on = baseAlert > 0f;
+                if (baseAlertText.gameObject.activeSelf != on) baseAlertText.gameObject.SetActive(on);
+                if (on) baseAlertText.color = new Color(1f, 0.3f, 0.25f, 0.6f + 0.4f * Mathf.PingPong(Time.unscaledTime * 4f, 1f));
+            }
+
+            // Banner fade.
+            if (bannerTimer > 0f)
+            {
+                bannerTimer -= dt;
+                float k = bannerTimer / bannerDuration;
+                var c = bannerText.color;
+                c.a = Mathf.Clamp01(bannerTimer / 0.4f);
+                bannerText.color = c;
+                bannerText.rectTransform.localScale = Vector3.one * (k > 0.9f ? Mathf.Lerp(1f, 1.3f, (k - 0.9f) * 10f) : 1f);
+                if (bannerTimer <= 0f) bannerText.gameObject.SetActive(false);
+            }
+        }
+    }
+}

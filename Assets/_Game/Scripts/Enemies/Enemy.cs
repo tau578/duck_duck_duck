@@ -1,0 +1,296 @@
+using UnityEngine;
+
+namespace Duck
+{
+    /// <summary>
+    /// Walks its road to the base, stops to attack the first building in reach (walls block ground units,
+    /// flying units ignore walls), chases the duck when it is close. Juice: white flash, knockback, numbers.
+    /// </summary>
+    public class Enemy : MonoBehaviour
+    {
+        public Transform visual;
+
+        public EnemyConfig Config { get; private set; }
+        public float Hp { get; private set; }
+        public float MaxHp { get; private set; }
+        public bool IsAlive => Hp > 0f;
+        public bool Flying => Config != null && Config.flying;
+        public float Radius { get; private set; } = 0.4f;
+        public float Mass { get; private set; } = 1f;
+
+        Vector3[] path;
+        int waypoint;
+        float lane;
+        Vector3 knock;
+        float attackTimer, retargetTimer, flashTimer, dieTimer, lunge, walkPhase;
+        Building targetBuilding;
+        bool chasePlayer;
+        Renderer[] renderers;
+        Material[] baseMaterials;
+        GameObject model;
+        WorldBar bar;
+        float baseY;
+
+        public void Init(EnemyConfig cfg, EnemyPath road, float hpMultiplier)
+        {
+            Config = cfg;
+            MaxHp = cfg.maxHp * hpMultiplier;
+            Hp = MaxHp;
+            Radius = 0.4f * cfg.scale;
+            Mass = cfg.scale * cfg.scale * (cfg.isBoss ? 4f : 1f);
+            path = road.points;
+            waypoint = 1;
+            lane = Random.Range(-road.laneHalfWidth, road.laneHalfWidth);
+            knock = Vector3.zero;
+            attackTimer = Random.Range(0f, cfg.attackInterval);
+            retargetTimer = 0f;
+            flashTimer = 0f;
+            dieTimer = 0f;
+            targetBuilding = null;
+            chasePlayer = false;
+            baseY = cfg.flying ? 1.6f : 0f;
+
+            SetupModel(cfg);
+            visual.localScale = Vector3.one * cfg.scale;
+
+            if (cfg.isBoss || cfg.isElite)
+            {
+                if (bar == null) bar = WorldBar.Create(transform, 1.9f * cfg.scale + 0.6f, cfg.isBoss ? 2.6f : 1.4f, new Color(0.9f, 0.2f, 0.2f), false);
+                bar.gameObject.SetActive(true);
+                bar.Set(1f);
+            }
+            else if (bar != null)
+            {
+                bar.gameObject.SetActive(false);
+            }
+
+            EnemyManager.Instance.Register(this);
+        }
+
+        void SetupModel(EnemyConfig cfg)
+        {
+            if (model != null) { Destroy(model); model = null; }
+            Transform defaultBody = visual.Find("Default");
+            if (cfg.modelOverride != null)
+            {
+                if (defaultBody != null) defaultBody.gameObject.SetActive(false);
+                model = Instantiate(cfg.modelOverride, visual);
+            }
+            else if (defaultBody != null)
+            {
+                defaultBody.gameObject.SetActive(true);
+                foreach (var r in defaultBody.GetComponentsInChildren<Renderer>(true))
+                    if (r.name == "Body" || r.name == "Arm") r.sharedMaterial = GameAssets.Lit(cfg.bodyColor);
+            }
+
+            renderers = visual.GetComponentsInChildren<Renderer>(false);
+            baseMaterials = new Material[renderers.Length];
+            for (int i = 0; i < renderers.Length; i++) baseMaterials[i] = renderers[i].sharedMaterial;
+        }
+
+        public void TakeHit(float damage, Vector3 direction, bool crit, float knockback)
+        {
+            if (!IsAlive) return;
+            Hp -= damage;
+            DamageNumbers.Damage(transform.position + Vector3.up * (baseY + Config.scale), damage, crit);
+            Flash();
+            direction.y = 0f;
+            if (direction.sqrMagnitude > 0.0001f)
+                knock += direction.normalized * knockback * (1f - Config.knockResist);
+            if (bar != null) bar.Set(Hp / MaxHp);
+            if (Hp <= 0f) Die();
+        }
+
+        void Flash()
+        {
+            var flashMat = GameAssets.I != null ? GameAssets.I.flashMaterial : null;
+            if (flashMat == null) return;
+            for (int i = 0; i < renderers.Length; i++) if (renderers[i] != null) renderers[i].sharedMaterial = flashMat;
+            flashTimer = 0.07f;
+        }
+
+        void RestoreMaterials()
+        {
+            for (int i = 0; i < renderers.Length; i++) if (renderers[i] != null) renderers[i].sharedMaterial = baseMaterials[i];
+        }
+
+        void Die()
+        {
+            Hp = 0f;
+            EnemyManager.Instance.Unregister(this, true);
+            dieTimer = 0.15f;
+            if (bar != null) bar.gameObject.SetActive(false);
+            Sfx.Play(SfxId.EnemyDie, 0.5f, 0.15f, 0.04f);
+
+            if (Random.value < Config.coinChance) CoinPickup.Drop(transform.position, Config.coinValue);
+            if (Config.isBoss)
+            {
+                for (int i = 0; i < 8; i++) CoinPickup.Drop(transform.position, 1);
+                HitStop.Do(0.15f);
+                CameraFollow.Shake(0.8f);
+                Sfx.Play(SfxId.Explosion, 1f, 0.05f, 0f);
+            }
+            else if (Config.isElite)
+            {
+                HitStop.Do(0.07f);
+                CameraFollow.Shake(0.4f);
+            }
+        }
+
+        public void Despawn()
+        {
+            RestoreMaterials();
+            if (bar != null) bar.gameObject.SetActive(false);
+            Pool.Despawn(gameObject);
+        }
+
+        void Update()
+        {
+            float dt = Time.deltaTime;
+
+            if (flashTimer > 0f)
+            {
+                flashTimer -= dt;
+                if (flashTimer <= 0f) RestoreMaterials();
+            }
+
+            if (!IsAlive)
+            {
+                // Death pop: squash and shrink, then back to the pool.
+                dieTimer -= dt;
+                float k = Mathf.Clamp01(dieTimer / 0.15f);
+                visual.localScale = new Vector3(1.3f - 0.3f * k, k, 1.3f - 0.3f * k) * Config.scale;
+                if (dieTimer <= 0f) Despawn();
+                return;
+            }
+
+            Vector3 pos = transform.position;
+            if (knock.sqrMagnitude > 0.0001f)
+            {
+                pos += knock * dt;
+                knock = Vector3.MoveTowards(knock, Vector3.zero, dt * 25f);
+            }
+
+            retargetTimer -= dt;
+            if (retargetTimer <= 0f)
+            {
+                retargetTimer = 0.2f;
+                FindTarget(pos);
+            }
+
+            attackTimer -= dt;
+            bool busy = false;
+            var duck = PlayerHealth.Instance;
+
+            if (targetBuilding != null && targetBuilding.IsAlive)
+            {
+                busy = true;
+                Face(targetBuilding.transform.position - pos, dt);
+                if (attackTimer <= 0f)
+                {
+                    attackTimer = Config.attackInterval;
+                    lunge = 1f;
+                    targetBuilding.TakeDamage(Config.damage);
+                }
+            }
+            else if (chasePlayer && duck != null && duck.IsAlive)
+            {
+                Vector3 to = duck.transform.position - pos;
+                to.y = 0f;
+                if (to.magnitude <= Config.attackRange + 0.4f)
+                {
+                    busy = true;
+                    Face(to, dt);
+                    if (attackTimer <= 0f)
+                    {
+                        attackTimer = Config.attackInterval;
+                        lunge = 1f;
+                        duck.TakeDamage(Config.damage);
+                    }
+                }
+                else
+                {
+                    busy = true;
+                    Step(ref pos, to, dt);
+                }
+            }
+
+            if (!busy) FollowPath(ref pos, dt);
+
+            transform.position = new Vector3(pos.x, 0f, pos.z);
+            Animate(dt, busy);
+        }
+
+        void FindTarget(Vector3 pos)
+        {
+            targetBuilding = null;
+            float best = Config.attackRange + 0.05f;
+            var all = Building.All;
+            for (int i = 0; i < all.Count; i++)
+            {
+                var b = all[i];
+                if (!b.IsAlive) continue;
+                if (Flying && b.Config.wallOnly) continue;
+                float d = b.DistanceTo(pos) - Radius;
+                if (d < best) { best = d; targetBuilding = b; }
+            }
+
+            var duck = PlayerHealth.Instance;
+            chasePlayer = false;
+            if (duck != null && duck.IsAlive)
+            {
+                Vector3 to = duck.transform.position - pos;
+                to.y = 0f;
+                float dd = to.magnitude;
+                chasePlayer = dd < Config.aggroRange;
+                // Prefer the duck if it is right here and closer than the building.
+                if (targetBuilding != null && dd <= Config.attackRange + 0.4f && dd < best) targetBuilding = null;
+                else if (targetBuilding != null) chasePlayer = false;
+            }
+        }
+
+        void FollowPath(ref Vector3 pos, float dt)
+        {
+            if (path == null || path.Length == 0) return;
+            int last = path.Length - 1;
+            Vector3 target = path[Mathf.Min(waypoint, last)];
+            if (waypoint < last)
+            {
+                Vector3 seg = path[waypoint] - path[waypoint - 1];
+                seg.y = 0f;
+                Vector3 side = Vector3.Cross(Vector3.up, seg.normalized);
+                target += side * lane;
+            }
+            Vector3 to = target - pos;
+            to.y = 0f;
+            if (to.sqrMagnitude < 0.36f && waypoint < last) waypoint++;
+            Step(ref pos, to, dt);
+        }
+
+        void Step(ref Vector3 pos, Vector3 to, float dt)
+        {
+            if (to.sqrMagnitude < 0.0001f) return;
+            Vector3 dir = to.normalized;
+            pos += dir * (Config.speed * dt);
+            Face(dir, dt);
+        }
+
+        void Face(Vector3 dir, float dt)
+        {
+            dir.y = 0f;
+            if (dir.sqrMagnitude < 0.0001f) return;
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dir), dt * 10f);
+        }
+
+        void Animate(float dt, bool attacking)
+        {
+            walkPhase += dt * (Config.flying ? 10f : 8f) * Config.speed;
+            lunge = Mathf.MoveTowards(lunge, 0f, dt * 5f);
+            float bob = Config.flying ? Mathf.Sin(walkPhase) * 0.25f : Mathf.Abs(Mathf.Sin(walkPhase)) * 0.12f;
+            visual.localPosition = new Vector3(0f, baseY + bob, lunge * 0.4f);
+            float wobble = Config.flying ? 0f : Mathf.Sin(walkPhase) * 6f;
+            visual.localRotation = Quaternion.Euler(lunge * 20f, 0f, wobble);
+            if (flashTimer <= 0f) visual.localScale = Vector3.one * Config.scale;
+        }
+    }
+}
