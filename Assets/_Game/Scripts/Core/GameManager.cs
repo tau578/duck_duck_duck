@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 namespace Duck
 {
-    public enum GamePhase { Day, Night, Victory, Defeat }
+    public enum GamePhase { Menu, Day, Night, Victory, Defeat }
 
     /// <summary>
     /// Battle loop of one chapter: Day (collect coins, build) -> Night (wave) -> Day ... -> Victory after the last wave.
@@ -17,6 +17,7 @@ namespace Duck
         public static GameManager Instance { get; private set; }
 
         public GameAssets assets;
+        public ChapterConfig[] chapters;
         public ChapterConfig chapter;
         public WaveSpawner spawner;
         public BuildSlot baseSlot;
@@ -27,6 +28,10 @@ namespace Duck
         public float rageAfter = 100f;
 
         public GamePhase Phase { get; private set; }
+        public int ChapterIndex { get; private set; }
+        public int ChapterNumber => ChapterIndex + 1;
+        public bool HasNextChapter => chapters != null && ChapterIndex + 1 < chapters.Length;
+        public int LastReward { get; private set; }
         public int WaveIndex { get; private set; }
         public int WaveCount => chapter != null && chapter.waves != null ? chapter.waves.Length : 0;
         public float NightTime { get; private set; }
@@ -49,7 +54,40 @@ namespace Duck
         void Start()
         {
             slots.AddRange(FindObjectsByType<BuildSlot>(FindObjectsSortMode.None));
-            Wallet.Instance.Set(chapter.startCoins);
+            foreach (var ind in indicators) ind.Hide();
+            int pending = GameSession.PendingChapter;
+            GameSession.PendingChapter = -1;
+            if (pending >= 0 && chapters != null && pending < chapters.Length) BeginChapter(pending);
+            else ShowMenu();
+        }
+
+        void ShowMenu()
+        {
+            SetPhase(GamePhase.Menu);
+            foreach (var s in slots) s.SetDayMode(false);
+            if (MenuUI.Instance != null) MenuUI.Instance.Show();
+        }
+
+        /// <summary>Called by the menu: reload the scene clean and start the chapter.</summary>
+        public void PlayChapter(int index)
+        {
+            GameSession.PendingChapter = index;
+            TimeControl.Reset();
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+
+        void BeginChapter(int index)
+        {
+            ChapterIndex = index;
+            chapter = chapters[index];
+            spawner.hpMultiplier = chapter.enemyHpMultiplier;
+            for (int i = slots.Count - 1; i >= 0; i--)
+            {
+                if (slots[i].minChapter <= ChapterNumber) continue;
+                slots[i].gameObject.SetActive(false);
+                slots.RemoveAt(i);
+            }
+            Wallet.Instance.Set(chapter.startCoins + MetaUpgrades.BonusStartCoins);
             EnterDay(true);
         }
 
@@ -85,7 +123,8 @@ namespace Duck
 
             if (first)
             {
-                HUD.Instance?.Banner(Loc.F("banner.start", chapter.Name), Color.white, 3.5f);
+                string news = string.IsNullOrEmpty(chapter.News) ? "" : "\n" + Loc.F("banner.news", chapter.News);
+                HUD.Instance?.Banner(Loc.F("banner.start", chapter.Name) + news, Color.white, 4.5f);
                 return;
             }
 
@@ -140,6 +179,7 @@ namespace Duck
             {
                 SetPhase(GamePhase.Victory);
                 Lighting(true);
+                GrantReward(true);
                 Sfx.Play(SfxId.Build, 1f, 0f, 0f);
                 HUD.Instance?.ShowResult(true);
                 return;
@@ -152,13 +192,33 @@ namespace Duck
             if (Phase == GamePhase.Victory || Phase == GamePhase.Defeat) return;
             SetPhase(GamePhase.Defeat);
             spawner.StopAll();
+            GrantReward(false);
             CameraFollow.Shake(1f);
             HitStop.Do(0.25f);
             HUD.Instance?.ShowResult(false);
         }
 
-        public void Restart()
+        void GrantReward(bool victory)
         {
+            var save = SaveSystem.Data;
+            int reward = victory
+                ? chapter.rewardGears
+                : Mathf.Max(5, Mathf.RoundToInt(chapter.rewardGears * 0.5f * WaveIndex / Mathf.Max(1, WaveCount)));
+            LastReward = reward;
+            save.gears += reward;
+            if (victory && save.unlockedChapter < ChapterNumber + 1) save.unlockedChapter = ChapterNumber + 1;
+            if (save.bestWaves.Length < chapters.Length) System.Array.Resize(ref save.bestWaves, chapters.Length);
+            int waves = victory ? WaveCount : WaveIndex;
+            if (waves > save.bestWaves[ChapterIndex]) save.bestWaves[ChapterIndex] = waves;
+            SaveSystem.Save();
+        }
+
+        public void Restart() => PlayChapter(ChapterIndex);
+        public void NextChapter() => PlayChapter(HasNextChapter ? ChapterIndex + 1 : ChapterIndex);
+
+        public void ToMenu()
+        {
+            GameSession.PendingChapter = -1;
             TimeControl.Reset();
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }

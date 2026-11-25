@@ -24,6 +24,9 @@ namespace Duck
         public Text resultTitle;
         public Text resultSubtitle;
         public Button restartButton;
+        public Button menuButton;
+        public Button nextButton;
+        public Text rewardText;
         public Text baseAlertText;
         public RectTransform xpFill;
         public Text levelText;
@@ -46,6 +49,8 @@ namespace Duck
             fightButton.onClick.AddListener(() => GameManager.Instance.StartNight());
             buildButton.onClick.AddListener(() => GameManager.Instance.BuildPressed());
             restartButton.onClick.AddListener(() => GameManager.Instance.Restart());
+            menuButton.onClick.AddListener(() => GameManager.Instance.ToMenu());
+            nextButton.onClick.AddListener(() => GameManager.Instance.NextChapter());
             Wallet.Instance.Changed += OnCoins;
             Loc.Changed += OnLanguage;
             OnCoins(Wallet.Instance.Coins);
@@ -113,6 +118,8 @@ namespace Duck
             resultSubtitle.text = victory
                 ? Loc.F("hud.victory_sub", gm.WaveCount)
                 : Loc.F("hud.defeat_sub", gm.WaveIndex, gm.WaveCount);
+            rewardText.text = Loc.F("result.reward", gm.LastReward, SaveSystem.Data.gears);
+            nextButton.gameObject.SetActive(victory && gm.HasNextChapter);
             buildButton.gameObject.SetActive(false);
             fightButton.gameObject.SetActive(false);
         }
@@ -120,7 +127,7 @@ namespace Duck
         void Update()
         {
             var gm = GameManager.Instance;
-            if (gm == null) return;
+            if (gm == null || gm.Phase == GamePhase.Menu) return;
             float dt = Time.unscaledDeltaTime;
 
             // Wave track and phase.

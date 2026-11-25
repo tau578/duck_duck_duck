@@ -37,6 +37,7 @@ namespace Duck
         void Start()
         {
             EnemyManager.EnemyKilled += OnKill;
+            passes = 1 + MetaUpgrades.BonusAirstrikePasses;
             if (button != null) button.onClick.AddListener(Trigger);
         }
 

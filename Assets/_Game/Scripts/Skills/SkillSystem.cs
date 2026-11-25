@@ -10,6 +10,8 @@ namespace Duck
         public bool passive;
         /// <summary>Star level that "awakens" the skill (big visual change). 0 = none.</summary>
         public int awakenAt;
+        /// <summary>Skill joins the pool from this chapter on.</summary>
+        public int minChapter = 1;
         public Color color;
 
         public string Name => Loc.T($"skill.{id}.name");
@@ -36,8 +38,8 @@ namespace Duck
         public readonly List<SkillDef> All = new List<SkillDef>
         {
             new SkillDef { id = "double_shot", maxStars = 3, awakenAt = 3, color = new Color(1f, 0.75f, 0.2f) },
-            new SkillDef { id = "blades", maxStars = 3, awakenAt = 3, color = new Color(0.75f, 0.8f, 0.9f) },
-            new SkillDef { id = "meteor", maxStars = 3, color = new Color(1f, 0.45f, 0.2f) },
+            new SkillDef { id = "blades", maxStars = 3, awakenAt = 3, minChapter = 2, color = new Color(0.75f, 0.8f, 0.9f) },
+            new SkillDef { id = "meteor", maxStars = 3, minChapter = 3, color = new Color(1f, 0.45f, 0.2f) },
             new SkillDef { id = "rapid", maxStars = 3, passive = true, color = new Color(0.4f, 0.8f, 1f) },
             new SkillDef { id = "power", maxStars = 3, passive = true, color = new Color(1f, 0.35f, 0.35f) },
             new SkillDef { id = "fortify", maxStars = 2, passive = true, color = new Color(0.6f, 0.5f, 0.35f) },
@@ -53,7 +55,7 @@ namespace Duck
         void Awake()
         {
             Instance = this;
-            BuildingHpMultiplier = 1f;
+            BuildingHpMultiplier = MetaUpgrades.BuildingHpMultiplier;
         }
 
         void Start()
@@ -61,7 +63,11 @@ namespace Duck
             EnemyManager.EnemyKilled += OnEnemyKilled;
             var duck = DuckController.Instance;
             shooter = duck != null ? duck.GetComponent<AutoShooter>() : null;
-            if (shooter != null) baseFireRate = shooter.fireRate;
+            if (shooter != null)
+            {
+                baseFireRate = shooter.fireRate;
+                shooter.damageMultiplier = MetaUpgrades.DuckDamageMultiplier;
+            }
         }
 
         void OnDestroy()
@@ -102,7 +108,8 @@ namespace Duck
         List<SkillDef> PickOptions(int count)
         {
             var pool = new List<SkillDef>();
-            foreach (var s in All) if (Stars(s) < s.maxStars) pool.Add(s);
+            int chapter = GameManager.Instance != null ? GameManager.Instance.ChapterNumber : 1;
+            foreach (var s in All) if (Stars(s) < s.maxStars && s.minChapter <= chapter) pool.Add(s);
             var result = new List<SkillDef>();
             while (result.Count < count && pool.Count > 0)
             {
@@ -150,10 +157,10 @@ namespace Duck
                     shooter.fireRate = baseFireRate * (1f + 0.15f * n);
                     break;
                 case "power":
-                    shooter.damageMultiplier = 1f + 0.15f * n;
+                    shooter.damageMultiplier = MetaUpgrades.DuckDamageMultiplier * (1f + 0.15f * n);
                     break;
                 case "fortify":
-                    BuildingHpMultiplier = 1f + 0.25f * n;
+                    BuildingHpMultiplier = MetaUpgrades.BuildingHpMultiplier * (1f + 0.25f * n);
                     foreach (var b in Building.All) if (b.IsAlive) b.ApplyHpMultiplier();
                     break;
                 case "vitality":
