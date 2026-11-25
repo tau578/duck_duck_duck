@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a87a3e4d8b08428e91c67cb9e9185382, type: 3}
+  m_Name: GameAssets
+  m_EditorClassIdentifier: Assembly-CSharp::Duck.GameAssets
+  litTemplate: {fileID: 2100000, guid: ad15a28722863474b97f375a6fc7c246, type: 2}
+  flashMaterial: {fileID: 2100000, guid: 641fa25f6e3b1514e86275ff264f2504, type: 2}
+  bulletPrefab: {fileID: 1814283841005144972, guid: c45d09cd541ce5a41bba046831194dc7, type: 3}
+  enemyPrefab: {fileID: 2388251787622387906, guid: c72b7254aab504e4b8459c4c18275e93, type: 3}
+  coinPrefab: {fileID: 4989746653712109478, guid: 8387ed20e344f2c42b8a9fe937a08341, type: 3}

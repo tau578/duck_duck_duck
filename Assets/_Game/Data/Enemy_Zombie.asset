@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe669cabc7fb4217b35193381b8cb289, type: 3}
+  m_Name: Enemy_Zombie
+  m_EditorClassIdentifier: Assembly-CSharp::Duck.EnemyConfig
+  displayName: "\u0417\u043E\u043C\u0431\u0438"
+  maxHp: 30
+  speed: 1.6
+  damage: 8
+  attackInterval: 1
+  attackRange: 0.9
+  aggroRange: 2.5
+  flying: 0
+  isElite: 0
+  isBoss: 0
+  scale: 1
+  knockResist: 0
+  bodyColor: {r: 0.45, g: 0.65, b: 0.35, a: 1}
+  coinChance: 0.3
+  coinValue: 1
+  xp: 1
+  modelOverride: {fileID: 0}
