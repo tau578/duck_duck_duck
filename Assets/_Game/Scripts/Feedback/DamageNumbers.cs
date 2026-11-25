@@ -29,6 +29,7 @@ namespace Duck
         void Awake()
         {
             instance = this;
+            Suppressed = false;
             entries = new Entry[poolSize];
             for (int i = 0; i < poolSize; i++)
             {
@@ -50,9 +51,23 @@ namespace Duck
             }
         }
 
-        public static void Damage(Vector3 world, float amount, bool crit)
+        /// <summary>True on the result screen: no new pop-ups over the result panel.</summary>
+        public static bool Suppressed;
+
+        /// <summary>Hide every pop-up at once (game over).</summary>
+        public static void Clear()
         {
             if (instance == null) return;
+            for (int i = 0; i < instance.entries.Length; i++)
+            {
+                instance.entries[i].active = false;
+                instance.entries[i].rt.gameObject.SetActive(false);
+            }
+        }
+
+        public static void Damage(Vector3 world, float amount, bool crit)
+        {
+            if (instance == null || Suppressed) return;
             string s = Mathf.CeilToInt(amount).ToString();
             if (crit) instance.Spawn(world, s + "!", new Color(1f, 0.85f, 0.1f), 58, 1.5f);
             else instance.Spawn(world, s, Color.white, 40, 1f);
@@ -60,7 +75,7 @@ namespace Duck
 
         public static void ShowText(Vector3 world, string s, Color color, int size = 48)
         {
-            if (instance == null) return;
+            if (instance == null || Suppressed) return;
             instance.Spawn(world, s, color, size, 1.4f);
         }
 

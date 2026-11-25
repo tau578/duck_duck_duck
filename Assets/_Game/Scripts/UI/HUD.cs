@@ -111,6 +111,15 @@ namespace Duck
 
         public void ShowResult(bool victory)
         {
+            // Run is over: clear combat clutter so nothing overlaps the result panel.
+            PlayerHealth.Instance?.EndRun();
+            DamageNumbers.Suppressed = true;
+            DamageNumbers.Clear();
+            bannerTimer = 0f;
+            bannerText.gameObject.SetActive(false);
+            if (baseAlertText != null) { baseAlert = 0f; baseAlertText.gameObject.SetActive(false); }
+            var duck = DuckController.Instance;
+            if (duck != null && duck.joystick != null) duck.joystick.gameObject.SetActive(false);
             resultPanel.SetActive(true);
             resultTitle.text = Loc.T(victory ? "hud.victory" : "hud.defeat");
             resultTitle.color = victory ? new Color(1f, 0.85f, 0.2f) : new Color(1f, 0.35f, 0.3f);
@@ -158,7 +167,7 @@ namespace Duck
                 playerHpFillImage.color = n < 0.3f
                     ? Color.Lerp(new Color(0.9f, 0.15f, 0.1f), new Color(1f, 0.5f, 0.4f), Mathf.PingPong(Time.unscaledTime * 3f, 1f))
                     : new Color(0.3f, 0.85f, 0.3f);
-                playerHpText.text = ph.IsAlive
+                playerHpText.text = ph.IsAlive || ph.RunOver
                     ? Loc.F("hud.duck_hp", Mathf.CeilToInt(ph.Current), Mathf.CeilToInt(ph.Max))
                     : Loc.F("hud.duck_respawn", Mathf.CeilToInt(ph.RespawnIn));
             }

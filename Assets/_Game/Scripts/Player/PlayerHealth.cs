@@ -5,6 +5,7 @@ namespace Duck
     /// <summary>
     /// Duck HP with clear feedback: bar over the head, HUD bar, red edge flash, low-HP pulse.
     /// Death is not game over: the duck respawns at the base after a delay.
+    /// Once the base falls (or the chapter is won) the run is over: no respawn, duck frozen.
     /// </summary>
     [RequireComponent(typeof(Health))]
     public class PlayerHealth : MonoBehaviour
@@ -27,6 +28,18 @@ namespace Duck
         public float Current => hp != null ? hp.Current : 0f;
         public float Max => hp != null ? hp.max : maxHp;
         public float RespawnIn => respawnTimer;
+        public bool RunOver { get; private set; }
+
+        /// <summary>Base destroyed or chapter won: cancel any respawn, stop moving and shooting.</summary>
+        public void EndRun()
+        {
+            RunOver = true;
+            respawnTimer = 0f;
+            invulnTimer = 0f;
+            hp.invulnerable = true;
+            controller.inputEnabled = false;
+            if (shooter != null) shooter.enabled = false;
+        }
 
         void Awake()
         {
@@ -80,6 +93,7 @@ namespace Duck
 
         void OnDied()
         {
+            if (RunOver) return;
             respawnTimer = respawnDelay;
             controller.inputEnabled = false;
             if (shooter != null) shooter.enabled = false;
@@ -93,6 +107,7 @@ namespace Duck
 
         void Update()
         {
+            if (RunOver) return;
             if (!hp.IsAlive && respawnTimer > 0f)
             {
                 respawnTimer -= Time.deltaTime;
