@@ -79,6 +79,7 @@ namespace Duck
             ["banner.dawn"] = ("Рассвет! +{0} монет\nВолна {1} из {2} впереди", "Dawn! +{0} coins\nWave {1} of {2} ahead"),
             ["banner.boss"] = ("БОСС!", "BOSS!"),
             ["banner.elite"] = ("Элитный враг приближается!", "Elite enemy incoming!"),
+            ["banner.rage"] = ("Момент ярости!\nВраги ускорились", "Rage moment!\nEnemies are faster"),
             ["banner.attack"] = ("Монстры атакуют!", "Monsters attack!"),
             ["banner.duck_down"] = ("Утку подбили!\nВозвращение через {0} с", "Duck is down!\nBack in {0}s"),
 

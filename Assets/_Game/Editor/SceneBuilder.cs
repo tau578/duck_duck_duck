@@ -199,8 +199,8 @@ namespace Duck.EditorTools
                 c.type = BuildingType.Base; c.displayName = "База"; c.displayNameEn = "Base"; c.halfExtents = new Vector2(1.5f, 1.4f); c.wallOnly = false;
                 c.levels = new[]
                 {
-                    new BuildingLevel { cost = 0, hp = 350, income = 3 },
-                    new BuildingLevel { cost = 7, hp = 550, income = 6 },
+                    new BuildingLevel { cost = 0, hp = 350, income = 4 },
+                    new BuildingLevel { cost = 8, hp = 550, income = 7 },
                     new BuildingLevel { cost = 12, hp = 850, income = 12 },
                 };
             });
@@ -218,9 +218,9 @@ namespace Duck.EditorTools
                 c.type = BuildingType.Tower; c.displayName = "Башня"; c.displayNameEn = "Tower"; c.halfExtents = new Vector2(0.6f, 0.6f); c.wallOnly = false;
                 c.levels = new[]
                 {
-                    new BuildingLevel { cost = 2, hp = 120, damage = 7, fireRate = 1.6f, range = 7.5f, shots = 1 },
-                    new BuildingLevel { cost = 4, hp = 200, damage = 12, fireRate = 2f, range = 8f, shots = 1 },
-                    new BuildingLevel { cost = 8, hp = 300, damage = 12, fireRate = 2f, range = 8.5f, shots = 3 },
+                    new BuildingLevel { cost = 1, hp = 120, damage = 7, fireRate = 1.6f, range = 7.5f, shots = 1 },
+                    new BuildingLevel { cost = 2, hp = 200, damage = 12, fireRate = 2f, range = 8f, shots = 1 },
+                    new BuildingLevel { cost = 4, hp = 300, damage = 12, fireRate = 2f, range = 8.5f, shots = 3 },
                 };
             });
             d.wall = LoadOrCreate<BuildingConfig>($"{DataFolder}/Building_Wall.asset", reset, c =>
@@ -228,17 +228,18 @@ namespace Duck.EditorTools
                 c.type = BuildingType.Wall; c.displayName = "Стена"; c.displayNameEn = "Wall"; c.halfExtents = new Vector2(3f, 0.45f); c.wallOnly = true;
                 c.levels = new[]
                 {
-                    new BuildingLevel { cost = 2, hp = 220 },
-                    new BuildingLevel { cost = 4, hp = 450 },
-                    new BuildingLevel { cost = 8, hp = 800 },
+                    new BuildingLevel { cost = 1, hp = 220 },
+                    new BuildingLevel { cost = 3, hp = 450 },
+                    new BuildingLevel { cost = 6, hp = 800 },
+                    new BuildingLevel { cost = 12, hp = 1400 },
                 };
             });
 
-            d.zombie = MakeEnemy("Enemy_Zombie", reset, "Зомби", "Zombie", 45, 1.8f, 10, 1f, 0.9f, 1f, new Color(0.45f, 0.65f, 0.35f), 0.2f, 1);
-            d.runner = MakeEnemy("Enemy_Runner", reset, "Бегун", "Runner", 18, 3.2f, 5, 0.8f, 0.9f, 0.8f, new Color(0.85f, 0.55f, 0.25f), 0.2f, 1);
+            d.zombie = MakeEnemy("Enemy_Zombie", reset, "Зомби", "Zombie", 22, 1.8f, 10, 1f, 0.9f, 1f, new Color(0.45f, 0.65f, 0.35f), 0.2f, 1);
+            d.runner = MakeEnemy("Enemy_Runner", reset, "Бегун", "Runner", 14, 3.2f, 6, 0.8f, 0.9f, 0.8f, new Color(0.85f, 0.55f, 0.25f), 0.2f, 1);
             d.bat = MakeEnemy("Enemy_Bat", reset, "Летучая мышь", "Bat", 15, 2.6f, 6, 1f, 0.9f, 0.7f, new Color(0.5f, 0.3f, 0.6f), 0.2f, 1, c => c.flying = true);
-            d.brute = MakeEnemy("Enemy_Brute", reset, "Громила в бочке", "Barrel Brute", 600, 1.1f, 25, 1.2f, 1.2f, 1.6f, new Color(0.4f, 0.4f, 0.45f), 1f, 3, c => { c.isElite = true; c.knockResist = 0.7f; c.xp = 5; });
-            d.ogre = MakeEnemy("Enemy_Ogre", reset, "Огр", "Ogre", 3200, 1.0f, 60, 1.5f, 1.6f, 2.6f, new Color(0.3f, 0.45f, 0.25f), 1f, 5, c => { c.isBoss = true; c.knockResist = 0.95f; c.aggroRange = 3.5f; c.xp = 20; });
+            d.brute = MakeEnemy("Enemy_Brute", reset, "Громила в бочке", "Barrel Brute", 420, 1.1f, 25, 1.2f, 1.2f, 1.6f, new Color(0.4f, 0.4f, 0.45f), 1f, 3, c => { c.isElite = true; c.knockResist = 0.7f; c.xp = 5; });
+            d.ogre = MakeEnemy("Enemy_Ogre", reset, "Огр", "Ogre", 6000, 1.0f, 60, 1.5f, 1.6f, 2.6f, new Color(0.3f, 0.45f, 0.25f), 1f, 5, c => { c.isBoss = true; c.knockResist = 0.95f; c.aggroRange = 3.5f; c.xp = 20; });
 
             d.chapter1 = LoadOrCreate<ChapterConfig>($"{DataFolder}/Chapter_1.asset", reset, c =>
             {
@@ -249,19 +250,19 @@ namespace Duck.EditorTools
                 {
                     new WaveConfig { kind = WaveKind.Normal, groups = new[]
                     {
-                        new SpawnGroup { enemy = d.zombie, count = 20, pathIndex = 0, interval = 0.6f },
+                        new SpawnGroup { enemy = d.zombie, count = 24, pathIndex = 0, interval = 0.55f },
                         new SpawnGroup { enemy = d.runner, count = 6, pathIndex = 0, interval = 0.5f, delay = 10f },
                     }},
                     new WaveConfig { kind = WaveKind.Normal, groups = new[]
                     {
-                        new SpawnGroup { enemy = d.zombie, count = 35, pathIndex = 0, interval = 0.35f },
-                        new SpawnGroup { enemy = d.runner, count = 12, pathIndex = 0, interval = 0.3f, delay = 6f },
+                        new SpawnGroup { enemy = d.zombie, count = 45, pathIndex = 0, interval = 0.3f },
+                        new SpawnGroup { enemy = d.runner, count = 20, pathIndex = 0, interval = 0.25f, delay = 6f },
                         new SpawnGroup { enemy = d.brute, count = 1, pathIndex = 0, interval = 0f, delay = 9f },
-                        new SpawnGroup { enemy = d.zombie, count = 25, pathIndex = 0, interval = 0.3f, delay = 14f },
+                        new SpawnGroup { enemy = d.zombie, count = 40, pathIndex = 0, interval = 0.25f, delay = 16f },
                     }},
                     new WaveConfig { kind = WaveKind.Boss, groups = new[]
                     {
-                        new SpawnGroup { enemy = d.zombie, count = 40, pathIndex = 0, interval = 0.3f },
+                        new SpawnGroup { enemy = d.zombie, count = 50, pathIndex = 0, interval = 0.25f },
                         new SpawnGroup { enemy = d.ogre, count = 1, pathIndex = 0, interval = 0f, delay = 5f },
                         new SpawnGroup { enemy = d.brute, count = 2, pathIndex = 0, interval = 3f, delay = 8f },
                         new SpawnGroup { enemy = d.runner, count = 20, pathIndex = 0, interval = 0.25f, delay = 12f },

@@ -8,6 +8,9 @@ namespace Duck
     /// </summary>
     public class Enemy : MonoBehaviour
     {
+        /// <summary>Global speed multiplier ("Rage moment" when a night drags on).</summary>
+        public static float SpeedMultiplier = 1f;
+
         public Transform visual;
 
         public EnemyConfig Config { get; private set; }
@@ -271,7 +274,7 @@ namespace Duck
         {
             if (to.sqrMagnitude < 0.0001f) return;
             Vector3 dir = to.normalized;
-            pos += dir * (Config.speed * dt);
+            pos += dir * (Config.speed * SpeedMultiplier * dt);
             Face(dir, dt);
         }
 

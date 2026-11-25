@@ -23,6 +23,8 @@ namespace Duck
         public List<SpawnIndicator> indicators = new List<SpawnIndicator>();
         public Light sun;
         public float buildReach = 2.2f;
+        [Tooltip("Seconds of night before enemies enrage (+50% speed).")]
+        public float rageAfter = 100f;
 
         public GamePhase Phase { get; private set; }
         public int WaveIndex { get; private set; }
@@ -40,6 +42,7 @@ namespace Duck
             Instance = this;
             GameAssets.I = assets;
             HitStop.ResetState();
+            Enemy.SpeedMultiplier = 1f;
             TimeControl.Reset();
         }
 
@@ -59,6 +62,12 @@ namespace Duck
             else if (Phase == GamePhase.Night)
             {
                 NightTime += Time.deltaTime;
+                if (Enemy.SpeedMultiplier < 1.5f && NightTime > rageAfter)
+                {
+                    Enemy.SpeedMultiplier = 1.5f;
+                    HUD.Instance?.Banner(Loc.T("banner.rage"), new Color(1f, 0.25f, 0.1f), 2.5f);
+                    CameraFollow.Shake(0.4f);
+                }
                 if (NightTime > 1f && !spawner.IsSpawning && EnemyManager.Instance.AliveCount == 0)
                     WaveCleared();
             }
@@ -69,6 +78,7 @@ namespace Duck
         void EnterDay(bool first)
         {
             SetPhase(GamePhase.Day);
+            Enemy.SpeedMultiplier = 1f;
             foreach (var s in slots) s.SetDayMode(true);
             ShowIndicators(CurrentWave);
             Lighting(true);

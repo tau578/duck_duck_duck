@@ -30,7 +30,8 @@ namespace Duck
 
         public int Level { get; private set; } = 1;
         public int Xp { get; private set; }
-        public int XpToNext => 4 + Level * 3;
+        /// <summary>First level after ~10 kills, then x1.25 per level (analysis 10.6).</summary>
+        public int XpToNext => Mathf.RoundToInt(10f * Mathf.Pow(1.25f, Level - 1));
 
         public readonly List<SkillDef> All = new List<SkillDef>
         {
