@@ -39,7 +39,8 @@ namespace Duck
         {
             Instance = this;
             GameAssets.I = assets;
-            Time.timeScale = 1f;
+            HitStop.ResetState();
+            TimeControl.Reset();
         }
 
         void Start()
@@ -148,7 +149,7 @@ namespace Duck
 
         public void Restart()
         {
-            Time.timeScale = 1f;
+            TimeControl.Reset();
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
 

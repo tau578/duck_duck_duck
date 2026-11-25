@@ -8,19 +8,21 @@ namespace Duck
     {
         static bool active;
 
+        /// <summary>Called on scene start: a coroutine killed by a scene reload must not leave the flag stuck.</summary>
+        public static void ResetState() { active = false; }
+
         public static void Do(float realSeconds)
         {
-            if (active || GameManager.Instance == null) return;
+            if (active || TimeControl.Paused || GameManager.Instance == null) return;
             GameManager.Instance.StartCoroutine(Run(realSeconds));
         }
 
         static IEnumerator Run(float t)
         {
             active = true;
-            float prev = Time.timeScale;
-            Time.timeScale = 0.05f;
+            TimeControl.SetHitStop(true);
             yield return new WaitForSecondsRealtime(t);
-            Time.timeScale = prev <= 0.05f ? 1f : prev;
+            TimeControl.SetHitStop(false);
             active = false;
         }
     }
