@@ -59,6 +59,7 @@ namespace Duck.EditorTools
             var spawner = game.AddComponent<WaveSpawner>();
             game.AddComponent<Sfx>();
             var skills = game.AddComponent<SkillSystem>();
+            var air = game.AddComponent<Airstrike>();
             gm.assets = assets;
             gm.chapter = data.chapter1;
             gm.spawner = spawner;
@@ -85,7 +86,7 @@ namespace Duck.EditorTools
 
             GameObject duck = CreateDuck();
             CreateCamera(duck.transform);
-            VirtualJoystick stick = CreateUI(out SkillPicker picker);
+            VirtualJoystick stick = CreateUI(out SkillPicker picker, air);
             skills.picker = picker;
             duck.GetComponent<DuckController>().joystick = stick;
 
@@ -502,7 +503,7 @@ namespace Duck.EditorTools
 
         // ================= UI =================
 
-        static VirtualJoystick CreateUI(out SkillPicker picker)
+        static VirtualJoystick CreateUI(out SkillPicker picker, Airstrike air)
         {
             var es = new GameObject("EventSystem");
             es.AddComponent<EventSystem>();
@@ -611,6 +612,27 @@ namespace Duck.EditorTools
             // Dev: language toggle RU/EN.
             var langBtn = MakeButton(c, "LanguageToggle", new Vector2(1f, 1f), new Vector2(-150f, -165f), new Vector2(240f, 70f), new Color(0.2f, 0.2f, 0.25f, 0.8f), rounded, "RU → EN", 30, Color.white, out var langLabel, out _);
             langBtn.gameObject.AddComponent<LanguageToggle>().label = langLabel;
+
+            // Airstrike button (bottom-left, above the stick area), fill shows the charge.
+            var airRt = UIRect("AirstrikeButton", c, new Vector2(0f, 0f), new Vector2(0f, 0f));
+            airRt.anchoredPosition = new Vector2(150f, 880f);
+            airRt.sizeDelta = new Vector2(190f, 190f);
+            var airImg = airRt.gameObject.AddComponent<Image>();
+            airImg.sprite = knob;
+            airImg.color = new Color(0.15f, 0.2f, 0.3f);
+            var airBtn = airRt.gameObject.AddComponent<Button>();
+            airBtn.targetGraphic = airImg;
+            var airFill = UIRect("Charge", airRt, Vector2.zero, Vector2.one);
+            airFill.pivot = new Vector2(0.5f, 0f);
+            var airFillImg = airFill.gameObject.AddComponent<Image>();
+            airFillImg.sprite = knob;
+            airFillImg.color = new Color(0.4f, 0.75f, 1f, 0.45f);
+            airFillImg.raycastTarget = false;
+            var airLabel = Label(airRt, "Text", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, 34, TextAnchor.MiddleCenter, Color.white);
+            air.button = airBtn;
+            air.fill = airFill;
+            air.buttonImage = airImg;
+            air.label = airLabel;
 
             // XP bar at the bottom of the top band.
             var xpBg = UIRect("XP", c, new Vector2(0f, 1f), new Vector2(1f, 1f));

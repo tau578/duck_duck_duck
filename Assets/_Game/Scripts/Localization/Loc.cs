@@ -92,6 +92,9 @@ namespace Duck
 
             // Skills
             ["hud.level"] = ("Ур. {0}   {1}/{2}", "Lv. {0}   {1}/{2}"),
+            ["air.button"] = ("АВИА-\nУДАР", "AIR\nSTRIKE"),
+            ["air.ready"] = ("Авиаудар готов!", "Airstrike ready!"),
+            ["air.banner"] = ("Авиаудар!", "Airstrike!"),
             ["skill.title"] = ("Уровень {0}! Выбери навык", "Level {0}! Pick a skill"),
             ["skill.new"] = ("Новый", "New"),
             ["skill.stars"] = ("ур. {0} → {1}", "lv. {0} → {1}"),
