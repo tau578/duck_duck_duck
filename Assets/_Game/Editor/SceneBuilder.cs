@@ -274,7 +274,7 @@ namespace Duck.EditorTools
             {
                 c.displayName = "Глава 1. Пустошь";
                 c.displayNameEn = "Chapter 1. Wasteland";
-                c.startCoins = 6;
+                c.startCoins = 7;
                 c.enemyHpMultiplier = 1f;
                 c.rewardGears = 60;
                 c.newsRu = "";
@@ -284,23 +284,23 @@ namespace Duck.EditorTools
                 {
                     new WaveConfig { kind = WaveKind.Normal, groups = new[]
                     {
-                        new SpawnGroup { enemy = d.zombie, count = 22, pathIndex = 0, interval = 0.7f },
-                        new SpawnGroup { enemy = d.runner, count = 8, pathIndex = 0, interval = 0.5f, delay = 10f },
+                        new SpawnGroup { enemy = d.zombie, count = 18, pathIndex = 0, interval = 0.8f },
+                        new SpawnGroup { enemy = d.runner, count = 4, pathIndex = 0, interval = 0.6f, delay = 12f },
                     }},
                     new WaveConfig { kind = WaveKind.Normal, groups = new[]
                     {
-                        new SpawnGroup { enemy = d.zombie, count = 36, pathIndex = 0, interval = 0.38f },
-                        new SpawnGroup { enemy = d.runner, count = 16, pathIndex = 0, interval = 0.3f, delay = 8f },
-                        new SpawnGroup { enemy = d.brute, count = 2, pathIndex = 0, interval = 5f, delay = 12f },
-                        new SpawnGroup { enemy = d.zombie, count = 26, pathIndex = 0, interval = 0.3f, delay = 18f },
+                        new SpawnGroup { enemy = d.zombie, count = 32, pathIndex = 0, interval = 0.42f },
+                        new SpawnGroup { enemy = d.runner, count = 14, pathIndex = 0, interval = 0.32f, delay = 8f },
+                        new SpawnGroup { enemy = d.brute, count = 1, pathIndex = 0, interval = 0f, delay = 12f },
+                        new SpawnGroup { enemy = d.zombie, count = 22, pathIndex = 0, interval = 0.33f, delay = 18f },
                     }},
                     new WaveConfig { kind = WaveKind.Boss, groups = new[]
                     {
-                        new SpawnGroup { enemy = d.zombie, count = 38, pathIndex = 0, interval = 0.33f },
+                        new SpawnGroup { enemy = d.zombie, count = 34, pathIndex = 0, interval = 0.36f },
                         new SpawnGroup { enemy = d.ogre, count = 1, pathIndex = 0, interval = 0f, delay = 5f },
                         new SpawnGroup { enemy = d.brute, count = 2, pathIndex = 0, interval = 5f, delay = 10f },
-                        new SpawnGroup { enemy = d.runner, count = 20, pathIndex = 0, interval = 0.28f, delay = 14f },
-                        new SpawnGroup { enemy = d.zombie, count = 38, pathIndex = 0, interval = 0.27f, delay = 20f },
+                        new SpawnGroup { enemy = d.runner, count = 17, pathIndex = 0, interval = 0.3f, delay = 14f },
+                        new SpawnGroup { enemy = d.zombie, count = 34, pathIndex = 0, interval = 0.29f, delay = 20f },
                     }},
                 };
             });
@@ -309,8 +309,8 @@ namespace Duck.EditorTools
             {
                 c.displayName = "Глава 2. Ночь летучих мышей";
                 c.displayNameEn = "Chapter 2. Night of Bats";
-                c.startCoins = 9;
-                c.enemyHpMultiplier = 1.35f;
+                c.startCoins = 8;
+                c.enemyHpMultiplier = 1.4f;
                 c.rewardGears = 90;
                 c.newsRu = "вторая дорога с востока, летучие мыши летят над стеной, навык «Вращающиеся лезвия», 3 новых места для построек";
                 c.newsEn = "a second road from the east, bats fly over the wall, Spinning Blades skill, 3 new build spots";
@@ -319,16 +319,17 @@ namespace Duck.EditorTools
                     // Two roads from the first night, but a gentle start: the second road teaches itself, the push comes on night 2.
                     new WaveConfig { kind = WaveKind.Normal, groups = new[]
                     {
-                        new SpawnGroup { enemy = d.zombie, count = 20, pathIndex = 0, interval = 0.7f },
-                        new SpawnGroup { enemy = d.zombie, count = 16, pathIndex = 1, interval = 0.7f, delay = 6f },
-                        new SpawnGroup { enemy = d.bat, count = 4, pathIndex = 0, interval = 0.8f, delay = 16f },
+                        new SpawnGroup { enemy = d.zombie, count = 24, pathIndex = 0, interval = 0.6f },
+                        new SpawnGroup { enemy = d.zombie, count = 20, pathIndex = 1, interval = 0.6f, delay = 5f },
+                        new SpawnGroup { enemy = d.runner, count = 6, pathIndex = 1, interval = 0.5f, delay = 12f },
+                        new SpawnGroup { enemy = d.bat, count = 6, pathIndex = 0, interval = 0.6f, delay = 15f },
                     }},
                     new WaveConfig { kind = WaveKind.Normal, groups = new[]
                     {
-                        new SpawnGroup { enemy = d.zombie, count = 42, pathIndex = 0, interval = 0.32f },
-                        new SpawnGroup { enemy = d.zombie, count = 34, pathIndex = 1, interval = 0.32f, delay = 4f },
+                        new SpawnGroup { enemy = d.zombie, count = 46, pathIndex = 0, interval = 0.3f },
+                        new SpawnGroup { enemy = d.zombie, count = 38, pathIndex = 1, interval = 0.3f, delay = 4f },
                         new SpawnGroup { enemy = d.brute, count = 1, pathIndex = 1, interval = 0f, delay = 8f },
-                        new SpawnGroup { enemy = d.runner, count = 18, pathIndex = 1, interval = 0.3f, delay = 10f },
+                        new SpawnGroup { enemy = d.runner, count = 22, pathIndex = 1, interval = 0.28f, delay = 10f },
                         new SpawnGroup { enemy = d.bat, count = 15, pathIndex = 0, interval = 0.35f, delay = 14f },
                     }},
                     new WaveConfig { kind = WaveKind.Elite, groups = new[]
