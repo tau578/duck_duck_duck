@@ -155,7 +155,7 @@ namespace Duck
             ["skill.blades.2"] = ("+1 лезвие, радиус больше", "+1 blade, wider orbit"),
             ["skill.blades.3"] = ("Золотые лезвия: урон +60%", "Golden blades: +60% damage"),
             ["skill.meteor.name"] = ("Метеор", "Meteor"),
-            ["skill.meteor.1"] = ("Раз в 10 с метеор падает на врага", "Every 10s a meteor hits an enemy"),
+            ["skill.meteor.1"] = ("Раз в 8 с метеор падает на врага", "Every 8s a meteor hits an enemy"),
             ["skill.meteor.2"] = ("+1 метеор", "+1 meteor"),
             ["skill.meteor.3"] = ("Метеорный дождь: 3 метеора, шире взрыв", "Meteor shower: 3 meteors, bigger blast"),
             ["skill.rapid.name"] = ("Скорострельность", "Rapid Fire"),
