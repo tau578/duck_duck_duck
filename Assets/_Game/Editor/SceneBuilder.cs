@@ -83,7 +83,7 @@ namespace Duck.EditorTools
             // Chapter 1 starts small: one mine, two tower spots, the wall and one barracks.
             CreateSlot(slotsRoot, data.mine, new Vector3(-4.5f, 0, -1.5f), 0);
             CreateSlot(slotsRoot, data.tower, new Vector3(-3f, 0, 4.5f), 0);
-            CreateSlot(slotsRoot, data.tower, new Vector3(3f, 0, 4.5f), 0);
+            CreateSlot(slotsRoot, data.tower, new Vector3(3f, 0, 4.5f), 0, 2); // chapter 1: one tower is enough
             CreateSlot(slotsRoot, data.wall, new Vector3(0, 0, 10.5f), 0);
             CreateSlot(slotsRoot, data.barracks, new Vector3(-5.5f, 0, 7f), 0).rallyPoint = new Vector3(0f, 0f, 9.2f);
             // Chapter 2: second mine, front towers, second barracks guarding the east road.
@@ -277,6 +277,7 @@ namespace Duck.EditorTools
                 c.startCoins = 7;
                 c.enemyHpMultiplier = 1f;
                 c.rewardGears = 60;
+                c.maxBuildingLevel = 2;
                 c.newsRu = "";
                 c.newsEn = "";
                 // Easy to win, but the horde should still press: a light first night, a real push, then the boss.
@@ -312,8 +313,9 @@ namespace Duck.EditorTools
                 c.startCoins = 8;
                 c.enemyHpMultiplier = 1.6f;
                 c.rewardGears = 90;
-                c.newsRu = "вторая дорога с востока, летучие мыши летят над стеной, навык «Вращающиеся лезвия», 3 новых места для построек";
-                c.newsEn = "a second road from the east, bats fly over the wall, Spinning Blades skill, 3 new build spots";
+                c.maxBuildingLevel = 3;
+                c.newsRu = "вторая дорога с востока, летучие мыши летят над стеной, навык «Вращающиеся лезвия», новые места для построек и улучшения до ур. 3";
+                c.newsEn = "a second road from the east, bats fly over the wall, Spinning Blades skill, new build spots and level 3 upgrades";
                 c.waves = new[]
                 {
                     // Two roads from the first night, but a gentle start: the second road teaches itself, the push comes on night 2.
@@ -361,6 +363,7 @@ d.chapter3 = LoadOrCreate<ChapterConfig>($"{DataFolder}/Chapter_3.asset", reset,
                 c.startCoins = 10;
                 c.enemyHpMultiplier = 1.7f;
                 c.rewardGears = 120;
+                c.maxBuildingLevel = 99;
                 c.newsRu = "третья дорога с запада, бронежуки держат удар, босс Матка роя, навык «Метеор»";
                 c.newsEn = "a third road from the west, armored beetles, the Swarm Queen boss, Meteor skill";
                 c.waves = new[]

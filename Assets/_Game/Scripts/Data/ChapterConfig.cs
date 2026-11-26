@@ -41,6 +41,8 @@ namespace Duck
         public float enemyHpMultiplier = 1f;
         [Tooltip("Gears for a victory; a defeat gives a share by waves survived.")]
         public int rewardGears = 60;
+        [Tooltip("Highest level any building may reach in this chapter (keeps the early base modest).")]
+        public int maxBuildingLevel = 99;
         [TextArea] public string newsRu;
         [TextArea] public string newsEn;
         public string News => Loc.Pick(newsRu, newsEn);

@@ -15,7 +15,15 @@ namespace Duck
 
         public int Level { get; private set; }
         public Building Current { get; private set; }
-        public bool CanUpgrade => Level < config.MaxLevel;
+        public bool CanUpgrade => Level < Mathf.Min(config.MaxLevel, ChapterLevelCap);
+        static int ChapterLevelCap
+        {
+            get
+            {
+                var gm = GameManager.Instance;
+                return gm != null && gm.chapter != null ? gm.chapter.maxBuildingLevel : 99;
+            }
+        }
         /// <summary>Price of the next level (levels[Level] is level Level+1).</summary>
         public int NextCost => CanUpgrade ? config.levels[Level].cost : 0;
 
