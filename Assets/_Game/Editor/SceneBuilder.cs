@@ -287,7 +287,7 @@ namespace Duck.EditorTools
                 c.eliteChestPicks = 2;
                 c.comboCoinsPerNight = 4;
                 c.autoLevel = false;
-                c.airstrikeKills = 50;          // twice the enemies, so twice the charge
+                c.airstrikeKills = 0;           // 40% of the night's enemies, one strike per night
                 c.baseIncomeBonus = -1;         // base 3 + mine 3 = 6 coins per dawn
                 c.newsRu = "";
                 c.newsEn = "";
@@ -784,12 +784,21 @@ d.chapter3 = LoadOrCreate<ChapterConfig>($"{DataFolder}/Chapter_3.asset", reset,
             var airBtn = airRt.gameObject.AddComponent<Button>();
             airBtn.targetGraphic = airImg;
             var airFill = UIRect("Charge", airRt, Vector2.zero, Vector2.one);
-            airFill.pivot = new Vector2(0.5f, 0f);
+            airFill.offsetMin = new Vector2(-12f, -12f);
+            airFill.offsetMax = new Vector2(12f, 12f);
             var airFillImg = airFill.gameObject.AddComponent<Image>();
-            airFillImg.sprite = knob;
-            airFillImg.color = new Color(0.4f, 0.75f, 1f, 0.45f);
+            airFillImg.sprite = IconSprite("airstrike_ring", RingPixel);
+            airFillImg.type = Image.Type.Filled;
+            airFillImg.fillMethod = Image.FillMethod.Radial360;
+            airFillImg.fillOrigin = (int)Image.Origin360.Top;
+            airFillImg.color = new Color(1f, 0.8f, 0.2f);
             airFillImg.raycastTarget = false;
-            var airLabel = Label(airRt, "Text", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, 34, TextAnchor.MiddleCenter, Color.white);
+            // Charge ring around the button, bomber icon on top.
+            var airIcon = UIRect("Icon", airRt, new Vector2(0.08f, 0.08f), new Vector2(0.92f, 0.92f));
+            var airIconImg = airIcon.gameObject.AddComponent<Image>();
+            airIconImg.sprite = IconSprite("airstrike_icon", BomberPixel);
+            airIconImg.raycastTarget = false;
+            var airLabel = Label(airRt, "Text", new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, 40f), new Vector2(60f, 50f), 34, TextAnchor.MiddleCenter, Color.white);
             air.button = airBtn;
             air.fill = airFill;
             air.buttonImage = airImg;
@@ -799,6 +808,7 @@ d.chapter3 = LoadOrCreate<ChapterConfig>($"{DataFolder}/Chapter_3.asset", reset,
             var xpBg = UIRect("XP", c, new Vector2(0f, 1f), new Vector2(1f, 1f));
             xpBg.pivot = new Vector2(0.5f, 1f);
             xpBg.offsetMin = new Vector2(40f, -300f);
+            air.icon = airIconImg;
             xpBg.offsetMax = new Vector2(-40f, -282f);
             var xpBgImg = xpBg.gameObject.AddComponent<Image>();
             xpBgImg.color = new Color(0f, 0f, 0f, 0.6f);
@@ -1068,6 +1078,67 @@ d.chapter3 = LoadOrCreate<ChapterConfig>($"{DataFolder}/Chapter_3.asset", reset,
             string parent = System.IO.Path.GetDirectoryName(path).Replace('\\', '/');
             EnsureFolder(parent);
             AssetDatabase.CreateFolder(parent, System.IO.Path.GetFileName(path));
+        // ================= generated icons =================
+
+        /// <summary>Draws a square icon from a per-pixel function (coordinates -60..60, y down) and saves it as a sprite.</summary>
+        static Sprite IconSprite(string name, Func<Vector2, Color> pixel)
+        {
+            const int size = 256, ss = 3;
+            var tex = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            for (int y = 0; y < size; y++)
+                for (int x = 0; x < size; x++)
+                {
+                    Vector4 sum = Vector4.zero;
+                    for (int i = 0; i < ss * ss; i++)
+                    {
+                        float u = (x + (i % ss + 0.5f) / ss) / size, v = (y + (i / ss + 0.5f) / ss) / size;
+                        Color c = pixel(new Vector2(u * 120f - 60f, 60f - v * 120f));
+                        sum += new Vector4(c.r * c.a, c.g * c.a, c.b * c.a, c.a);
+                    }
+                    float a = sum.w / (ss * ss);
+                    tex.SetPixel(x, y, sum.w > 0f ? new Color(sum.x / sum.w, sum.y / sum.w, sum.z / sum.w, a) : Color.clear);
+                }
+            EnsureFolder("Assets/_Game/Art/Icons");
+            string path = $"Assets/_Game/Art/Icons/{name}.png";
+            System.IO.File.WriteAllBytes(path, tex.EncodeToPNG());
+            UnityEngine.Object.DestroyImmediate(tex);
+            AssetDatabase.ImportAsset(path);
+            var importer = (TextureImporter)AssetImporter.GetAtPath(path);
+            importer.textureType = TextureImporterType.Sprite;
+            importer.spriteImportMode = SpriteImportMode.Single;
+            importer.alphaIsTransparency = true;
+            importer.mipmapEnabled = false;
+            importer.SaveAndReimport();
+            return AssetDatabase.LoadAssetAtPath<Sprite>(path);
+        }
+
+        static Color RingPixel(Vector2 p) => p.magnitude <= 59f && p.magnitude >= 50f ? Color.white : Color.clear;
+
+        /// <summary>Top view of a bomber: white silhouette, dark outline, two yellow roundels.</summary>
+        static Color BomberPixel(Vector2 p)
+        {
+            Vector2[] half =
+            {
+                new Vector2(0, -46), new Vector2(5, -44), new Vector2(8, -37), new Vector2(9, -26), new Vector2(9, -12),
+                new Vector2(46, 8), new Vector2(46, 18), new Vector2(9, 8), new Vector2(7, 26), new Vector2(19, 36),
+                new Vector2(19, 43), new Vector2(0, 38),
+            };
+            Vector2 q = new Vector2(Mathf.Abs(p.x), p.y);
+            bool inside = false;
+            float edge = float.MaxValue;
+            for (int i = 0; i + 1 < half.Length; i++)
+            {
+                Vector2 a = half[i], b = half[i + 1];
+                if ((a.y > q.y) != (b.y > q.y) && q.x < (b.x - a.x) * (q.y - a.y) / (b.y - a.y) + a.x) inside = !inside;
+                Vector2 ab = b - a;
+                float t = Mathf.Clamp01(Vector2.Dot(q - a, ab) / ab.sqrMagnitude);
+                edge = Mathf.Min(edge, (q - a - ab * t).magnitude);
+            }
+            if (edge < 2.5f) return new Color(0.09f, 0.16f, 0.25f);
+            if (!inside) return Color.clear;
+            return (q - new Vector2(27f, 5f)).magnitude < 5f ? new Color(1f, 0.79f, 0.16f) : Color.white;
+        }
+
         }
 
         static RectTransform UIRect(string name, Transform parent, Vector2 anchorMin, Vector2 anchorMax)

@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,34 +14,42 @@ namespace Duck
     {
         public static Airstrike Instance { get; private set; }
 
-        [Tooltip("Share of the current night's enemies to kill for one charge, so a stronger duck does not get more strikes.")]
-        [Range(0.1f, 1f)] public float chargeShare = 0.35f;
+        [Tooltip("Share of the current night's enemies to kill before the strike is ready.")]
+        [Range(0.1f, 1f)] public float chargeShare = 0.4f;
         public int minKillsToCharge = 15;
         public int killsToCharge = 25;
-        public int passes = 1;
-        public int bombsPerPass = 9;
-        public float stripLength = 14f;
+        public int bombsPerPass = 6;
+        [Tooltip("Extra bombs per Workshop level.")]
+        public int bombsPerUpgrade = 2;
+        public float stripLength = 10f;
         public float bombRadius = 2.3f;
-        public float bombDamage = 90f;
+        [Tooltip("Share of max HP a strike takes from an elite / a boss. Ordinary enemies die.")]
+        [Range(0f, 1f)] public float eliteDamageShare = 0.4f;
+        [Range(0f, 1f)] public float bossDamageShare = 0.08f;
 
         [Header("UI")]
         public Button button;
         public RectTransform fill;
         public Image buttonImage;
+        public Image icon;
         public Text label;
 
         int charge;
-        bool flying;
+        bool flying, used;
+        Image ring;
+        /// <summary>Enemies already damaged by the current strike: one strike hurts each of them once.</summary>
+        readonly HashSet<Enemy> struck = new HashSet<Enemy>();
 
-        public bool Ready => charge >= killsToCharge && !flying;
-        public float Charge01 => Mathf.Clamp01(charge / (float)killsToCharge);
+        public bool Ready => !used && !flying && charge >= killsToCharge;
+        public float Charge01 => used ? 0f : Mathf.Clamp01(charge / (float)killsToCharge);
 
         void Awake() { Instance = this; }
 
         void Start()
         {
             EnemyManager.EnemyKilled += OnKill;
-            passes = 1 + MetaUpgrades.BonusAirstrikePasses;
+            bombsPerPass += bombsPerUpgrade * MetaUpgrades.BonusAirstrikeLevels;
+            if (fill != null) ring = fill.GetComponent<Image>();
             if (button != null) button.onClick.AddListener(Trigger);
         }
 
@@ -48,7 +57,7 @@ namespace Duck
 
         void OnKill(Enemy e)
         {
-            if (flying) return;
+            if (flying || used) return;
             bool wasReady = Ready;
             charge = Mathf.Min(killsToCharge, charge + 1);
             if (!wasReady && Ready)
@@ -58,12 +67,12 @@ namespace Duck
             }
         }
 
-        /// <summary>Charge size follows the night's size: about two strikes per night at most.</summary>
+        /// <summary>One strike per night: the meter starts empty, nothing is carried over.</summary>
         public void OnNightStart(int enemiesThisNight, int fixedKills = 0)
         {
-            float was = Charge01;
             killsToCharge = fixedKills > 0 ? fixedKills : Mathf.Max(minKillsToCharge, Mathf.RoundToInt(enemiesThisNight * chargeShare));
-            charge = Mathf.RoundToInt(was * killsToCharge); // keep a carried-over charge as a share
+            charge = 0;
+            used = false;
         }
 
         public void Trigger()
@@ -74,7 +83,7 @@ namespace Duck
                 Sfx.Play(SfxId.Denied, 0.7f, 0f, 0.1f);
                 return;
             }
-            charge = 0;
+            used = true;
             StartCoroutine(Run());
         }
 
@@ -101,36 +110,33 @@ namespace Duck
             flying = true;
             HUD.Instance?.Banner(Loc.T("air.banner"), new Color(0.5f, 0.9f, 1f), 1.5f);
 
-            for (int pass = 0; pass < passes; pass++)
-            {
-                if (EnemyManager.Instance.AliveCount == 0) break;
-                Vector3 target = FindTarget();
-                Vector3 dir = Vector3.back; // flies along the road, north to south
-                Vector3 start = target - dir * (stripLength * 0.5f + 14f) + Vector3.up * 9f;
-                Vector3 end = target + dir * (stripLength * 0.5f + 14f) + Vector3.up * 9f;
+            struck.Clear();
+            Vector3 target = FindTarget();
+            Vector3 dir = Vector3.back; // flies along the road, north to south
+            Vector3 start = target - dir * (stripLength * 0.5f + 14f) + Vector3.up * 9f;
+            Vector3 end = target + dir * (stripLength * 0.5f + 14f) + Vector3.up * 9f;
 
-                var plane = BuildPlane();
-                plane.rotation = Quaternion.LookRotation(dir);
-                const float speed = 22f;
-                float total = Vector3.Distance(start, end) / speed;
-                int dropped = 0;
-                for (float t = 0f; t < total; t += Time.deltaTime)
+            var plane = BuildPlane();
+            plane.rotation = Quaternion.LookRotation(dir);
+            const float speed = 22f;
+            float total = Vector3.Distance(start, end) / speed;
+            int dropped = 0;
+            for (float t = 0f; t < total; t += Time.deltaTime)
+            {
+                Vector3 p = Vector3.Lerp(start, end, t / total);
+                plane.position = p;
+                // Drop bombs evenly while over the strip.
+                float along = Vector3.Dot(p - target, dir) + stripLength * 0.5f;
+                int shouldHave = Mathf.Clamp(Mathf.FloorToInt(along / stripLength * bombsPerPass) + 1, 0, bombsPerPass);
+                if (along >= 0f && along <= stripLength) while (dropped < shouldHave)
                 {
-                    Vector3 p = Vector3.Lerp(start, end, t / total);
-                    plane.position = p;
-                    // Drop bombs evenly while over the strip.
-                    float along = Vector3.Dot(p - target, dir) + stripLength * 0.5f;
-                    int shouldHave = Mathf.Clamp(Mathf.FloorToInt(along / stripLength * bombsPerPass) + 1, 0, bombsPerPass);
-                    if (along >= 0f && along <= stripLength) while (dropped < shouldHave)
-                    {
-                        dropped++;
-                        Vector3 ground = new Vector3(p.x + Random.Range(-1f, 1f), 0f, p.z);
-                        StartCoroutine(Bomb(p, ground));
-                    }
-                    yield return null;
+                    dropped++;
+                    Vector3 ground = new Vector3(p.x + Random.Range(-1f, 1f), 0f, p.z);
+                    StartCoroutine(Bomb(p, ground));
                 }
-                Destroy(plane.gameObject);
+                yield return null;
             }
+            Destroy(plane.gameObject);
             flying = false;
         }
 
@@ -154,8 +160,9 @@ namespace Duck
                 var e = list[i];
                 Vector3 d = e.transform.position - ground;
                 d.y = 0f;
-                if (d.magnitude > bombRadius + e.Radius) continue;
-                e.TakeHit(bombDamage, d.sqrMagnitude > 0.01f ? d : Vector3.forward, false, 8f);
+                if (d.magnitude > bombRadius + e.Radius || !struck.Add(e)) continue;
+                float share = e.Config.isBoss ? bossDamageShare : e.Config.isElite ? eliteDamageShare : 1f;
+                e.TakeHit(e.MaxHp * share, d.sqrMagnitude > 0.01f ? d : Vector3.forward, false, 8f);
             }
             Sfx.Play(SfxId.Explosion, 0.7f, 0.2f, 0.03f);
             CameraFollow.Shake(0.18f);
@@ -205,12 +212,13 @@ namespace Duck
             bool show = gm != null && (gm.Phase == GamePhase.Night || gm.Phase == GamePhase.Day);
             if (button.gameObject.activeSelf != show) button.gameObject.SetActive(show);
             if (!show) return;
-            fill.localScale = new Vector3(1f, Charge01, 1f);
+            if (ring != null) ring.fillAmount = Charge01;
             bool usable = Ready && gm.Phase == GamePhase.Night;
             float pulse = usable ? 0.5f + 0.5f * Mathf.Sin(Time.unscaledTime * 6f) : 0f;
-            buttonImage.color = usable ? Color.Lerp(new Color(0.2f, 0.5f, 0.9f), new Color(0.5f, 0.85f, 1f), pulse) : new Color(0.15f, 0.2f, 0.3f, 0.85f);
+            buttonImage.color = usable ? Color.Lerp(new Color(0.18f, 0.5f, 0.85f), new Color(0.45f, 0.8f, 1f), pulse) : new Color(0.15f, 0.2f, 0.3f, 0.9f);
+            if (icon != null) icon.color = usable ? Color.white : new Color(1f, 1f, 1f, used ? 0.25f : 0.55f);
             button.transform.localScale = Vector3.one * (1f + 0.06f * pulse);
-            label.text = Ready ? Loc.T("air.button") : $"{Mathf.RoundToInt(Charge01 * 100f)}%";
+            label.text = Ready ? Loc.T("air.button") : "";
         }
     }
 }

@@ -31,7 +31,7 @@ namespace Duck
         public static float DuckDamageMultiplier => 1f + 0.15f * Level(0);
         public static float BuildingHpMultiplier => 1f + 0.15f * Level(1);
         public static int BonusStartCoins => 2 * Level(2);
-        public static int BonusAirstrikePasses => Level(3);
+        public static int BonusAirstrikeLevels => Level(3);
 
         public static bool TryBuy(int i)
         {

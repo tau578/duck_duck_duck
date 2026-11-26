@@ -127,7 +127,7 @@ namespace Duck
             ["meta.supplies.name"] = ("Запасы", "Supplies"),
             ["meta.supplies.desc"] = ("+2 монеты на старте главы", "+2 coins at chapter start"),
             ["meta.airstrike.name"] = ("Эскадрилья", "Squadron"),
-            ["meta.airstrike.desc"] = ("+1 заход бомбардировщика в авиаударе", "+1 bomber pass per airstrike"),
+            ["meta.airstrike.desc"] = ("+2 бомбы в авиаударе", "+2 bombs per airstrike"),
             ["result.reward"] = ("+{0} шестерёнок (всего {1})", "+{0} gears (total {1})"),
             ["hud.menu"] = ("В меню", "Menu"),
             ["hud.next"] = ("Следующая глава", "Next chapter"),
