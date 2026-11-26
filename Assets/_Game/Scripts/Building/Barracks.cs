@@ -9,7 +9,8 @@ namespace Duck
     /// </summary>
     public class Barracks : MonoBehaviour
     {
-        public float respawnDelay = 6f;
+        /// <summary>Seconds to replace one lost soldier.</summary>
+        public float respawnDelay = 8f;
 
         Building building;
         readonly List<Ally> squad = new List<Ally>();

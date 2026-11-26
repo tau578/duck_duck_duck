@@ -7,9 +7,9 @@ namespace Duck
     {
         public BuildingConfig config;
         public int startLevel;
-        [Tooltip("Per chapter: the day this spot opens (1 = from the start), 0 = not in that chapter.")]
-        public int[] unlockDays = { 1, 1, 1 };
-        public int UnlockDay(int chapterIndex) => unlockDays != null && chapterIndex < unlockDays.Length ? unlockDays[chapterIndex] : 1;
+        [Tooltip("Per chapter: whether this spot exists there. It is open from the first day.")]
+        public bool[] chapters = { true, true, true };
+        public bool InChapter(int index) => chapters == null || index >= chapters.Length || chapters[index];
         public GameObject marker;
         [Tooltip("Barracks only: where the squad stands guard.")]
         public Vector3 rallyPoint;
@@ -38,7 +38,7 @@ namespace Duck
             }
         }
 
-        [Tooltip("Price label is shown only when the duck is this close (keeps the screen clean).")]
+        [Tooltip("Upgrade price is shown only when the duck is this close. Empty spots are always labelled.")]
         public float labelRadius = 7f;
 
         WorldLabel label;
@@ -66,7 +66,8 @@ namespace Duck
 
         void Start()
         {
-            label = WorldLabel.Create(transform, Vector3.up * 1.2f, 56, new Color(1f, 0.88f, 0.25f));
+            label = WorldLabel.Create(transform, Vector3.up * 1.2f, 48, new Color(1f, 0.88f, 0.25f));
+            label.keepOnScreen = true;
             if (config.type == BuildingType.Tower)
             {
                 currentRing = RangeRing.Create(transform, "RangeNow", new Color(1f, 1f, 1f, 1f), false, 0.12f);
@@ -158,7 +159,7 @@ namespace Duck
         {
             if (marker != null) marker.SetActive(Level == 0);
             if (label == null) return;
-            label.SetVisible(isDay && CanUpgrade && labelNear);
+            label.SetVisible(isDay && CanUpgrade && (Level == 0 || labelNear));
             // Below the slot (towards the camera) so it never covers the ring or the roof.
             label.offset = new Vector3(0f, 0.3f, -(config.halfExtents.y + 0.9f));
             label.Set(Level == 0 ? Loc.F("slot.empty", config.Name, NextCost) : Loc.F("slot.upgrade", Level + 1, NextCost));

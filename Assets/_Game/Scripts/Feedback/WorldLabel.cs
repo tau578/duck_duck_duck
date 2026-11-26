@@ -8,6 +8,8 @@ namespace Duck
     {
         public Transform target;
         public Vector3 offset;
+        /// <summary>Slide the text sideways so it is not cut off while its target is at the screen edge.</summary>
+        public bool keepOnScreen;
         Text text;
         Canvas canvas;
         bool visible = true;
@@ -66,7 +68,23 @@ namespace Duck
             if (!on) return;
             transform.position = target.position + offset;
             var cam = Camera.main;
-            if (cam != null) transform.rotation = cam.transform.rotation;
+            if (cam == null) return;
+            transform.rotation = cam.transform.rotation;
+            if (keepOnScreen) PullInside(cam);
+        }
+
+        void PullInside(Camera cam)
+        {
+            const float margin = 0.01f; // share of the screen width
+            Vector3 at = cam.WorldToViewportPoint(target.position);
+            // A target that is fully off screen takes its label with it.
+            if (at.z <= 0f || at.x < -margin || at.x > 1f + margin) return;
+            float halfWorld = text.preferredWidth * 0.5f * transform.localScale.x;
+            Vector3 centre = cam.WorldToViewportPoint(transform.position);
+            float half = cam.WorldToViewportPoint(transform.position + cam.transform.right * halfWorld).x - centre.x;
+            if (half <= 0f || half >= 0.5f - margin) return;
+            float x = Mathf.Clamp(centre.x, margin + half, 1f - margin - half);
+            transform.position += cam.transform.right * ((x - centre.x) / half * halfWorld);
         }
     }
 

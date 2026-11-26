@@ -35,6 +35,8 @@ namespace Duck
         public int WaveIndex { get; private set; }
         public int WaveCount => chapter != null && chapter.waves != null ? chapter.waves.Length : 0;
         public float NightTime { get; private set; }
+        /// <summary>The boss of the current night has been announced: only then the word "BOSS" shows up.</summary>
+        public bool BossAnnounced { get; private set; }
         public WaveConfig CurrentWave => WaveIndex < WaveCount ? chapter.waves[WaveIndex] : null;
 
         public event Action<GamePhase> PhaseChanged;
@@ -83,7 +85,8 @@ namespace Duck
             spawner.hpMultiplier = chapter.enemyHpMultiplier;
             for (int i = slots.Count - 1; i >= 0; i--)
             {
-                if (slots[i].UnlockDay(ChapterIndex) > 0) continue;
+                // Every spot of the chapter is open from the first day, so the player can plan ahead.
+                if (slots[i].InChapter(ChapterIndex)) continue;
                 slots[i].gameObject.SetActive(false);
                 slots.RemoveAt(i);
             }
@@ -117,12 +120,8 @@ namespace Duck
         {
             SetPhase(GamePhase.Day);
             Enemy.SpeedMultiplier = 1f;
-            // Build spots open day by day, as in the original: a new choice appears only when its day comes.
-            foreach (var s in slots)
-            {
-                s.gameObject.SetActive(WaveIndex + 1 >= s.UnlockDay(ChapterIndex));
-                s.SetDayMode(true);
-            }
+            BossAnnounced = false;
+            foreach (var s in slots) s.SetDayMode(true);
             ShowIndicators(CurrentWave);
             Lighting(true);
 
@@ -156,6 +155,7 @@ namespace Duck
             if (Phase != GamePhase.Day || CurrentWave == null) return;
             SetPhase(GamePhase.Night);
             NightTime = 0f;
+            BossAnnounced = false;
             foreach (var s in slots) s.SetDayMode(false);
             foreach (var ind in indicators) ind.Hide();
             Lighting(false);
@@ -164,10 +164,6 @@ namespace Duck
 
             switch (CurrentWave.kind)
             {
-                case WaveKind.Boss:
-                    HUD.Instance?.Banner(Loc.T("banner.boss"), new Color(1f, 0.2f, 0.2f), 2.5f);
-                    CameraFollow.Shake(0.5f);
-                    break;
                 case WaveKind.Elite:
                     HUD.Instance?.Banner(Loc.T("banner.elite"), new Color(0.8f, 0.4f, 1f), 2.5f);
                     break;
@@ -175,6 +171,15 @@ namespace Duck
                     HUD.Instance?.Banner(Loc.T("banner.attack"), new Color(1f, 0.4f, 0.3f), 2f);
                     break;
             }
+        }
+
+        /// <summary>Called by the spawner shortly before the boss appears.</summary>
+        public void AnnounceBoss()
+        {
+            if (Phase != GamePhase.Night) return;
+            BossAnnounced = true;
+            HUD.Instance?.Banner(Loc.T("banner.boss"), new Color(1f, 0.2f, 0.2f), 2.5f);
+            CameraFollow.Shake(0.5f);
         }
 
         void WaveCleared()

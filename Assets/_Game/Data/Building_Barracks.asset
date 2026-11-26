@@ -26,7 +26,7 @@ MonoBehaviour:
     range: 0
     shots: 1
     allies: 3
-    allyHp: 60
+    allyHp: 30
     allyDamage: 7
   - cost: 3
     hp: 320
@@ -36,5 +36,5 @@ MonoBehaviour:
     range: 0
     shots: 1
     allies: 6
-    allyHp: 90
+    allyHp: 45
     allyDamage: 10

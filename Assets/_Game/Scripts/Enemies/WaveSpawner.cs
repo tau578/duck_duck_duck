@@ -25,6 +25,9 @@ namespace Duck
         /// <summary>Enemies the current night will spawn in total.</summary>
         public int NightEnemyCount { get; private set; }
 
+        /// <summary>Seconds between the "BOSS!" warning and the boss appearing.</summary>
+        const float BossWarningLead = 1.5f;
+
         int running;
         public bool IsSpawning => running > 0;
 
@@ -58,7 +61,14 @@ namespace Duck
         IEnumerator SpawnGroup(SpawnGroup g, int count)
         {
             running++;
-            if (g.delay > 0f) yield return new WaitForSeconds(g.delay);
+            bool boss = g.enemy != null && g.enemy.isBoss;
+            float warning = boss ? Mathf.Min(g.delay, BossWarningLead) : 0f;
+            if (g.delay > warning) yield return new WaitForSeconds(g.delay - warning);
+            if (boss)
+            {
+                GameManager.Instance?.AnnounceBoss();
+                if (warning > 0f) yield return new WaitForSeconds(warning);
+            }
             var road = paths[Mathf.Clamp(g.pathIndex, 0, paths.Count - 1)];
             for (int i = 0; i < count; i++)
             {

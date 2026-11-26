@@ -145,7 +145,7 @@ namespace Duck
             // Wave track and phase.
             int shownWave = Mathf.Min(gm.WaveIndex + 1, gm.WaveCount);
             var wave = gm.CurrentWave;
-            string kind = wave == null ? "" : wave.kind == WaveKind.Boss ? Loc.T("hud.wave_boss") : wave.kind == WaveKind.Elite ? Loc.T("hud.wave_elite") : "";
+            string kind = wave == null ? "" : wave.kind == WaveKind.Boss ? (gm.BossAnnounced ? Loc.T("hud.wave_boss") : "") : wave.kind == WaveKind.Elite ? Loc.T("hud.wave_elite") : "";
             waveText.text = Loc.F("hud.wave", shownWave, gm.WaveCount, kind);
 
             if (gm.Phase == GamePhase.Day)

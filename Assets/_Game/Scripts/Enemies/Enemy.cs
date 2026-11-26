@@ -22,6 +22,9 @@ namespace Duck
         /// <summary>How far before a turn of the road it already counts as passed.</summary>
         const float TurnReach = 0.8f;
 
+        /// <summary>Share of its walking speed an enemy keeps however hard it is being pushed back.</summary>
+        const float MinAdvance = 0.4f;
+
         public EnemyConfig Config { get; private set; }
         public float Hp { get; private set; }
         public float MaxHp { get; private set; }
@@ -185,11 +188,7 @@ namespace Duck
             }
 
             Vector3 pos = transform.position;
-            if (knock.sqrMagnitude > 0.0001f)
-            {
-                pos += knock * dt;
-                knock = Vector3.MoveTowards(knock, Vector3.zero, dt * 25f);
-            }
+            Vector3 heading = Vector3.zero; // where it walks this frame; stays zero while it stands and attacks
 
             retargetTimer -= dt;
             if (retargetTimer <= 0f)
@@ -243,11 +242,12 @@ namespace Duck
                 else
                 {
                     busy = true;
-                    Step(ref pos, to, dt);
+                    heading = Step(ref pos, to, dt);
                 }
             }
 
-            if (!busy) FollowPath(ref pos, dt);
+            if (!busy) heading = FollowPath(ref pos, dt);
+            ApplyKnockback(ref pos, heading, dt);
 
             transform.position = new Vector3(pos.x, 0f, pos.z);
             Animate(dt, busy);
@@ -294,9 +294,29 @@ namespace Duck
             }
         }
 
-        void FollowPath(ref Vector3 pos, float dt)
+        /// <summary>
+        /// Hits push the enemy, but never stop it: against its walking direction the push takes at most
+        /// (1 - MinAdvance) of the speed, and an enemy that is attacking is not pushed off its target.
+        /// </summary>
+        void ApplyKnockback(ref Vector3 pos, Vector3 heading, float dt)
         {
-            if (path == null || path.Length == 0) return;
+            if (knock.sqrMagnitude <= 0.0001f) return;
+            Vector3 push = knock;
+            knock = Vector3.MoveTowards(knock, Vector3.zero, dt * 25f);
+
+            bool walking = heading != Vector3.zero;
+            Vector3 forward = walking ? heading : transform.forward;
+            forward.y = 0f;
+            forward.Normalize();
+            float back = -Vector3.Dot(push, forward);
+            float maxBack = walking ? moveSpeed * SpeedMultiplier * (1f - MinAdvance) : 0f;
+            if (back > maxBack) push += forward * (back - maxBack);
+            pos += push * dt;
+        }
+
+        Vector3 FollowPath(ref Vector3 pos, float dt)
+        {
+            if (path == null || path.Length == 0) return Vector3.zero;
             int last = path.Length - 1;
             Vector3 target = path[last];
             // A turn is passed once the enemy crosses the line across the road just before it. Requiring a touch of
@@ -316,15 +336,17 @@ namespace Duck
             }
             Vector3 to = target - pos;
             to.y = 0f;
-            Step(ref pos, to, dt);
+            return Step(ref pos, to, dt);
         }
 
-        void Step(ref Vector3 pos, Vector3 to, float dt)
+        /// <summary>Moves towards <paramref name="to"/> and returns the walking direction.</summary>
+        Vector3 Step(ref Vector3 pos, Vector3 to, float dt)
         {
-            if (to.sqrMagnitude < 0.0001f) return;
+            if (to.sqrMagnitude < 0.0001f) return Vector3.zero;
             Vector3 dir = to.normalized;
             pos += dir * (moveSpeed * SpeedMultiplier * dt);
             Face(dir, dt);
+            return dir;
         }
 
         void Face(Vector3 dir, float dt)

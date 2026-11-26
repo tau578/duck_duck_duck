@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Linq;
 using UnityEditor;
@@ -28,6 +29,7 @@ namespace Duck.EditorTools
 
             EditorUserBuildSettings.buildAppBundle = false;
             Directory.CreateDirectory(Path.GetDirectoryName(ApkPath));
+            UseAsciiGradleHome();
 
             var options = new BuildPlayerOptions
             {
@@ -44,6 +46,19 @@ namespace Duck.EditorTools
 
             if (Application.isBatchMode)
                 EditorApplication.Exit(sum.result == BuildResult.Succeeded ? 0 : 1);
+        }
+
+        /// <summary>
+        /// The Android prefab tool fails to load from a path with non-ASCII letters (error CXX1429), and the default
+        /// Gradle cache sits in the user profile. In that case the cache goes next to the project folder instead.
+        /// </summary>
+        static void UseAsciiGradleHome()
+        {
+            const string variable = "GRADLE_USER_HOME";
+            if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable(variable))) return;
+            if (Environment.GetFolderPath(Environment.SpecialFolder.UserProfile).All(c => c < 128)) return;
+            // The working directory of the editor is the project folder.
+            Environment.SetEnvironmentVariable(variable, Path.GetFullPath("../.gradle"));
         }
     }
 }

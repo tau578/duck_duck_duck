@@ -78,26 +78,26 @@ namespace Duck.EditorTools
 
             // Building slots (fixed places like in the original).
             var slotsRoot = new GameObject("Slots").transform;
-            // Days per chapter { 1, 2, 3 } on which each spot opens; 0 = not in that chapter.
-            // Chapter 1 copies the original: a mine, then one tower, then barracks. No wall, no second tower.
+            // Flags per chapter { 1, 2, 3 }: whether the spot exists there. All spots are open from the first day.
+            // Chapter 1 copies the original: a mine, one tower, barracks. No wall, no second tower.
             gm.baseSlot = CreateSlot(slotsRoot, data.baseCfg, new Vector3(0, 0, 0), 1);
-            CreateSlot(slotsRoot, data.mine, new Vector3(-4.5f, 0, -1.5f), 0, 1, 1, 1);
-            CreateSlot(slotsRoot, data.tower, new Vector3(-3f, 0, 4.5f), 0, 2, 2, 2);
-            CreateSlot(slotsRoot, data.tower, new Vector3(3f, 0, 4.5f), 0, 0, 2, 2);
-            CreateSlot(slotsRoot, data.wall, new Vector3(0, 0, 10.5f), 0, 0, 4, 3);
-            CreateSlot(slotsRoot, data.barracks, new Vector3(-5.5f, 0, 7f), 0, 3, 4, 3).rallyPoint = new Vector3(0f, 0f, 9.2f);
+            CreateSlot(slotsRoot, data.mine, new Vector3(-4.5f, 0, -1.5f), 0, true, true, true);
+            CreateSlot(slotsRoot, data.tower, new Vector3(-3f, 0, 4.5f), 0, true, true, true);
+            CreateSlot(slotsRoot, data.tower, new Vector3(3f, 0, 4.5f), 0, false, true, true);
+            CreateSlot(slotsRoot, data.wall, new Vector3(0, 0, 10.5f), 0, false, true, true);
+            CreateSlot(slotsRoot, data.barracks, new Vector3(-5.5f, 0, 7f), 0, true, true, true).rallyPoint = new Vector3(0f, 0f, 9.2f);
             // Later chapters: more roads, more spots.
-            CreateSlot(slotsRoot, data.mine, new Vector3(4.5f, 0, -1.5f), 0, 0, 0, 2);
-            CreateSlot(slotsRoot, data.tower, new Vector3(-3f, 0, 8f), 0, 0, 3, 3);
-            CreateSlot(slotsRoot, data.tower, new Vector3(3f, 0, 8f), 0, 0, 3, 3);
-            CreateSlot(slotsRoot, data.barracks, new Vector3(5.5f, 0, 7f), 0, 0, 0, 4).rallyPoint = new Vector3(3.5f, 0f, 13.4f);
-            // East road (chapter 2+).
-            CreateSlot(slotsRoot, data.tower, new Vector3(6f, 0, 12f), 0, 0, 2, 3);
-            CreateSlot(slotsRoot, data.tower, new Vector3(9f, 0, 17.5f), 0, 0, 0, 4);
+            CreateSlot(slotsRoot, data.mine, new Vector3(4.5f, 0, -1.5f), 0, false, false, true);
+            CreateSlot(slotsRoot, data.tower, new Vector3(-3f, 0, 8f), 0, false, true, true);
+            CreateSlot(slotsRoot, data.tower, new Vector3(3f, 0, 8f), 0, false, false, true);
+            CreateSlot(slotsRoot, data.barracks, new Vector3(5.5f, 0, 7f), 0, false, true, true).rallyPoint = new Vector3(3.5f, 0f, 13.4f);
+            // East road (chapter 3); in chapter 2 it is held by the second barracks.
+            CreateSlot(slotsRoot, data.tower, new Vector3(6f, 0, 12f), 0, false, false, true);
+            CreateSlot(slotsRoot, data.tower, new Vector3(9f, 0, 17.5f), 0, false, false, true);
             // West road (chapter 3).
-            CreateSlot(slotsRoot, data.tower, new Vector3(-6f, 0, 12f), 0, 0, 0, 3);
-            CreateSlot(slotsRoot, data.tower, new Vector3(-9f, 0, 17.5f), 0, 0, 0, 4);
-            CreateSlot(slotsRoot, data.mine, new Vector3(0f, 0, -5f), 0, 0, 0, 4);
+            CreateSlot(slotsRoot, data.tower, new Vector3(-6f, 0, 12f), 0, false, false, true);
+            CreateSlot(slotsRoot, data.tower, new Vector3(-9f, 0, 17.5f), 0, false, false, true);
+            CreateSlot(slotsRoot, data.mine, new Vector3(0f, 0, -5f), 0, false, false, true);
 
             GameObject duck = CreateDuck();
             CreateCamera(duck.transform);
@@ -256,8 +256,8 @@ namespace Duck.EditorTools
                 c.type = BuildingType.Barracks; c.displayName = "Казарма"; c.displayNameEn = "Barracks"; c.halfExtents = new Vector2(0.9f, 0.7f); c.wallOnly = false;
                 c.levels = new[]
                 {
-                    new BuildingLevel { cost = 1, hp = 200, allies = 3, allyHp = 60, allyDamage = 7 },
-                    new BuildingLevel { cost = 3, hp = 320, allies = 6, allyHp = 90, allyDamage = 10 },
+                    new BuildingLevel { cost = 1, hp = 200, allies = 3, allyHp = 30, allyDamage = 7 },
+                    new BuildingLevel { cost = 3, hp = 320, allies = 6, allyHp = 45, allyDamage = 10 },
                 };
             });
 
@@ -571,7 +571,7 @@ d.chapter3 = LoadOrCreate<ChapterConfig>($"{DataFolder}/Chapter_3.asset", reset,
             return ind;
         }
 
-        static BuildSlot CreateSlot(Transform parent, BuildingConfig cfg, Vector3 pos, int startLevel, int day1 = 1, int day2 = 1, int day3 = 1)
+        static BuildSlot CreateSlot(Transform parent, BuildingConfig cfg, Vector3 pos, int startLevel, bool ch1 = true, bool ch2 = true, bool ch3 = true)
         {
             var go = new GameObject($"Slot_{cfg.displayName}");
             go.transform.SetParent(parent);
@@ -595,7 +595,7 @@ d.chapter3 = LoadOrCreate<ChapterConfig>($"{DataFolder}/Chapter_3.asset", reset,
             var slot = go.AddComponent<BuildSlot>();
             slot.config = cfg;
             slot.startLevel = startLevel;
-            slot.unlockDays = new[] { day1, day2, day3 };
+            slot.chapters = new[] { ch1, ch2, ch3 };
             slot.marker = marker.gameObject;
             return slot;
         }
