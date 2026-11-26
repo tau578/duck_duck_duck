@@ -58,7 +58,6 @@ namespace Duck.EditorTools
             game.AddComponent<EnemyManager>();
             var spawner = game.AddComponent<WaveSpawner>();
             game.AddComponent<Sfx>();
-            game.AddComponent<Music>();
             game.AddComponent<ComboTracker>();
             var skills = game.AddComponent<SkillSystem>();
             var air = game.AddComponent<Airstrike>();
@@ -931,13 +930,13 @@ d.chapter3 = LoadOrCreate<ChapterConfig>($"{DataFolder}/Chapter_3.asset", reset,
             var setHeader = Label(settings, "Header", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -340f), new Vector2(960f, 70f), 46, TextAnchor.MiddleCenter, Color.white);
             setHeader.text = "Настройки";
             setHeader.gameObject.AddComponent<LocalizedText>().key = "menu.settings";
-            const int rows = 7;
+            const int rows = 6;
             menu.settingButtons = new Button[rows];
             menu.settingLabels = new Text[rows];
             float y = -470f;
             for (int i = 0; i < rows; i++)
             {
-                if (i == 3)
+                if (i == 2)
                 {
                     menu.accessibilityHeader = Label(settings, "AccessHeader", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, y - 20f), new Vector2(960f, 60f), 38, TextAnchor.MiddleLeft, new Color(1f, 0.85f, 0.2f));
                     y -= 100f;

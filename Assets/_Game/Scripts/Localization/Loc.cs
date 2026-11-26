@@ -109,7 +109,6 @@ namespace Duck
             ["menu.back"] = ("Назад", "Back"),
             ["menu.unlock_all"] = ("Открыть все (dev)", "Unlock all (dev)"),
             ["set.sfx"] = ("Звуки: {0}", "Sound: {0}"),
-            ["set.music"] = ("Музыка: {0}", "Music: {0}"),
             ["set.lang"] = ("Язык: Русский", "Language: English"),
             ["set.access"] = ("Доступность", "Accessibility"),
             ["set.large"] = ("Крупный текст: {0}", "Large text: {0}"),

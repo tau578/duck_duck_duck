@@ -5,7 +5,7 @@ namespace Duck
 {
     /// <summary>
     /// Main menu: New game (level select with 3 chapters), Workshop (permanent upgrades) and Settings
-    /// (sound, music, language, accessibility). One page is visible at a time.
+    /// (sound, language, accessibility). One page is visible at a time.
     /// </summary>
     public class MenuUI : MonoBehaviour
     {
@@ -22,7 +22,7 @@ namespace Duck
         public Button[] backButtons;
         public Button unlockAllButton;
 
-        [Header("Settings rows: sfx, music, language, large text, color-blind, reduce motion, slow mode")]
+        [Header("Settings rows: sfx, language, large text, color-blind, reduce motion, slow mode")]
         public Button[] settingButtons;
         public Text[] settingLabels;
         public Text accessibilityHeader;
@@ -77,7 +77,7 @@ namespace Duck
 
             System.Action[] actions =
             {
-                GameSettings.CycleSfx, GameSettings.CycleMusic, Loc.Toggle, GameSettings.ToggleLargeText,
+                GameSettings.CycleSfx, Loc.Toggle, GameSettings.ToggleLargeText,
                 GameSettings.ToggleColorBlind, GameSettings.ToggleReduceMotion, GameSettings.ToggleSlowMode,
             };
             for (int i = 0; i < settingButtons.Length && i < actions.Length; i++)
@@ -148,7 +148,6 @@ namespace Duck
             string[] settingTexts =
             {
                 Loc.F("set.sfx", Percent(GameSettings.SfxVolume)),
-                Loc.F("set.music", Percent(GameSettings.MusicVolume)),
                 Loc.T("set.lang"),
                 Loc.F("set.large", OnOff(GameSettings.LargeText)),
                 Loc.F("set.colorblind", OnOff(GameSettings.ColorBlind)),

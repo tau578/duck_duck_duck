@@ -4,8 +4,8 @@ using UnityEngine;
 namespace Duck
 {
     /// <summary>
-    /// Player settings (PlayerPrefs): sound and music volume plus accessibility options.
-    /// Read by Sfx, Music, TimeControl, CameraFollow, DamageVignette, HitStop, text pop-ups and bars.
+    /// Player settings (PlayerPrefs): sound volume plus accessibility options.
+    /// Read by Sfx, TimeControl, CameraFollow, DamageVignette, HitStop, text pop-ups and bars.
     /// </summary>
     public static class GameSettings
     {
@@ -14,7 +14,6 @@ namespace Duck
         static readonly float[] VolumeSteps = { 1f, 0.75f, 0.5f, 0.25f, 0f };
 
         public static float SfxVolume { get; private set; } = 1f;
-        public static float MusicVolume { get; private set; } = 0.75f;
         /// <summary>Bigger pop-up numbers, slot labels and banners.</summary>
         public static bool LargeText { get; private set; }
         /// <summary>Blue/orange instead of green/red on bars and range rings.</summary>
@@ -38,7 +37,6 @@ namespace Duck
         {
             loaded = true;
             SfxVolume = PlayerPrefs.GetFloat("set_sfx", 1f);
-            MusicVolume = PlayerPrefs.GetFloat("set_music", 0.75f);
             LargeText = PlayerPrefs.GetInt("set_large", 0) == 1;
             ColorBlind = PlayerPrefs.GetInt("set_cb", 0) == 1;
             ReduceMotion = PlayerPrefs.GetInt("set_motion", 0) == 1;
@@ -48,7 +46,6 @@ namespace Duck
         static void Save()
         {
             PlayerPrefs.SetFloat("set_sfx", SfxVolume);
-            PlayerPrefs.SetFloat("set_music", MusicVolume);
             PlayerPrefs.SetInt("set_large", LargeText ? 1 : 0);
             PlayerPrefs.SetInt("set_cb", ColorBlind ? 1 : 0);
             PlayerPrefs.SetInt("set_motion", ReduceMotion ? 1 : 0);
@@ -66,7 +63,6 @@ namespace Duck
         }
 
         public static void CycleSfx() { SfxVolume = NextVolume(SfxVolume); Save(); }
-        public static void CycleMusic() { MusicVolume = NextVolume(MusicVolume); Save(); }
         public static void ToggleLargeText() { LargeText = !LargeText; Save(); }
         public static void ToggleColorBlind() { ColorBlind = !ColorBlind; Save(); }
         public static void ToggleReduceMotion() { ReduceMotion = !ReduceMotion; Save(); }
