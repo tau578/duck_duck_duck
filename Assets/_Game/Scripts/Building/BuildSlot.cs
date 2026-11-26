@@ -76,7 +76,24 @@ namespace Duck
                 CameraFollow.Shake(0.12f);
                 DamageNumbers.ShowText(transform.position + Vector3.up, level == 1 ? Loc.T("fx.built") : Loc.F("fx.level", level), new Color(0.5f, 1f, 0.5f), 48);
             }
+            if (fx) PushDuckOut();
             Refresh();
+        }
+
+        /// <summary>A new building must not swallow the duck standing on its slot: step her out towards the base.</summary>
+        void PushDuckOut()
+        {
+            var duck = DuckController.Instance;
+            if (duck == null || config.type == BuildingType.Wall || config.type == BuildingType.Base) return;
+            const float clearRadius = 1.7f;
+            Vector3 d = duck.transform.position - transform.position;
+            d.y = 0f;
+            if (d.sqrMagnitude >= clearRadius * clearRadius) return;
+            Vector3 dir = d.sqrMagnitude > 0.04f ? d.normalized : -new Vector3(transform.position.x, 0f, transform.position.z).normalized;
+            if (dir.sqrMagnitude < 0.01f) dir = Vector3.back;
+            Vector3 p = transform.position + dir * clearRadius;
+            p.y = duck.transform.position.y;
+            duck.transform.position = p;
         }
 
         public void OnBuildingDestroyed(Building b)
