@@ -17,6 +17,7 @@ MonoBehaviour:
   startCoins: 7
   enemyHpMultiplier: 1
   rewardGears: 60
+  maxBuildingLevel: 2
   newsRu: 
   newsEn: 
   waves:
