@@ -34,8 +34,14 @@ namespace Duck
         public int Xp { get; private set; }
         /// <summary>First level after ~10 kills, then x1.25 per level (analysis 10.6).</summary>
         public int XpToNext => Mathf.RoundToInt(10f * XpScale * Mathf.Pow(1.25f, Level - 1));
-        /// <summary>Level-ups at half the speed of the block14 tuning (1.18 x 2).</summary>
-        public const float XpScale = 2.36f;
+        static float XpScale
+        {
+            get
+            {
+                var gm = GameManager.Instance;
+                return gm != null && gm.chapter != null ? gm.chapter.xpScale : 1f;
+            }
+        }
 
         public readonly List<SkillDef> All = new List<SkillDef>
         {

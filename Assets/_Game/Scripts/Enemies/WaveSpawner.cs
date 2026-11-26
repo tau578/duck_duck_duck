@@ -30,8 +30,10 @@ namespace Duck
 
         public void StartWave(WaveConfig wave)
         {
-            int duckLevel = SkillSystem.Instance != null ? SkillSystem.Instance.Level : 1;
-            int workshop = MetaUpgrades.TotalLevels;
+            var gm = GameManager.Instance;
+            bool autoLevel = gm == null || gm.chapter == null || gm.chapter.autoLevel;
+            int duckLevel = autoLevel && SkillSystem.Instance != null ? SkillSystem.Instance.Level : 1;
+            int workshop = autoLevel ? MetaUpgrades.TotalLevels : 0;
             NightHpMultiplier = hpMultiplier
                 * (1f + hpPerDuckLevel * Mathf.Max(0, duckLevel - freeDuckLevels))
                 * (1f + hpPerWorkshopLevel * workshop);
@@ -44,7 +46,7 @@ namespace Duck
                 NightEnemyCount += count;
                 StartCoroutine(SpawnGroup(g, count));
             }
-            Airstrike.Instance?.OnNightStart(NightEnemyCount);
+            Airstrike.Instance?.OnNightStart(NightEnemyCount, gm != null && gm.chapter != null ? gm.chapter.airstrikeKills : 0);
         }
 
         static int ScaledCount(SpawnGroup g, float scale)

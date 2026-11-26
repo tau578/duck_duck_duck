@@ -83,7 +83,7 @@ namespace Duck.EditorTools
             // Chapter 1 starts small: one mine, two tower spots, the wall and one barracks.
             CreateSlot(slotsRoot, data.mine, new Vector3(-4.5f, 0, -1.5f), 0);
             CreateSlot(slotsRoot, data.tower, new Vector3(-3f, 0, 4.5f), 0);
-            CreateSlot(slotsRoot, data.tower, new Vector3(3f, 0, 4.5f), 0, 2); // chapter 1: one tower is enough
+            CreateSlot(slotsRoot, data.tower, new Vector3(3f, 0, 4.5f), 0);
             CreateSlot(slotsRoot, data.wall, new Vector3(0, 0, 10.5f), 0);
             CreateSlot(slotsRoot, data.barracks, new Vector3(-5.5f, 0, 7f), 0).rallyPoint = new Vector3(0f, 0f, 9.2f);
             // Chapter 2: second mine, front towers, second barracks guarding the east road.
@@ -215,7 +215,7 @@ namespace Duck.EditorTools
                 c.type = BuildingType.Base; c.displayName = "База"; c.displayNameEn = "Base"; c.halfExtents = new Vector2(1.5f, 1.4f); c.wallOnly = false;
                 c.levels = new[]
                 {
-                    new BuildingLevel { cost = 0, hp = 700, income = 5 },
+                    new BuildingLevel { cost = 0, hp = 700, income = 4 },
                     new BuildingLevel { cost = 8, hp = 950, income = 7 },
                     new BuildingLevel { cost = 12, hp = 1300, income = 12 },
                 };
@@ -265,7 +265,7 @@ namespace Duck.EditorTools
             d.runner = MakeEnemy("Enemy_Runner", reset, "Бегун", "Runner", 14, 3.2f, 6, 0.8f, 0.9f, 0.8f, new Color(0.85f, 0.55f, 0.25f), 0.2f, 1);
             d.bat = MakeEnemy("Enemy_Bat", reset, "Летучая мышь", "Bat", 15, 2.6f, 6, 1f, 0.9f, 0.7f, new Color(0.5f, 0.3f, 0.6f), 0.2f, 1, c => c.flying = true);
             d.brute = MakeEnemy("Enemy_Brute", reset, "Громила в бочке", "Barrel Brute", 420, 1.1f, 25, 1.2f, 1.2f, 1.6f, new Color(0.4f, 0.4f, 0.45f), 1f, 3, c => { c.isElite = true; c.knockResist = 0.7f; c.xp = 5; });
-            d.ogre = MakeEnemy("Enemy_Ogre", reset, "Огр", "Ogre", 2600, 1.0f, 60, 1.5f, 1.6f, 2.6f, new Color(0.3f, 0.45f, 0.25f), 1f, 5, c => { c.isBoss = true; c.knockResist = 0.95f; c.aggroRange = 3.5f; c.xp = 20; });
+            d.ogre = MakeEnemy("Enemy_Ogre", reset, "Огр", "Ogre", 3500, 1.0f, 60, 1.5f, 1.6f, 2.6f, new Color(0.3f, 0.45f, 0.25f), 1f, 5, c => { c.isBoss = true; c.knockResist = 0.95f; c.aggroRange = 3.5f; c.xp = 20; });
 
             d.beetle = MakeEnemy("Enemy_Beetle", reset, "Бронежук", "Armored Beetle", 70, 1.3f, 14, 1.2f, 1f, 1.3f, new Color(0.35f, 0.3f, 0.25f), 0.3f, 1, c => { c.knockResist = 0.6f; c.xp = 2; });
             d.queen = MakeEnemy("Enemy_Queen", reset, "Матка роя", "Swarm Queen", 7000, 0.9f, 70, 1.4f, 1.8f, 3f, new Color(0.5f, 0.25f, 0.55f), 1f, 8, c => { c.isBoss = true; c.knockResist = 0.97f; c.aggroRange = 3.5f; c.xp = 30; });
@@ -277,7 +277,13 @@ namespace Duck.EditorTools
                 c.startCoins = 7;
                 c.enemyHpMultiplier = 1f;
                 c.rewardGears = 60;
-                c.maxBuildingLevel = 2;
+                c.maxBuildingLevel = 99;
+                // Chapter 1 = the block11 tuning Сергей liked: no auto-leveling, block11 XP, combo coins and airstrike.
+                c.xpScale = 1f;
+                c.comboCoinsPerNight = 4;
+                c.autoLevel = false;
+                c.airstrikeKills = 25;
+                c.baseIncomeBonus = 0;
                 c.newsRu = "";
                 c.newsEn = "";
                 // Easy to win, but the horde should still press: a light first night, a real push, then the boss.
@@ -290,18 +296,18 @@ namespace Duck.EditorTools
                     }},
                     new WaveConfig { kind = WaveKind.Normal, groups = new[]
                     {
-                        new SpawnGroup { enemy = d.zombie, count = 24, pathIndex = 0, interval = 0.5f },
-                        new SpawnGroup { enemy = d.runner, count = 8, pathIndex = 0, interval = 0.4f, delay = 9f },
-                        new SpawnGroup { enemy = d.brute, count = 1, pathIndex = 0, interval = 0f, delay = 15f },
-                        new SpawnGroup { enemy = d.zombie, count = 12, pathIndex = 0, interval = 0.45f, delay = 20f },
+                        new SpawnGroup { enemy = d.zombie, count = 32, pathIndex = 0, interval = 0.42f },
+                        new SpawnGroup { enemy = d.runner, count = 14, pathIndex = 0, interval = 0.32f, delay = 8f },
+                        new SpawnGroup { enemy = d.brute, count = 1, pathIndex = 0, interval = 0f, delay = 12f },
+                        new SpawnGroup { enemy = d.zombie, count = 22, pathIndex = 0, interval = 0.33f, delay = 18f },
                     }},
                     new WaveConfig { kind = WaveKind.Boss, groups = new[]
                     {
-                        new SpawnGroup { enemy = d.zombie, count = 26, pathIndex = 0, interval = 0.42f },
+                        new SpawnGroup { enemy = d.zombie, count = 34, pathIndex = 0, interval = 0.36f },
                         new SpawnGroup { enemy = d.ogre, count = 1, pathIndex = 0, interval = 0f, delay = 5f },
-                        new SpawnGroup { enemy = d.brute, count = 1, pathIndex = 0, interval = 0f, delay = 12f },
-                        new SpawnGroup { enemy = d.runner, count = 12, pathIndex = 0, interval = 0.35f, delay = 15f },
-                        new SpawnGroup { enemy = d.zombie, count = 24, pathIndex = 0, interval = 0.35f, delay = 22f },
+                        new SpawnGroup { enemy = d.brute, count = 2, pathIndex = 0, interval = 5f, delay = 10f },
+                        new SpawnGroup { enemy = d.runner, count = 17, pathIndex = 0, interval = 0.3f, delay = 14f },
+                        new SpawnGroup { enemy = d.zombie, count = 34, pathIndex = 0, interval = 0.29f, delay = 20f },
                     }},
                 };
             });
@@ -314,6 +320,11 @@ namespace Duck.EditorTools
                 c.enemyHpMultiplier = 1.6f;
                 c.rewardGears = 90;
                 c.maxBuildingLevel = 3;
+                c.xpScale = 2.36f;
+                c.comboCoinsPerNight = 0;
+                c.autoLevel = true;
+                c.airstrikeKills = 0;
+                c.baseIncomeBonus = 1;
                 c.newsRu = "вторая дорога с востока, летучие мыши летят над стеной, навык «Вращающиеся лезвия», новые места для построек и улучшения до ур. 3";
                 c.newsEn = "a second road from the east, bats fly over the wall, Spinning Blades skill, new build spots and level 3 upgrades";
                 c.waves = new[]
@@ -364,6 +375,11 @@ d.chapter3 = LoadOrCreate<ChapterConfig>($"{DataFolder}/Chapter_3.asset", reset,
                 c.enemyHpMultiplier = 1.7f;
                 c.rewardGears = 120;
                 c.maxBuildingLevel = 99;
+                c.xpScale = 2.36f;
+                c.comboCoinsPerNight = 0;
+                c.autoLevel = true;
+                c.airstrikeKills = 0;
+                c.baseIncomeBonus = 1;
                 c.newsRu = "третья дорога с запада, бронежуки держат удар, босс Матка роя, навык «Метеор»";
                 c.newsEn = "a third road from the west, armored beetles, the Swarm Queen boss, Meteor skill";
                 c.waves = new[]

@@ -17,7 +17,15 @@ namespace Duck
         public BuildSlot Slot { get; private set; }
         public Health Health { get; private set; }
         public bool IsAlive => Health != null && Health.IsAlive;
-        public int Income => Config.Level(Level).income;
+        public int Income => Config.Level(Level).income + (Config.type == BuildingType.Base ? ChapterIncomeBonus : 0);
+        static int ChapterIncomeBonus
+        {
+            get
+            {
+                var gm = GameManager.Instance;
+                return gm != null && gm.chapter != null ? gm.chapter.baseIncomeBonus : 0;
+            }
+        }
 
         WorldBar bar;
         float fireTimer, retarget, pop, hitSquash;

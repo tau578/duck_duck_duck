@@ -48,7 +48,9 @@ namespace Duck
             count = 0;
             if (n < minCombo) return;
 
-            int coins = Mathf.Min(n >= 5 ? 2 : 1, maxCoinsPerNight - coinsThisNight);
+            var ch = gm != null ? gm.chapter : null;
+            int cap = ch != null ? ch.comboCoinsPerNight : maxCoinsPerNight;
+            int coins = Mathf.Min(n >= 5 ? 2 : 1, cap - coinsThisNight);
             if (coins <= 0) return;
             coinsThisNight += coins;
             for (int i = 0; i < coins; i++) CoinPickup.Drop(lastPos, 1);

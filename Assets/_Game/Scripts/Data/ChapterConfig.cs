@@ -43,6 +43,18 @@ namespace Duck
         public int rewardGears = 60;
         [Tooltip("Highest level any building may reach in this chapter (keeps the early base modest).")]
         public int maxBuildingLevel = 99;
+
+        [Header("Systems per chapter (chapter 1 keeps the block11 tuning the player liked)")]
+        [Tooltip("XP needed per duck level is multiplied by this.")]
+        public float xpScale = 1f;
+        [Tooltip("Coins from duck-gun combos per night (0 = none).")]
+        public int comboCoinsPerNight = 0;
+        [Tooltip("Enemy HP / count follow the duck level and the Workshop.")]
+        public bool autoLevel = true;
+        [Tooltip("Kills for one airstrike charge; 0 = a share of the night's enemies.")]
+        public int airstrikeKills = 0;
+        [Tooltip("Extra coins the base pays at dawn in this chapter.")]
+        public int baseIncomeBonus = 0;
         [TextArea] public string newsRu;
         [TextArea] public string newsEn;
         public string News => Loc.Pick(newsRu, newsEn);

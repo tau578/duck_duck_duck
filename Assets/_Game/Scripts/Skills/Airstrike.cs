@@ -59,10 +59,10 @@ namespace Duck
         }
 
         /// <summary>Charge size follows the night's size: about two strikes per night at most.</summary>
-        public void OnNightStart(int enemiesThisNight)
+        public void OnNightStart(int enemiesThisNight, int fixedKills = 0)
         {
             float was = Charge01;
-            killsToCharge = Mathf.Max(minKillsToCharge, Mathf.RoundToInt(enemiesThisNight * chargeShare));
+            killsToCharge = fixedKills > 0 ? fixedKills : Mathf.Max(minKillsToCharge, Mathf.RoundToInt(enemiesThisNight * chargeShare));
             charge = Mathf.RoundToInt(was * killsToCharge); // keep a carried-over charge as a share
         }
 
