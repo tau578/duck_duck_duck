@@ -78,25 +78,26 @@ namespace Duck.EditorTools
 
             // Building slots (fixed places like in the original).
             var slotsRoot = new GameObject("Slots").transform;
+            // Days per chapter { 1, 2, 3 } on which each spot opens; 0 = not in that chapter.
+            // Chapter 1 copies the original: a mine, then one tower, then barracks. No wall, no second tower.
             gm.baseSlot = CreateSlot(slotsRoot, data.baseCfg, new Vector3(0, 0, 0), 1);
-            // Chapter 1 starts small: one mine, two tower spots, the wall and one barracks.
-            CreateSlot(slotsRoot, data.mine, new Vector3(-4.5f, 0, -1.5f), 0);
-            CreateSlot(slotsRoot, data.tower, new Vector3(-3f, 0, 4.5f), 0);
-            CreateSlot(slotsRoot, data.tower, new Vector3(3f, 0, 4.5f), 0);
-            CreateSlot(slotsRoot, data.wall, new Vector3(0, 0, 10.5f), 0);
-            CreateSlot(slotsRoot, data.barracks, new Vector3(-5.5f, 0, 7f), 0).rallyPoint = new Vector3(0f, 0f, 9.2f);
-            // Chapter 2: second mine, front towers, second barracks guarding the east road.
-            CreateSlot(slotsRoot, data.mine, new Vector3(4.5f, 0, -1.5f), 0, 2);
-            CreateSlot(slotsRoot, data.tower, new Vector3(-3f, 0, 8f), 0, 2);
-            CreateSlot(slotsRoot, data.tower, new Vector3(3f, 0, 8f), 0, 2);
-            CreateSlot(slotsRoot, data.barracks, new Vector3(5.5f, 0, 7f), 0, 2).rallyPoint = new Vector3(3.5f, 0f, 13.4f);
-            // Chapter 2 opens the east road: more tower spots there.
-            CreateSlot(slotsRoot, data.tower, new Vector3(6f, 0, 12f), 0, 2);
-            CreateSlot(slotsRoot, data.tower, new Vector3(9f, 0, 17.5f), 0, 2);
-            // Chapter 3 opens the west road.
-            CreateSlot(slotsRoot, data.tower, new Vector3(-6f, 0, 12f), 0, 3);
-            CreateSlot(slotsRoot, data.tower, new Vector3(-9f, 0, 17.5f), 0, 3);
-            CreateSlot(slotsRoot, data.mine, new Vector3(0f, 0, -5f), 0, 2);
+            CreateSlot(slotsRoot, data.mine, new Vector3(-4.5f, 0, -1.5f), 0, 1, 1, 1);
+            CreateSlot(slotsRoot, data.tower, new Vector3(-3f, 0, 4.5f), 0, 2, 2, 2);
+            CreateSlot(slotsRoot, data.tower, new Vector3(3f, 0, 4.5f), 0, 0, 2, 2);
+            CreateSlot(slotsRoot, data.wall, new Vector3(0, 0, 10.5f), 0, 0, 4, 3);
+            CreateSlot(slotsRoot, data.barracks, new Vector3(-5.5f, 0, 7f), 0, 3, 4, 3).rallyPoint = new Vector3(0f, 0f, 9.2f);
+            // Later chapters: more roads, more spots.
+            CreateSlot(slotsRoot, data.mine, new Vector3(4.5f, 0, -1.5f), 0, 0, 0, 2);
+            CreateSlot(slotsRoot, data.tower, new Vector3(-3f, 0, 8f), 0, 0, 3, 3);
+            CreateSlot(slotsRoot, data.tower, new Vector3(3f, 0, 8f), 0, 0, 3, 3);
+            CreateSlot(slotsRoot, data.barracks, new Vector3(5.5f, 0, 7f), 0, 0, 0, 4).rallyPoint = new Vector3(3.5f, 0f, 13.4f);
+            // East road (chapter 2+).
+            CreateSlot(slotsRoot, data.tower, new Vector3(6f, 0, 12f), 0, 0, 2, 3);
+            CreateSlot(slotsRoot, data.tower, new Vector3(9f, 0, 17.5f), 0, 0, 0, 4);
+            // West road (chapter 3).
+            CreateSlot(slotsRoot, data.tower, new Vector3(-6f, 0, 12f), 0, 0, 0, 3);
+            CreateSlot(slotsRoot, data.tower, new Vector3(-9f, 0, 17.5f), 0, 0, 0, 4);
+            CreateSlot(slotsRoot, data.mine, new Vector3(0f, 0, -5f), 0, 0, 0, 4);
 
             GameObject duck = CreateDuck();
             CreateCamera(duck.transform);
@@ -214,7 +215,7 @@ namespace Duck.EditorTools
                 c.type = BuildingType.Base; c.displayName = "База"; c.displayNameEn = "Base"; c.halfExtents = new Vector2(1.5f, 1.4f); c.wallOnly = false;
                 c.levels = new[]
                 {
-                    new BuildingLevel { cost = 0, hp = 700, income = 4 },
+                    new BuildingLevel { cost = 0, hp = 700, income = 3 },
                     new BuildingLevel { cost = 8, hp = 950, income = 7 },
                     new BuildingLevel { cost = 12, hp = 1300, income = 12 },
                 };
@@ -224,7 +225,7 @@ namespace Duck.EditorTools
                 c.type = BuildingType.Mine; c.displayName = "Шахта"; c.displayNameEn = "Gold Mine"; c.halfExtents = new Vector2(0.8f, 0.8f); c.wallOnly = false;
                 c.levels = new[]
                 {
-                    new BuildingLevel { cost = 3, hp = 150, income = 3 },
+                    new BuildingLevel { cost = 2, hp = 150, income = 3 },
                     new BuildingLevel { cost = 6, hp = 220, income = 5 },
                 };
             });
@@ -274,36 +275,39 @@ namespace Duck.EditorTools
                 c.displayName = "Глава 1. Пустошь";
                 c.displayNameEn = "Chapter 1. Wasteland";
                 // Curve measured on the original's first chapter (docs/chapter1_balance.md).
-                c.startCoins = 9;               // original: 10, minus 2 for the base that we give for free, plus 1 for our pricier mine
+                // Every day's money is meant to be spent: all three buildings (17) only fit the best path, see docs/power_balance.md.
+                c.startCoins = 5;
+                c.buildCosts = new[] { 0, 5, 6, 0, 6 }; // base, mine, tower, wall, barracks
+                c.workshopCoins = false;
                 c.enemyHpMultiplier = 0.7f;     // zombie 15.4 HP = 2 duck hits
                 c.enemyDamageMultiplier = 0.18f; // the horde that reaches the base is felt, but gives time to react
                 c.enemySpeedMultiplier = 0.7f;   // the horde is met far from the base, as in the original
                 c.bossHpMultiplier = 0.75f;     // boss lives about 30-50 s
                 c.rewardGears = 60;
-                c.maxBuildingLevel = 99;
+                c.maxBuildingLevel = 1;
                 c.xpScale = 1f;
-                c.xpPerLevel = new[] { 25, 25, 25, 55, 60 };
-                c.maxDuckLevel = 6;             // reached at the start of the boss night
+                c.xpPerLevel = new[] { 40, 60, 80 };
+                c.maxDuckLevel = 4;             // 3 level-ups, the last one at the start of the boss night
                 c.eliteChestPicks = 2;
-                c.comboCoinsPerNight = 4;
+                c.comboCoinsPerNight = 0;
                 c.autoLevel = false;
-                c.airstrikeKills = 0;           // 40% of the night's enemies, one strike per night
-                c.baseIncomeBonus = -1;         // base 3 + mine 3 = 6 coins per dawn
+                c.airstrikeKills = 0;           // 40% of the first night's enemies, one strike per chapter
+                c.baseIncomeBonus = 0;
                 c.newsRu = "";
                 c.newsEn = "";
-                // 57 -> 121 -> 172 enemies, nights of about 35 / 40 / 50 s, elite on night 2, boss 18 s into night 3.
+                // 66 -> 103 -> 172 enemies (original 57 / 121 / 172; nights 1 and 2 moved by 15% after playtest), elite on night 2, boss 18 s into night 3.
                 c.waves = new[]
                 {
                     new WaveConfig { kind = WaveKind.Normal, groups = new[]
                     {
-                        new SpawnGroup { enemy = d.zombie, count = 57, pathIndex = 0, interval = 0.5f },
+                        new SpawnGroup { enemy = d.zombie, count = 66, pathIndex = 0, interval = 0.43f },
                     }},
                     new WaveConfig { kind = WaveKind.Normal, groups = new[]
                     {
-                        new SpawnGroup { enemy = d.zombie, count = 80, pathIndex = 0, interval = 0.3f },
-                        new SpawnGroup { enemy = d.zombie, count = 20, pathIndex = 0, interval = 0.5f, delay = 6f },
+                        new SpawnGroup { enemy = d.zombie, count = 68, pathIndex = 0, interval = 0.353f },
+                        new SpawnGroup { enemy = d.zombie, count = 17, pathIndex = 0, interval = 0.59f, delay = 6f },
                         new SpawnGroup { enemy = d.brute, count = 1, pathIndex = 0, interval = 0f, delay = 15f },
-                        new SpawnGroup { enemy = d.runner, count = 20, pathIndex = 0, interval = 0.5f, delay = 19f },
+                        new SpawnGroup { enemy = d.runner, count = 17, pathIndex = 0, interval = 0.59f, delay = 19f },
                     }},
                     new WaveConfig { kind = WaveKind.Boss, groups = new[]
                     {
@@ -320,20 +324,20 @@ namespace Duck.EditorTools
             {
                 c.displayName = "Глава 2. Ночь летучих мышей";
                 c.displayNameEn = "Chapter 2. Night of Bats";
-                c.startCoins = 8;
+                c.startCoins = 2;
                 c.enemyHpMultiplier = 1.05f;
                 c.enemyDamageMultiplier = 0.23f;
                 c.enemySpeedMultiplier = 0.75f;
                 c.bossHpMultiplier = 0.6f;
                 c.rewardGears = 90;
-                c.maxBuildingLevel = 3;
+                c.maxBuildingLevel = 2;
                 c.xpScale = 2.36f;
                 c.comboCoinsPerNight = 0;
                 c.autoLevel = true;
                 c.airstrikeKills = 0;
-                c.baseIncomeBonus = 1;
-                c.newsRu = "вторая дорога с востока, летучие мыши летят над стеной, навык «Вращающиеся лезвия», новые места для построек и улучшения до ур. 3";
-                c.newsEn = "a second road from the east, bats fly over the wall, Spinning Blades skill, new build spots and level 3 upgrades";
+                c.baseIncomeBonus = 0;
+                c.newsRu = "вторая дорога с востока, летучие мыши летят над стеной, навык «Вращающиеся лезвия», новые места для построек и улучшения до ур. 2";
+                c.newsEn = "a second road from the east, bats fly over the wall, Spinning Blades skill, new build spots and level 2 upgrades";
                 c.waves = new[]
                 {
                     // Two roads from the first night, but a gentle start: the second road teaches itself, the push comes on night 2.
@@ -378,18 +382,18 @@ d.chapter3 = LoadOrCreate<ChapterConfig>($"{DataFolder}/Chapter_3.asset", reset,
             {
                 c.displayName = "Глава 3. Двойной фронт";
                 c.displayNameEn = "Chapter 3. Two Fronts";
-                c.startCoins = 10;
+                c.startCoins = 2;
                 c.enemyHpMultiplier = 1.22f;
                 c.enemyDamageMultiplier = 0.4f;
                 c.enemySpeedMultiplier = 0.75f;
                 c.bossHpMultiplier = 0.6f;
                 c.rewardGears = 120;
-                c.maxBuildingLevel = 99;
+                c.maxBuildingLevel = 3;
                 c.xpScale = 2.36f;
                 c.comboCoinsPerNight = 0;
                 c.autoLevel = true;
                 c.airstrikeKills = 0;
-                c.baseIncomeBonus = 1;
+                c.baseIncomeBonus = 0;
                 c.newsRu = "третья дорога с запада, бронежуки держат удар, босс Матка роя, навык «Метеор»";
                 c.newsEn = "a third road from the west, armored beetles, the Swarm Queen boss, Meteor skill";
                 c.waves = new[]
@@ -567,7 +571,7 @@ d.chapter3 = LoadOrCreate<ChapterConfig>($"{DataFolder}/Chapter_3.asset", reset,
             return ind;
         }
 
-        static BuildSlot CreateSlot(Transform parent, BuildingConfig cfg, Vector3 pos, int startLevel, int minChapter = 1)
+        static BuildSlot CreateSlot(Transform parent, BuildingConfig cfg, Vector3 pos, int startLevel, int day1 = 1, int day2 = 1, int day3 = 1)
         {
             var go = new GameObject($"Slot_{cfg.displayName}");
             go.transform.SetParent(parent);
@@ -591,7 +595,7 @@ d.chapter3 = LoadOrCreate<ChapterConfig>($"{DataFolder}/Chapter_3.asset", reset,
             var slot = go.AddComponent<BuildSlot>();
             slot.config = cfg;
             slot.startLevel = startLevel;
-            slot.minChapter = minChapter;
+            slot.unlockDays = new[] { day1, day2, day3 };
             slot.marker = marker.gameObject;
             return slot;
         }
@@ -810,6 +814,19 @@ d.chapter3 = LoadOrCreate<ChapterConfig>($"{DataFolder}/Chapter_3.asset", reset,
             air.buttonImage = airImg;
             air.icon = airIconImg;
             air.label = airLabel;
+            // Badge in the corner: the strike is a single charge for the whole chapter.
+            var airBadge = UIRect("Count", airRt, new Vector2(1f, 1f), new Vector2(1f, 1f));
+            airBadge.anchoredPosition = new Vector2(-6f, -6f);
+            airBadge.sizeDelta = new Vector2(78f, 78f);
+            var airBadgeImg = airBadge.gameObject.AddComponent<Image>();
+            airBadgeImg.sprite = knob;
+            airBadgeImg.color = new Color(0.85f, 0.18f, 0.12f);
+            airBadgeImg.raycastTarget = false;
+            var airCount = Label(airBadge, "Text", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, 40, TextAnchor.MiddleCenter, Color.white);
+            airCount.horizontalOverflow = HorizontalWrapMode.Overflow;
+            airCount.text = "×1";
+            air.countBadge = airBadgeImg;
+            air.countLabel = airCount;
 
             // XP bar at the bottom of the top band.
             var xpBg = UIRect("XP", c, new Vector2(0f, 1f), new Vector2(1f, 1f));

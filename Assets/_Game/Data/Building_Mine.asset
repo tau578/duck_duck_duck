@@ -18,7 +18,7 @@ MonoBehaviour:
   halfExtents: {x: 0.8, y: 0.8}
   wallOnly: 0
   levels:
-  - cost: 3
+  - cost: 2
     hp: 150
     income: 3
     damage: 0

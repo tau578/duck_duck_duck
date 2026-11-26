@@ -69,6 +69,10 @@ namespace Duck
         public int[] xpPerLevel = new int[0];
         [Tooltip("Free skill picks for the first elite killed in a battle (the original's elite chest).")]
         public int eliteChestPicks = 0;
+        [Tooltip("Price of building a spot (level 1) in this chapter, by BuildingType; 0 or missing = the building's own price.")]
+        public int[] buildCosts = new int[0];
+        [Tooltip("The Workshop start coins apply in this chapter (off where the economy is counted to the coin).")]
+        public bool workshopCoins = true;
         [TextArea] public string newsRu;
         [TextArea] public string newsEn;
         public string News => Loc.Pick(newsRu, newsEn);

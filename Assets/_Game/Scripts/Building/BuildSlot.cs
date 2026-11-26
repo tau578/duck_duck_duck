@@ -7,8 +7,9 @@ namespace Duck
     {
         public BuildingConfig config;
         public int startLevel;
-        [Tooltip("Slot appears from this chapter on.")]
-        public int minChapter = 1;
+        [Tooltip("Per chapter: the day this spot opens (1 = from the start), 0 = not in that chapter.")]
+        public int[] unlockDays = { 1, 1, 1 };
+        public int UnlockDay(int chapterIndex) => unlockDays != null && chapterIndex < unlockDays.Length ? unlockDays[chapterIndex] : 1;
         public GameObject marker;
         [Tooltip("Barracks only: where the squad stands guard.")]
         public Vector3 rallyPoint;
@@ -25,7 +26,17 @@ namespace Duck
             }
         }
         /// <summary>Price of the next level (levels[Level] is level Level+1).</summary>
-        public int NextCost => CanUpgrade ? config.levels[Level].cost : 0;
+        public int NextCost
+        {
+            get
+            {
+                if (!CanUpgrade) return 0;
+                var gm = GameManager.Instance;
+                var costs = gm != null && gm.chapter != null ? gm.chapter.buildCosts : null;
+                int type = (int)config.type;
+                return Level == 0 && costs != null && type < costs.Length && costs[type] > 0 ? costs[type] : config.levels[Level].cost;
+            }
+        }
 
         [Tooltip("Price label is shown only when the duck is this close (keeps the screen clean).")]
         public float labelRadius = 7f;

@@ -31,7 +31,11 @@ namespace Duck
         public int maxLevel = 15;
         public int MaxLevel => Chapter != null && Chapter.maxDuckLevel > 0 ? Chapter.maxDuckLevel : maxLevel;
         static ChapterConfig Chapter => GameManager.Instance != null ? GameManager.Instance.chapter : null;
-        bool eliteChestOpened;
+
+        /// <summary>The elite chest: its free picks come after its own animation and before level-up picks.</summary>
+        bool eliteChestOpened, chestToReveal;
+        int chestPicks, chestTotal;
+        ChestReveal reveal;
 
         public int Level { get; private set; } = 1;
         public int Xp { get; private set; }
@@ -97,18 +101,19 @@ namespace Duck
             if (e.Config.isElite && !eliteChestOpened && Chapter != null && Chapter.eliteChestPicks > 0)
             {
                 eliteChestOpened = true;
-                pendingChoices += Chapter.eliteChestPicks;
-                HUD.Instance?.Banner(Loc.T("banner.chest"), new Color(1f, 0.85f, 0.2f), 2f);
-                TryShowChoice();
+                chestPicks = chestTotal = Chapter.eliteChestPicks;
+                chestToReveal = true;
             }
-            if (Level >= MaxLevel) return;
-            Xp += Mathf.Max(1, e.Config.xp);
-            while (Xp >= XpToNext && Level < MaxLevel)
+            if (Level < MaxLevel)
             {
-                Xp -= XpToNext;
-                Level++;
-                pendingChoices++;
-                Sfx.Play(SfxId.Build, 0.7f, 0f, 0f);
+                Xp += Mathf.Max(1, e.Config.xp);
+                while (Xp >= XpToNext && Level < MaxLevel)
+                {
+                    Xp -= XpToNext;
+                    Level++;
+                    pendingChoices++;
+                    Sfx.Play(SfxId.Build, 0.7f, 0f, 0f);
+                }
             }
             TryShowChoice();
         }
@@ -120,23 +125,50 @@ namespace Duck
             var gm = GameManager.Instance;
             if (gm == null || (gm.Phase != GamePhase.Victory && gm.Phase != GamePhase.Defeat)) return;
             if (picker != null) picker.Cancel();
+            if (reveal != null) reveal.Close();
             showing = false;
-            pendingChoices = 0;
+            pendingChoices = chestPicks = 0;
+            chestToReveal = false;
             TimeControl.Resume();
         }
 
         void TryShowChoice()
         {
-            if (showing || pendingChoices <= 0 || picker == null) return;
+            if (showing || pendingChoices + chestPicks <= 0 || picker == null) return;
             var gm = GameManager.Instance;
             if (gm != null && (gm.Phase == GamePhase.Victory || gm.Phase == GamePhase.Defeat)) return;
 
             var options = PickOptions(3);
-            if (options.Count == 0) { pendingChoices = 0; return; }
-            pendingChoices--;
+            if (options.Count == 0) { pendingChoices = chestPicks = 0; chestToReveal = false; return; }
             showing = true;
             TimeControl.Pause();
-            picker.Show(options, this, OnPicked);
+
+            if (chestToReveal)
+            {
+                chestToReveal = false;
+                var card = picker.cardImages != null && picker.cardImages.Length > 0 ? picker.cardImages[0].sprite : null;
+                reveal = ChestReveal.Show(picker.transform.parent, card, chestTotal, () =>
+                {
+                    reveal = null;
+                    showing = false;
+                    TimeControl.Resume();
+                    TryShowChoice();
+                });
+                return;
+            }
+
+            string heading;
+            if (chestPicks > 0)
+            {
+                heading = Loc.F("chest.pick", chestTotal - chestPicks + 1, chestTotal);
+                chestPicks--;
+            }
+            else
+            {
+                heading = Loc.F("skill.title", Level);
+                pendingChoices--;
+            }
+            picker.Show(options, this, OnPicked, heading);
         }
 
         List<SkillDef> PickOptions(int count)

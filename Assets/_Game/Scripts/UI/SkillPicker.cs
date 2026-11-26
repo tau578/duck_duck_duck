@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace Duck
 {
-    /// <summary>"Level up" overlay with up to 3 skill cards. Built by SceneBuilder.</summary>
+    /// <summary>Skill choice overlay (level up or chest) with up to 3 skill cards. Built by SceneBuilder.</summary>
     public class SkillPicker : MonoBehaviour
     {
         public Text title;
@@ -29,11 +29,11 @@ namespace Duck
             gameObject.SetActive(false);
         }
 
-        public void Show(List<SkillDef> opts, SkillSystem system, Action<SkillDef> callback)
+        public void Show(List<SkillDef> opts, SkillSystem system, Action<SkillDef> callback, string heading)
         {
             options = opts;
             onPick = callback;
-            title.text = Loc.F("skill.title", system.Level);
+            title.text = heading;
             for (int i = 0; i < cards.Length; i++)
             {
                 bool on = i < opts.Count;

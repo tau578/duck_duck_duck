@@ -19,6 +19,9 @@ namespace Duck
 
         public Transform visual;
 
+        /// <summary>How far before a turn of the road it already counts as passed.</summary>
+        const float TurnReach = 0.8f;
+
         public EnemyConfig Config { get; private set; }
         public float Hp { get; private set; }
         public float MaxHp { get; private set; }
@@ -295,17 +298,24 @@ namespace Duck
         {
             if (path == null || path.Length == 0) return;
             int last = path.Length - 1;
-            Vector3 target = path[Mathf.Min(waypoint, last)];
-            if (waypoint < last)
+            Vector3 target = path[last];
+            // A turn is passed once the enemy crosses the line across the road just before it. Requiring a touch of
+            // the point itself jams a horde: neighbours push each other off it, and whoever overshot walks back.
+            while (waypoint < last)
             {
-                Vector3 seg = path[waypoint] - path[waypoint - 1];
-                seg.y = 0f;
-                Vector3 side = Vector3.Cross(Vector3.up, seg.normalized);
-                target += side * lane;
+                Vector3 dir = path[waypoint] - path[waypoint - 1];
+                dir.y = 0f;
+                dir.Normalize();
+                Vector3 point = path[waypoint] + Vector3.Cross(Vector3.up, dir) * lane;
+                if (Vector3.Dot(pos - point, dir) < -TurnReach)
+                {
+                    target = point;
+                    break;
+                }
+                waypoint++;
             }
             Vector3 to = target - pos;
             to.y = 0f;
-            if (to.sqrMagnitude < 0.36f && waypoint < last) waypoint++;
             Step(ref pos, to, dt);
         }
 

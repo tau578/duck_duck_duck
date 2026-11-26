@@ -15,30 +15,32 @@ MonoBehaviour:
   displayName: "\u0413\u043B\u0430\u0432\u0430 2. \u041D\u043E\u0447\u044C \u043B\u0435\u0442\u0443\u0447\u0438\u0445
     \u043C\u044B\u0448\u0435\u0439"
   displayNameEn: Chapter 2. Night of Bats
-  startCoins: 8
+  startCoins: 2
   enemyHpMultiplier: 1.05
   rewardGears: 90
-  maxBuildingLevel: 3
+  maxBuildingLevel: 2
   xpScale: 2.36
   comboCoinsPerNight: 0
   autoLevel: 1
   airstrikeKills: 0
-  baseIncomeBonus: 1
+  baseIncomeBonus: 0
   enemyDamageMultiplier: 0.23
   enemySpeedMultiplier: 0.75
   bossHpMultiplier: 0.6
   maxDuckLevel: 0
   xpPerLevel: 
   eliteChestPicks: 0
+  buildCosts: 
+  workshopCoins: 1
   newsRu: "\u0432\u0442\u043E\u0440\u0430\u044F \u0434\u043E\u0440\u043E\u0433\u0430
     \u0441 \u0432\u043E\u0441\u0442\u043E\u043A\u0430, \u043B\u0435\u0442\u0443\u0447\u0438\u0435
     \u043C\u044B\u0448\u0438 \u043B\u0435\u0442\u044F\u0442 \u043D\u0430\u0434 \u0441\u0442\u0435\u043D\u043E\u0439,
     \u043D\u0430\u0432\u044B\u043A \xAB\u0412\u0440\u0430\u0449\u0430\u044E\u0449\u0438\u0435\u0441\u044F
     \u043B\u0435\u0437\u0432\u0438\u044F\xBB, \u043D\u043E\u0432\u044B\u0435 \u043C\u0435\u0441\u0442\u0430
     \u0434\u043B\u044F \u043F\u043E\u0441\u0442\u0440\u043E\u0435\u043A \u0438 \u0443\u043B\u0443\u0447\u0448\u0435\u043D\u0438\u044F
-    \u0434\u043E \u0443\u0440. 3"
+    \u0434\u043E \u0443\u0440. 2"
   newsEn: a second road from the east, bats fly over the wall, Spinning Blades skill,
-    new build spots and level 3 upgrades
+    new build spots and level 2 upgrades
   waves:
   - kind: 0
     hpMultiplier: 1

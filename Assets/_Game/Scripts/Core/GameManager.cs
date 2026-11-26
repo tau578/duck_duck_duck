@@ -83,11 +83,11 @@ namespace Duck
             spawner.hpMultiplier = chapter.enemyHpMultiplier;
             for (int i = slots.Count - 1; i >= 0; i--)
             {
-                if (slots[i].minChapter <= ChapterNumber) continue;
+                if (slots[i].UnlockDay(ChapterIndex) > 0) continue;
                 slots[i].gameObject.SetActive(false);
                 slots.RemoveAt(i);
             }
-            Wallet.Instance.Set(chapter.startCoins + MetaUpgrades.BonusStartCoins);
+            Wallet.Instance.Set(chapter.startCoins + (chapter.workshopCoins ? MetaUpgrades.BonusStartCoins : 0));
             EnterDay(true);
         }
 
@@ -117,7 +117,12 @@ namespace Duck
         {
             SetPhase(GamePhase.Day);
             Enemy.SpeedMultiplier = 1f;
-            foreach (var s in slots) s.SetDayMode(true);
+            // Build spots open day by day, as in the original: a new choice appears only when its day comes.
+            foreach (var s in slots)
+            {
+                s.gameObject.SetActive(WaveIndex + 1 >= s.UnlockDay(ChapterIndex));
+                s.SetDayMode(true);
+            }
             ShowIndicators(CurrentWave);
             Lighting(true);
 
@@ -245,7 +250,7 @@ namespace Duck
                 float bestScore = float.MaxValue;
                 foreach (var s in slots)
                 {
-                    if (!s.CanUpgrade) continue;
+                    if (!s.isActiveAndEnabled || !s.CanUpgrade) continue;
                     Vector3 d = s.transform.position - duck.transform.position;
                     d.y = 0f;
                     float reach = s.config != null ? s.config.halfExtents.magnitude : 0f;

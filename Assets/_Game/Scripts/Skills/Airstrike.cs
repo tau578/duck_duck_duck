@@ -14,7 +14,7 @@ namespace Duck
     {
         public static Airstrike Instance { get; private set; }
 
-        [Tooltip("Share of the current night's enemies to kill before the strike is ready.")]
+        [Tooltip("Share of the first night's enemies to kill before the strike is ready.")]
         [Range(0.1f, 1f)] public float chargeShare = 0.4f;
         public int minKillsToCharge = 15;
         public int killsToCharge = 25;
@@ -33,9 +33,12 @@ namespace Duck
         public Image buttonImage;
         public Image icon;
         public Text label;
+        [Tooltip("Corner badge: how many strikes are left in this chapter.")]
+        public Image countBadge;
+        public Text countLabel;
 
         int charge;
-        bool flying, used;
+        bool flying, used, sized;
         Image ring;
         /// <summary>Enemies already damaged by the current strike: one strike hurts each of them once.</summary>
         readonly HashSet<Enemy> struck = new HashSet<Enemy>();
@@ -67,12 +70,12 @@ namespace Duck
             }
         }
 
-        /// <summary>One strike per night: the meter starts empty, nothing is carried over.</summary>
+        /// <summary>One strike per chapter: the meter is sized on the first night, fills across nights and never refills.</summary>
         public void OnNightStart(int enemiesThisNight, int fixedKills = 0)
         {
+            if (sized) return;
+            sized = true;
             killsToCharge = fixedKills > 0 ? fixedKills : Mathf.Max(minKillsToCharge, Mathf.RoundToInt(enemiesThisNight * chargeShare));
-            charge = 0;
-            used = false;
         }
 
         public void Trigger()
@@ -219,6 +222,8 @@ namespace Duck
             if (icon != null) icon.color = usable ? Color.white : new Color(1f, 1f, 1f, used ? 0.25f : 0.55f);
             button.transform.localScale = Vector3.one * (1f + 0.06f * pulse);
             label.text = Ready ? Loc.T("air.button") : "";
+            if (countLabel != null) countLabel.text = used ? "×0" : "×1";
+            if (countBadge != null) countBadge.color = used ? new Color(0.35f, 0.35f, 0.38f) : new Color(0.85f, 0.18f, 0.12f);
         }
     }
 }
