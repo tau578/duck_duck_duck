@@ -307,46 +307,53 @@ namespace Duck.EditorTools
 
             d.chapter2 = LoadOrCreate<ChapterConfig>($"{DataFolder}/Chapter_2.asset", reset, c =>
             {
-                c.displayName = "Глава 2. Ночь мышей";
+                c.displayName = "Глава 2. Ночь летучих мышей";
                 c.displayNameEn = "Chapter 2. Night of Bats";
-                c.startCoins = 8;
-                c.enemyHpMultiplier = 1.3f;
+                c.startCoins = 7;
+                c.enemyHpMultiplier = 1.45f;
                 c.rewardGears = 90;
                 c.newsRu = "вторая дорога с востока, летучие мыши летят над стеной, навык «Вращающиеся лезвия», 3 новых места для построек";
                 c.newsEn = "a second road from the east, bats fly over the wall, Spinning Blades skill, 3 new build spots";
                 c.waves = new[]
                 {
+                    // Two roads from the first night: the duck can no longer guard everything herself.
                     new WaveConfig { kind = WaveKind.Normal, groups = new[]
                     {
-                        new SpawnGroup { enemy = d.zombie, count = 25, pathIndex = 0, interval = 0.5f },
-                        new SpawnGroup { enemy = d.zombie, count = 20, pathIndex = 1, interval = 0.5f, delay = 4f },
+                        new SpawnGroup { enemy = d.zombie, count = 30, pathIndex = 0, interval = 0.45f },
+                        new SpawnGroup { enemy = d.zombie, count = 25, pathIndex = 1, interval = 0.45f, delay = 4f },
+                        new SpawnGroup { enemy = d.runner, count = 10, pathIndex = 1, interval = 0.35f, delay = 10f },
+                        new SpawnGroup { enemy = d.bat, count = 6, pathIndex = 0, interval = 0.5f, delay = 14f },
                     }},
                     new WaveConfig { kind = WaveKind.Normal, groups = new[]
                     {
-                        new SpawnGroup { enemy = d.zombie, count = 45, pathIndex = 0, interval = 0.3f },
-                        new SpawnGroup { enemy = d.zombie, count = 35, pathIndex = 1, interval = 0.3f, delay = 3f },
-                        new SpawnGroup { enemy = d.runner, count = 20, pathIndex = 1, interval = 0.3f, delay = 10f },
-                        new SpawnGroup { enemy = d.bat, count = 12, pathIndex = 0, interval = 0.4f, delay = 14f },
+                        new SpawnGroup { enemy = d.zombie, count = 50, pathIndex = 0, interval = 0.28f },
+                        new SpawnGroup { enemy = d.zombie, count = 40, pathIndex = 1, interval = 0.28f, delay = 3f },
+                        new SpawnGroup { enemy = d.brute, count = 1, pathIndex = 1, interval = 0f, delay = 8f },
+                        new SpawnGroup { enemy = d.runner, count = 25, pathIndex = 1, interval = 0.28f, delay = 10f },
+                        new SpawnGroup { enemy = d.bat, count = 15, pathIndex = 0, interval = 0.35f, delay = 14f },
                     }},
                     new WaveConfig { kind = WaveKind.Elite, groups = new[]
                     {
-                        new SpawnGroup { enemy = d.zombie, count = 60, pathIndex = 0, interval = 0.25f },
-                        new SpawnGroup { enemy = d.zombie, count = 50, pathIndex = 1, interval = 0.25f, delay = 3f },
-                        new SpawnGroup { enemy = d.brute, count = 2, pathIndex = 0, interval = 4f, delay = 8f },
-                        new SpawnGroup { enemy = d.bat, count = 15, pathIndex = 1, interval = 0.3f, delay = 12f },
+                        new SpawnGroup { enemy = d.zombie, count = 65, pathIndex = 0, interval = 0.23f },
+                        new SpawnGroup { enemy = d.zombie, count = 55, pathIndex = 1, interval = 0.23f, delay = 3f },
+                        new SpawnGroup { enemy = d.brute, count = 2, pathIndex = 0, interval = 4f, delay = 6f },
+                        new SpawnGroup { enemy = d.brute, count = 2, pathIndex = 1, interval = 4f, delay = 10f },
+                        new SpawnGroup { enemy = d.runner, count = 25, pathIndex = 0, interval = 0.3f, delay = 12f },
+                        new SpawnGroup { enemy = d.bat, count = 20, pathIndex = 1, interval = 0.3f, delay = 14f },
                     }},
                     new WaveConfig { kind = WaveKind.Boss, groups = new[]
                     {
-                        new SpawnGroup { enemy = d.zombie, count = 70, pathIndex = 0, interval = 0.22f },
+                        new SpawnGroup { enemy = d.zombie, count = 75, pathIndex = 0, interval = 0.2f },
                         new SpawnGroup { enemy = d.ogre, count = 1, pathIndex = 0, interval = 0f, delay = 6f },
-                        new SpawnGroup { enemy = d.zombie, count = 70, pathIndex = 1, interval = 0.22f, delay = 3f },
-                        new SpawnGroup { enemy = d.brute, count = 2, pathIndex = 1, interval = 4f, delay = 10f },
-                        new SpawnGroup { enemy = d.bat, count = 25, pathIndex = 0, interval = 0.3f, delay = 16f },
+                        new SpawnGroup { enemy = d.zombie, count = 75, pathIndex = 1, interval = 0.2f, delay = 3f },
+                        new SpawnGroup { enemy = d.brute, count = 3, pathIndex = 1, interval = 4f, delay = 10f },
+                        new SpawnGroup { enemy = d.runner, count = 20, pathIndex = 1, interval = 0.3f, delay = 14f },
+                        new SpawnGroup { enemy = d.bat, count = 30, pathIndex = 0, interval = 0.28f, delay = 16f },
                     }},
                 };
             });
 
-            d.chapter3 = LoadOrCreate<ChapterConfig>($"{DataFolder}/Chapter_3.asset", reset, c =>
+d.chapter3 = LoadOrCreate<ChapterConfig>($"{DataFolder}/Chapter_3.asset", reset, c =>
             {
                 c.displayName = "Глава 3. Двойной фронт";
                 c.displayNameEn = "Chapter 3. Two Fronts";
@@ -697,7 +704,7 @@ namespace Duck.EditorTools
             hud.playerHpFill = hpFill;
             hud.playerHpFillImage = hpFillImg;
             hud.playerHpText = Label(hpBar, "Text", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, 30, TextAnchor.MiddleCenter, Color.white);
-            hud.playerHpText.text = "Утка 100/100";
+            hud.playerHpText.text = "";
 
             var baseBar = Bar(c, "BaseHP", new Vector2(40f, -126f), new Vector2(420f, 40f), new Color(0.95f, 0.65f, 0.2f), rounded, out var baseFill, out _);
             hud.baseHpFill = baseFill;
@@ -736,17 +743,17 @@ namespace Duck.EditorTools
 
             // Buttons.
             hud.buildButton = MakeButton(c, "BuildButton", new Vector2(0.5f, 0f), new Vector2(0f, 700f), new Vector2(760f, 130f), new Color(1f, 0.8f, 0.2f), rounded, "Построить", 38, new Color(0.2f, 0.12f, 0f), out hud.buildButtonText, out hud.buildButtonImage);
-            hud.fightButton = MakeButton(c, "FightButton", new Vector2(1f, 0f), new Vector2(-190f, 880f), new Vector2(320f, 150f), new Color(0.85f, 0.2f, 0.15f), rounded, "В БОЙ!", 52, Color.white, out var fightLabel, out _);
+            hud.fightButton = MakeButton(c, "FightButton", new Vector2(1f, 0f), new Vector2(-180f, 190f), new Vector2(300f, 140f), new Color(0.85f, 0.2f, 0.15f), rounded, "В БОЙ!", 52, Color.white, out var fightLabel, out _);
             fightLabel.gameObject.AddComponent<LocalizedText>().key = "hud.fight";
 
             // Dev: language toggle RU/EN.
             var langBtn = MakeButton(c, "LanguageToggle", new Vector2(1f, 1f), new Vector2(-150f, -165f), new Vector2(240f, 70f), new Color(0.2f, 0.2f, 0.25f, 0.8f), rounded, "RU → EN", 30, Color.white, out var langLabel, out _);
             langBtn.gameObject.AddComponent<LanguageToggle>().label = langLabel;
 
-            // Airstrike button (bottom-left, above the stick area), fill shows the charge.
+            // Airstrike button (bottom-left corner, out of the way of the build slots), fill shows the charge.
             var airRt = UIRect("AirstrikeButton", c, new Vector2(0f, 0f), new Vector2(0f, 0f));
-            airRt.anchoredPosition = new Vector2(150f, 880f);
-            airRt.sizeDelta = new Vector2(190f, 190f);
+            airRt.anchoredPosition = new Vector2(125f, 190f);
+            airRt.sizeDelta = new Vector2(180f, 180f);
             var airImg = airRt.gameObject.AddComponent<Image>();
             airImg.sprite = knob;
             airImg.color = new Color(0.15f, 0.2f, 0.3f);
