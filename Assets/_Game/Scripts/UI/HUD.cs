@@ -85,6 +85,7 @@ namespace Duck
             bannerText.gameObject.SetActive(true);
             bannerTimer = duration;
             bannerDuration = duration;
+            bannerText.transform.localScale = Vector3.one * GameSettings.TextScale;
         }
 
         public void BaseUnderAttack()
@@ -166,9 +167,9 @@ namespace Duck
             {
                 float n = ph.Normalized;
                 playerHpFill.localScale = new Vector3(n, 1f, 1f);
-                playerHpFillImage.color = n < 0.3f
+                playerHpFillImage.color = GameSettings.Safe(n < 0.3f
                     ? Color.Lerp(new Color(0.9f, 0.15f, 0.1f), new Color(1f, 0.5f, 0.4f), Mathf.PingPong(Time.unscaledTime * 3f, 1f))
-                    : new Color(0.3f, 0.85f, 0.3f);
+                    : new Color(0.3f, 0.85f, 0.3f));
                 playerHpText.text = ph.IsAlive || ph.RunOver
                     ? Loc.F("hud.duck_hp", Mathf.CeilToInt(ph.Current), Mathf.CeilToInt(ph.Max))
                     : Loc.F("hud.duck_respawn", Mathf.CeilToInt(ph.RespawnIn));

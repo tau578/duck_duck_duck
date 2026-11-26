@@ -30,7 +30,7 @@ namespace Duck
 
         void Init(Color c, bool dashed, float width)
         {
-            color = c;
+            color = GameSettings.Safe(c);
             line = gameObject.AddComponent<LineRenderer>();
             line.useWorldSpace = false;
             line.loop = true;

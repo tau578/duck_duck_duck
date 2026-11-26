@@ -64,7 +64,7 @@ namespace Duck
             var src = sources[next];
             next = (next + 1) % sources.Length;
             src.pitch = 1f + Random.Range(-pitchJitter, pitchJitter);
-            src.PlayOneShot(clip, volume * masterVolume);
+            src.PlayOneShot(clip, volume * masterVolume * GameSettings.SfxVolume);
         }
 
         // ---------- synthesis ----------

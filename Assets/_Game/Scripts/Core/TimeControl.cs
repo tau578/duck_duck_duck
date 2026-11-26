@@ -12,10 +12,12 @@ namespace Duck
         public static void Resume() { if (pauseCount > 0) pauseCount--; Apply(); }
         public static void SetHitStop(bool on) { hitStop = on; Apply(); }
         public static void Reset() { pauseCount = 0; hitStop = false; Apply(); }
+        /// <summary>Re-apply after a settings change (slow mode).</summary>
+        public static void Refresh() => Apply();
 
         static void Apply()
         {
-            UnityEngine.Time.timeScale = pauseCount > 0 ? 0f : hitStop ? 0.05f : 1f;
+            UnityEngine.Time.timeScale = pauseCount > 0 ? 0f : (hitStop ? 0.05f : 1f) * GameSettings.GameSpeed;
         }
     }
 }

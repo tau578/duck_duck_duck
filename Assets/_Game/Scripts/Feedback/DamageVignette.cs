@@ -26,7 +26,7 @@ namespace Duck
 
         public static void Flash(float strength = 0.6f)
         {
-            if (instance != null) instance.flash = Mathf.Max(instance.flash, strength);
+            if (instance != null) instance.flash = Mathf.Max(instance.flash, strength * GameSettings.FlashScale);
         }
 
         public static void SetHealth(float normalized)

@@ -13,7 +13,7 @@ namespace Duck
 
         public static void Do(float realSeconds)
         {
-            if (active || TimeControl.Paused || GameManager.Instance == null) return;
+            if (active || GameSettings.ReduceMotion || TimeControl.Paused || GameManager.Instance == null) return;
             GameManager.Instance.StartCoroutine(Run(realSeconds));
         }
 

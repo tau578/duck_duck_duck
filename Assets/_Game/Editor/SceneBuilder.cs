@@ -58,6 +58,7 @@ namespace Duck.EditorTools
             game.AddComponent<EnemyManager>();
             var spawner = game.AddComponent<WaveSpawner>();
             game.AddComponent<Sfx>();
+            game.AddComponent<Music>();
             game.AddComponent<ComboTracker>();
             var skills = game.AddComponent<SkillSystem>();
             var air = game.AddComponent<Airstrike>();
@@ -797,8 +798,30 @@ namespace Duck.EditorTools
             var menu = panel.gameObject.AddComponent<MenuUI>();
             menu.title = Label(panel, "Title", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -150f), new Vector2(1000f, 120f), 76, TextAnchor.MiddleCenter, new Color(1f, 0.85f, 0.2f));
             menu.gearsText = Label(panel, "Gears", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -240f), new Vector2(1000f, 60f), 40, TextAnchor.MiddleCenter, new Color(0.7f, 0.85f, 1f));
-            menu.chaptersHeader = Label(panel, "ChaptersHeader", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -320f), new Vector2(960f, 60f), 38, TextAnchor.MiddleLeft, Color.white);
 
+            var backs = new System.Collections.Generic.List<Button>();
+            Button Back(RectTransform page)
+            {
+                var b = MakeButton(page, "Back", new Vector2(0.5f, 0f), new Vector2(0f, 110f), new Vector2(520f, 120f), new Color(0.3f, 0.35f, 0.45f), rounded, "Назад", 44, Color.white, out var l, out _);
+                l.gameObject.AddComponent<LocalizedText>().key = "menu.back";
+                backs.Add(b);
+                return b;
+            }
+
+            // ---- Main page: three big buttons.
+            var main = UIRect("MainPage", panel, Vector2.zero, Vector2.one);
+            menu.mainPage = main.gameObject;
+            menu.playButton = MakeButton(main, "NewGame", new Vector2(0.5f, 0.56f), Vector2.zero, new Vector2(760f, 170f), new Color(1f, 0.8f, 0.2f), rounded, "Новая игра", 60, new Color(0.2f, 0.12f, 0f), out var playLabel, out _);
+            playLabel.gameObject.AddComponent<LocalizedText>().key = "menu.play";
+            menu.workshopButton = MakeButton(main, "Workshop", new Vector2(0.5f, 0.45f), Vector2.zero, new Vector2(760f, 150f), new Color(0.2f, 0.35f, 0.6f), rounded, "Мастерская", 50, Color.white, out var wsLabel, out _);
+            wsLabel.gameObject.AddComponent<LocalizedText>().key = "menu.workshop_btn";
+            menu.settingsButton = MakeButton(main, "Settings", new Vector2(0.5f, 0.35f), Vector2.zero, new Vector2(760f, 150f), new Color(0.3f, 0.35f, 0.45f), rounded, "Настройки", 50, Color.white, out var setLabel, out _);
+            setLabel.gameObject.AddComponent<LocalizedText>().key = "menu.settings";
+
+            // ---- Level select.
+            var levels = UIRect("LevelsPage", panel, Vector2.zero, Vector2.one);
+            menu.levelsPage = levels.gameObject;
+            menu.chaptersHeader = Label(levels, "Header", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -340f), new Vector2(960f, 70f), 46, TextAnchor.MiddleCenter, Color.white);
             const int chapters = 3;
             menu.chapterButtons = new Button[chapters];
             menu.chapterImages = new Image[chapters];
@@ -806,9 +829,9 @@ namespace Duck.EditorTools
             menu.chapterInfo = new Text[chapters];
             for (int i = 0; i < chapters; i++)
             {
-                var rt = UIRect($"Chapter{i + 1}", panel, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f));
-                rt.anchoredPosition = new Vector2(0f, -470f - i * 230f);
-                rt.sizeDelta = new Vector2(960f, 210f);
+                var rt = UIRect($"Chapter{i + 1}", levels, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f));
+                rt.anchoredPosition = new Vector2(0f, -520f - i * 280f);
+                rt.sizeDelta = new Vector2(960f, 250f);
                 var img = rt.gameObject.AddComponent<Image>();
                 img.sprite = rounded;
                 img.type = Image.Type.Sliced;
@@ -816,12 +839,18 @@ namespace Duck.EditorTools
                 btn.targetGraphic = img;
                 menu.chapterButtons[i] = btn;
                 menu.chapterImages[i] = img;
-                menu.chapterNames[i] = Label(rt, "Name", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -45f), new Vector2(900f, 60f), 44, TextAnchor.MiddleLeft, Color.white);
-                menu.chapterInfo[i] = Label(rt, "Info", new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, -30f), new Vector2(900f, 130f), 28, TextAnchor.MiddleLeft, new Color(0.92f, 0.92f, 0.92f));
+                menu.chapterNames[i] = Label(rt, "Name", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -50f), new Vector2(900f, 64f), 48, TextAnchor.MiddleLeft, Color.white);
+                menu.chapterInfo[i] = Label(rt, "Info", new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, -35f), new Vector2(900f, 150f), 30, TextAnchor.MiddleLeft, new Color(0.92f, 0.92f, 0.92f));
                 menu.chapterInfo[i].fontStyle = FontStyle.Normal;
             }
+            menu.unlockAllButton = MakeButton(levels, "UnlockAll", new Vector2(0.5f, 0f), new Vector2(0f, 270f), new Vector2(420f, 80f), new Color(0.2f, 0.3f, 0.2f), rounded, "Открыть все (dev)", 28, Color.white, out var unlockLabel, out _);
+            unlockLabel.gameObject.AddComponent<LocalizedText>().key = "menu.unlock_all";
+            Back(levels);
 
-            menu.workshopHeader = Label(panel, "WorkshopHeader", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -1170f), new Vector2(960f, 60f), 38, TextAnchor.MiddleLeft, Color.white);
+            // ---- Workshop.
+            var workshop = UIRect("WorkshopPage", panel, Vector2.zero, Vector2.one);
+            menu.workshopPage = workshop.gameObject;
+            menu.workshopHeader = Label(workshop, "Header", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -340f), new Vector2(960f, 70f), 42, TextAnchor.MiddleCenter, Color.white);
             int ups = MetaUpgrades.All.Length;
             menu.upgradeButtons = new Button[ups];
             menu.upgradeImages = new Image[ups];
@@ -830,9 +859,9 @@ namespace Duck.EditorTools
             for (int i = 0; i < ups; i++)
             {
                 int col = i % 2, row = i / 2;
-                var rt = UIRect($"Upgrade{i}", panel, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f));
-                rt.anchoredPosition = new Vector2(col == 0 ? -242f : 242f, -1310f - row * 210f);
-                rt.sizeDelta = new Vector2(470f, 190f);
+                var rt = UIRect($"Upgrade{i}", workshop, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f));
+                rt.anchoredPosition = new Vector2(col == 0 ? -242f : 242f, -510f - row * 230f);
+                rt.sizeDelta = new Vector2(470f, 210f);
                 var img = rt.gameObject.AddComponent<Image>();
                 img.sprite = rounded;
                 img.type = Image.Type.Sliced;
@@ -840,14 +869,40 @@ namespace Duck.EditorTools
                 btn.targetGraphic = img;
                 menu.upgradeButtons[i] = btn;
                 menu.upgradeImages[i] = img;
-                menu.upgradeNames[i] = Label(rt, "Name", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -38f), new Vector2(430f, 50f), 32, TextAnchor.MiddleLeft, Color.white);
-                menu.upgradeInfo[i] = Label(rt, "Info", new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, -25f), new Vector2(430f, 110f), 26, TextAnchor.MiddleLeft, new Color(0.92f, 0.92f, 0.92f));
+                menu.upgradeNames[i] = Label(rt, "Name", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -40f), new Vector2(430f, 50f), 32, TextAnchor.MiddleLeft, Color.white);
+                menu.upgradeInfo[i] = Label(rt, "Info", new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, -28f), new Vector2(430f, 120f), 26, TextAnchor.MiddleLeft, new Color(0.92f, 0.92f, 0.92f));
                 menu.upgradeInfo[i].fontStyle = FontStyle.Normal;
             }
-
-            menu.resetButton = MakeButton(panel, "Reset", new Vector2(0f, 0f), new Vector2(170f, 70f), new Vector2(280f, 80f), new Color(0.35f, 0.15f, 0.15f), rounded, "Сброс (dev)", 28, Color.white, out var resetLabel, out _);
+            menu.resetButton = MakeButton(workshop, "Reset", new Vector2(0f, 0f), new Vector2(170f, 270f), new Vector2(280f, 80f), new Color(0.35f, 0.15f, 0.15f), rounded, "Сброс (dev)", 28, Color.white, out var resetLabel, out _);
             resetLabel.gameObject.AddComponent<LocalizedText>().key = "menu.reset";
-            menu.cheatButton = MakeButton(panel, "Cheat", new Vector2(1f, 0f), new Vector2(-170f, 70f), new Vector2(280f, 80f), new Color(0.2f, 0.3f, 0.2f), rounded, "+100 (dev)", 28, Color.white, out _, out _);
+            menu.cheatButton = MakeButton(workshop, "Cheat", new Vector2(1f, 0f), new Vector2(-170f, 270f), new Vector2(280f, 80f), new Color(0.2f, 0.3f, 0.2f), rounded, "+100 (dev)", 28, Color.white, out _, out _);
+            Back(workshop);
+
+            // ---- Settings: each row is a button that cycles its value.
+            var settings = UIRect("SettingsPage", panel, Vector2.zero, Vector2.one);
+            menu.settingsPage = settings.gameObject;
+            var setHeader = Label(settings, "Header", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -340f), new Vector2(960f, 70f), 46, TextAnchor.MiddleCenter, Color.white);
+            setHeader.text = "Настройки";
+            setHeader.gameObject.AddComponent<LocalizedText>().key = "menu.settings";
+            const int rows = 7;
+            menu.settingButtons = new Button[rows];
+            menu.settingLabels = new Text[rows];
+            float y = -470f;
+            for (int i = 0; i < rows; i++)
+            {
+                if (i == 3)
+                {
+                    menu.accessibilityHeader = Label(settings, "AccessHeader", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, y - 20f), new Vector2(960f, 60f), 38, TextAnchor.MiddleLeft, new Color(1f, 0.85f, 0.2f));
+                    y -= 100f;
+                }
+                menu.settingButtons[i] = MakeButton(settings, $"Setting{i}", new Vector2(0.5f, 1f), new Vector2(0f, y), new Vector2(960f, 120f), new Color(0.2f, 0.24f, 0.3f), rounded, "", 38, Color.white, out menu.settingLabels[i], out _);
+                menu.settingLabels[i].alignment = TextAnchor.MiddleLeft;
+                menu.settingLabels[i].rectTransform.offsetMin = new Vector2(40f, 0f);
+                y -= 140f;
+            }
+            Back(settings);
+
+            menu.backButtons = backs.ToArray();
         }
 
         static SkillPicker CreateSkillPicker(Transform c, Sprite rounded)

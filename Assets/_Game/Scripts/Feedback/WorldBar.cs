@@ -44,9 +44,9 @@ namespace Duck
             fill.offsetMax = new Vector2(-3f, -3f);
             fill.pivot = new Vector2(0f, 0.5f);
             fillImage = fill.gameObject.AddComponent<Image>();
-            fullColor = color;
-            lowColor = new Color(0.95f, 0.2f, 0.15f);
-            fillImage.color = color;
+            fullColor = GameSettings.Safe(color);
+            lowColor = GameSettings.Safe(new Color(0.95f, 0.2f, 0.15f));
+            fillImage.color = fullColor;
         }
 
         static RectTransform Child(string name, RectTransform parent)

@@ -3,11 +3,31 @@ using UnityEngine.UI;
 
 namespace Duck
 {
-    /// <summary>Main menu between battles: chapters (with what's new and best result) and the Workshop.</summary>
+    /// <summary>
+    /// Main menu: New game (level select with 3 chapters), Workshop (permanent upgrades) and Settings
+    /// (sound, music, language, accessibility). One page is visible at a time.
+    /// </summary>
     public class MenuUI : MonoBehaviour
     {
         public static MenuUI Instance { get; private set; }
 
+        [Header("Pages")]
+        public GameObject mainPage;
+        public GameObject levelsPage;
+        public GameObject workshopPage;
+        public GameObject settingsPage;
+        public Button playButton;
+        public Button workshopButton;
+        public Button settingsButton;
+        public Button[] backButtons;
+        public Button unlockAllButton;
+
+        [Header("Settings rows: sfx, music, language, large text, color-blind, reduce motion, slow mode")]
+        public Button[] settingButtons;
+        public Text[] settingLabels;
+        public Text accessibilityHeader;
+
+        [Header("Content")]
         public Text title;
         public Text gearsText;
         public Text chaptersHeader;
@@ -43,16 +63,59 @@ namespace Duck
             }
             resetButton.onClick.AddListener(() => { SaveSystem.ResetAll(); Refresh(); });
             cheatButton.onClick.AddListener(() => { SaveSystem.Data.gears += 100; SaveSystem.Save(); Refresh(); });
+
+            playButton.onClick.AddListener(() => ShowPage(levelsPage));
+            workshopButton.onClick.AddListener(() => ShowPage(workshopPage));
+            settingsButton.onClick.AddListener(() => ShowPage(settingsPage));
+            foreach (var b in backButtons) b.onClick.AddListener(() => ShowPage(mainPage));
+            unlockAllButton.onClick.AddListener(() =>
+            {
+                SaveSystem.Data.unlockedChapter = Mathf.Max(SaveSystem.Data.unlockedChapter, GameManager.Instance.chapters.Length);
+                SaveSystem.Save();
+                Refresh();
+            });
+
+            System.Action[] actions =
+            {
+                GameSettings.CycleSfx, GameSettings.CycleMusic, Loc.Toggle, GameSettings.ToggleLargeText,
+                GameSettings.ToggleColorBlind, GameSettings.ToggleReduceMotion, GameSettings.ToggleSlowMode,
+            };
+            for (int i = 0; i < settingButtons.Length && i < actions.Length; i++)
+            {
+                var action = actions[i];
+                settingButtons[i].onClick.AddListener(() => { action(); Sfx.Play(SfxId.Coin, 0.6f, 0f, 0f); });
+            }
+
             Loc.Changed += Refresh;
+            GameSettings.Changed += Refresh;
         }
 
-        void OnDestroy() { Loc.Changed -= Refresh; }
+        void OnDestroy()
+        {
+            Loc.Changed -= Refresh;
+            GameSettings.Changed -= Refresh;
+        }
 
         public void Show()
         {
             gameObject.SetActive(true);
+            // The in-game dev language button would cover the title; the language lives in Settings here.
+            var lang = FindFirstObjectByType<LanguageToggle>();
+            if (lang != null) lang.gameObject.SetActive(false);
+            ShowPage(mainPage);
+        }
+
+        void ShowPage(GameObject page)
+        {
+            mainPage.SetActive(page == mainPage);
+            levelsPage.SetActive(page == levelsPage);
+            workshopPage.SetActive(page == workshopPage);
+            settingsPage.SetActive(page == settingsPage);
             Refresh();
         }
+
+        static string OnOff(bool v) => Loc.T(v ? "set.on" : "set.off");
+        static string Percent(float v) => Mathf.RoundToInt(v * 100f) + "%";
 
         void OnChapter(int index)
         {
@@ -80,6 +143,19 @@ namespace Duck
             gearsText.text = Loc.F("menu.gears", save.gears);
             chaptersHeader.text = Loc.T("menu.chapters");
             workshopHeader.text = Loc.T("menu.workshop");
+            if (accessibilityHeader != null) accessibilityHeader.text = Loc.T("set.access");
+
+            string[] settingTexts =
+            {
+                Loc.F("set.sfx", Percent(GameSettings.SfxVolume)),
+                Loc.F("set.music", Percent(GameSettings.MusicVolume)),
+                Loc.T("set.lang"),
+                Loc.F("set.large", OnOff(GameSettings.LargeText)),
+                Loc.F("set.colorblind", OnOff(GameSettings.ColorBlind)),
+                Loc.F("set.motion", OnOff(GameSettings.ReduceMotion)),
+                Loc.F("set.slow", OnOff(GameSettings.SlowMode)),
+            };
+            for (int i = 0; i < settingLabels.Length && i < settingTexts.Length; i++) settingLabels[i].text = settingTexts[i];
 
             for (int i = 0; i < chapterButtons.Length; i++)
             {

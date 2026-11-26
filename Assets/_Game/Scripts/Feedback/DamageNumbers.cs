@@ -89,7 +89,7 @@ namespace Duck
             e.scale = size >= 50 ? 1.6f : 1.3f;
             e.active = true;
             e.text.text = s;
-            e.text.fontSize = size;
+            e.text.fontSize = Mathf.RoundToInt(size * GameSettings.TextScale);
             e.text.color = color;
             e.rt.gameObject.SetActive(true);
         }

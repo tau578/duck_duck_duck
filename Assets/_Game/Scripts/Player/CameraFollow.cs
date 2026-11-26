@@ -25,7 +25,7 @@ namespace Duck
         /// <summary>Adds screen shake (0..1). Strength grows with the square of trauma.</summary>
         public static void Shake(float amount)
         {
-            if (Instance != null) Instance.trauma = Mathf.Min(1f, Instance.trauma + amount);
+            if (Instance != null) Instance.trauma = Mathf.Min(1f, Instance.trauma + amount * GameSettings.ShakeScale);
         }
 
         void Start()

@@ -34,7 +34,7 @@ namespace Duck
             trt.offsetMax = Vector2.zero;
             l.text = tgo.AddComponent<Text>();
             l.text.font = UiFont.Get();
-            l.text.fontSize = fontSize;
+            l.text.fontSize = Mathf.RoundToInt(fontSize * GameSettings.TextScale);
             l.text.fontStyle = FontStyle.Bold;
             l.text.alignment = TextAnchor.MiddleCenter;
             l.text.color = color;
