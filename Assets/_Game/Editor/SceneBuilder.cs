@@ -274,7 +274,7 @@ namespace Duck.EditorTools
             {
                 c.displayName = "Глава 1. Пустошь";
                 c.displayNameEn = "Chapter 1. Wasteland";
-                c.startCoins = 8;
+                c.startCoins = 7;
                 c.enemyHpMultiplier = 1f;
                 c.rewardGears = 60;
                 c.newsRu = "";
@@ -326,11 +326,11 @@ namespace Duck.EditorTools
                     }},
                     new WaveConfig { kind = WaveKind.Normal, groups = new[]
                     {
-                        new SpawnGroup { enemy = d.zombie, count = 53, pathIndex = 0, interval = 0.3f },
-                        new SpawnGroup { enemy = d.zombie, count = 44, pathIndex = 1, interval = 0.3f, delay = 4f },
+                        new SpawnGroup { enemy = d.zombie, count = 40, pathIndex = 0, interval = 0.36f },
+                        new SpawnGroup { enemy = d.zombie, count = 34, pathIndex = 1, interval = 0.36f, delay = 5f },
                         new SpawnGroup { enemy = d.brute, count = 1, pathIndex = 1, interval = 0f, delay = 8f },
-                        new SpawnGroup { enemy = d.runner, count = 25, pathIndex = 1, interval = 0.28f, delay = 10f },
-                        new SpawnGroup { enemy = d.bat, count = 17, pathIndex = 0, interval = 0.35f, delay = 14f },
+                        new SpawnGroup { enemy = d.runner, count = 18, pathIndex = 1, interval = 0.32f, delay = 12f },
+                        new SpawnGroup { enemy = d.bat, count = 12, pathIndex = 0, interval = 0.4f, delay = 16f },
                     }},
                     new WaveConfig { kind = WaveKind.Elite, groups = new[]
                     {
