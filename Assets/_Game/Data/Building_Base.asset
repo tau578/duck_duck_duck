@@ -19,7 +19,7 @@ MonoBehaviour:
   wallOnly: 0
   levels:
   - cost: 0
-    hp: 350
+    hp: 700
     income: 4
     damage: 0
     fireRate: 0
@@ -29,7 +29,7 @@ MonoBehaviour:
     allyHp: 0
     allyDamage: 0
   - cost: 8
-    hp: 550
+    hp: 950
     income: 7
     damage: 0
     fireRate: 0
@@ -39,7 +39,7 @@ MonoBehaviour:
     allyHp: 0
     allyDamage: 0
   - cost: 12
-    hp: 850
+    hp: 1300
     income: 12
     damage: 0
     fireRate: 0

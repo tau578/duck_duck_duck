@@ -15,7 +15,7 @@ MonoBehaviour:
   displayName: "\u0413\u043B\u0430\u0432\u0430 2. \u041D\u043E\u0447\u044C \u043B\u0435\u0442\u0443\u0447\u0438\u0445
     \u043C\u044B\u0448\u0435\u0439"
   displayNameEn: Chapter 2. Night of Bats
-  startCoins: 8
+  startCoins: 9
   enemyHpMultiplier: 1.4
   rewardGears: 90
   newsRu: "\u0432\u0442\u043E\u0440\u0430\u044F \u0434\u043E\u0440\u043E\u0433\u0430
