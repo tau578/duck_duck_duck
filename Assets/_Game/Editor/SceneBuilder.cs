@@ -284,23 +284,23 @@ namespace Duck.EditorTools
                 {
                     new WaveConfig { kind = WaveKind.Normal, groups = new[]
                     {
-                        new SpawnGroup { enemy = d.zombie, count = 16, pathIndex = 0, interval = 0.9f },
-                        new SpawnGroup { enemy = d.runner, count = 4, pathIndex = 0, interval = 0.6f, delay = 12f },
+                        new SpawnGroup { enemy = d.zombie, count = 22, pathIndex = 0, interval = 0.7f },
+                        new SpawnGroup { enemy = d.runner, count = 8, pathIndex = 0, interval = 0.5f, delay = 10f },
                     }},
                     new WaveConfig { kind = WaveKind.Normal, groups = new[]
                     {
-                        new SpawnGroup { enemy = d.zombie, count = 30, pathIndex = 0, interval = 0.45f },
-                        new SpawnGroup { enemy = d.runner, count = 12, pathIndex = 0, interval = 0.35f, delay = 8f },
-                        new SpawnGroup { enemy = d.brute, count = 1, pathIndex = 0, interval = 0f, delay = 12f },
-                        new SpawnGroup { enemy = d.zombie, count = 20, pathIndex = 0, interval = 0.35f, delay = 18f },
+                        new SpawnGroup { enemy = d.zombie, count = 36, pathIndex = 0, interval = 0.38f },
+                        new SpawnGroup { enemy = d.runner, count = 16, pathIndex = 0, interval = 0.3f, delay = 8f },
+                        new SpawnGroup { enemy = d.brute, count = 2, pathIndex = 0, interval = 5f, delay = 12f },
+                        new SpawnGroup { enemy = d.zombie, count = 26, pathIndex = 0, interval = 0.3f, delay = 18f },
                     }},
                     new WaveConfig { kind = WaveKind.Boss, groups = new[]
                     {
-                        new SpawnGroup { enemy = d.zombie, count = 30, pathIndex = 0, interval = 0.4f },
+                        new SpawnGroup { enemy = d.zombie, count = 38, pathIndex = 0, interval = 0.33f },
                         new SpawnGroup { enemy = d.ogre, count = 1, pathIndex = 0, interval = 0f, delay = 5f },
-                        new SpawnGroup { enemy = d.brute, count = 1, pathIndex = 0, interval = 0f, delay = 10f },
-                        new SpawnGroup { enemy = d.runner, count = 15, pathIndex = 0, interval = 0.3f, delay = 14f },
-                        new SpawnGroup { enemy = d.zombie, count = 30, pathIndex = 0, interval = 0.3f, delay = 20f },
+                        new SpawnGroup { enemy = d.brute, count = 2, pathIndex = 0, interval = 5f, delay = 10f },
+                        new SpawnGroup { enemy = d.runner, count = 20, pathIndex = 0, interval = 0.28f, delay = 14f },
+                        new SpawnGroup { enemy = d.zombie, count = 38, pathIndex = 0, interval = 0.27f, delay = 20f },
                     }},
                 };
             });
@@ -309,27 +309,26 @@ namespace Duck.EditorTools
             {
                 c.displayName = "Глава 2. Ночь летучих мышей";
                 c.displayNameEn = "Chapter 2. Night of Bats";
-                c.startCoins = 7;
-                c.enemyHpMultiplier = 1.45f;
+                c.startCoins = 9;
+                c.enemyHpMultiplier = 1.35f;
                 c.rewardGears = 90;
                 c.newsRu = "вторая дорога с востока, летучие мыши летят над стеной, навык «Вращающиеся лезвия», 3 новых места для построек";
                 c.newsEn = "a second road from the east, bats fly over the wall, Spinning Blades skill, 3 new build spots";
                 c.waves = new[]
                 {
-                    // Two roads from the first night: the duck can no longer guard everything herself.
+                    // Two roads from the first night, but a gentle start: the second road teaches itself, the push comes on night 2.
                     new WaveConfig { kind = WaveKind.Normal, groups = new[]
                     {
-                        new SpawnGroup { enemy = d.zombie, count = 30, pathIndex = 0, interval = 0.45f },
-                        new SpawnGroup { enemy = d.zombie, count = 25, pathIndex = 1, interval = 0.45f, delay = 4f },
-                        new SpawnGroup { enemy = d.runner, count = 10, pathIndex = 1, interval = 0.35f, delay = 10f },
-                        new SpawnGroup { enemy = d.bat, count = 6, pathIndex = 0, interval = 0.5f, delay = 14f },
+                        new SpawnGroup { enemy = d.zombie, count = 20, pathIndex = 0, interval = 0.7f },
+                        new SpawnGroup { enemy = d.zombie, count = 16, pathIndex = 1, interval = 0.7f, delay = 6f },
+                        new SpawnGroup { enemy = d.bat, count = 4, pathIndex = 0, interval = 0.8f, delay = 16f },
                     }},
                     new WaveConfig { kind = WaveKind.Normal, groups = new[]
                     {
-                        new SpawnGroup { enemy = d.zombie, count = 50, pathIndex = 0, interval = 0.28f },
-                        new SpawnGroup { enemy = d.zombie, count = 40, pathIndex = 1, interval = 0.28f, delay = 3f },
+                        new SpawnGroup { enemy = d.zombie, count = 42, pathIndex = 0, interval = 0.32f },
+                        new SpawnGroup { enemy = d.zombie, count = 34, pathIndex = 1, interval = 0.32f, delay = 4f },
                         new SpawnGroup { enemy = d.brute, count = 1, pathIndex = 1, interval = 0f, delay = 8f },
-                        new SpawnGroup { enemy = d.runner, count = 25, pathIndex = 1, interval = 0.28f, delay = 10f },
+                        new SpawnGroup { enemy = d.runner, count = 18, pathIndex = 1, interval = 0.3f, delay = 10f },
                         new SpawnGroup { enemy = d.bat, count = 15, pathIndex = 0, interval = 0.35f, delay = 14f },
                     }},
                     new WaveConfig { kind = WaveKind.Elite, groups = new[]
@@ -743,7 +742,7 @@ d.chapter3 = LoadOrCreate<ChapterConfig>($"{DataFolder}/Chapter_3.asset", reset,
 
             // Buttons.
             hud.buildButton = MakeButton(c, "BuildButton", new Vector2(0.5f, 0f), new Vector2(0f, 700f), new Vector2(760f, 130f), new Color(1f, 0.8f, 0.2f), rounded, "Построить", 38, new Color(0.2f, 0.12f, 0f), out hud.buildButtonText, out hud.buildButtonImage);
-            hud.fightButton = MakeButton(c, "FightButton", new Vector2(1f, 0f), new Vector2(-180f, 190f), new Vector2(300f, 140f), new Color(0.85f, 0.2f, 0.15f), rounded, "В БОЙ!", 52, Color.white, out var fightLabel, out _);
+            hud.fightButton = MakeButton(c, "FightButton", new Vector2(1f, 0f), new Vector2(-150f, 150f), new Vector2(250f, 115f), new Color(0.85f, 0.2f, 0.15f), rounded, "В БОЙ!", 46, Color.white, out var fightLabel, out _);
             fightLabel.gameObject.AddComponent<LocalizedText>().key = "hud.fight";
 
             // Dev: language toggle RU/EN.
@@ -752,8 +751,8 @@ d.chapter3 = LoadOrCreate<ChapterConfig>($"{DataFolder}/Chapter_3.asset", reset,
 
             // Airstrike button (bottom-left corner, out of the way of the build slots), fill shows the charge.
             var airRt = UIRect("AirstrikeButton", c, new Vector2(0f, 0f), new Vector2(0f, 0f));
-            airRt.anchoredPosition = new Vector2(125f, 190f);
-            airRt.sizeDelta = new Vector2(180f, 180f);
+            airRt.anchoredPosition = new Vector2(105f, 150f);
+            airRt.sizeDelta = new Vector2(150f, 150f);
             var airImg = airRt.gameObject.AddComponent<Image>();
             airImg.sprite = knob;
             airImg.color = new Color(0.15f, 0.2f, 0.3f);
