@@ -66,7 +66,7 @@ namespace Duck
             ["hud.day"] = ("День {0}: строй оборону", "Day {0}: build your defense"),
             ["hud.night"] = ("Ночь {0}   {1:00}:{2:00}   врагов: {3}", "Night {0}   {1:00}:{2:00}   enemies: {3}"),
             ["hud.duck_hp"] = ("Утка {0}/{1}", "Duck {0}/{1}"),
-            ["hud.duck_respawn"] = ("Утка вернётся через {0} с", "Duck is back in {0}s"),
+            ["hud.duck_respawn"] = ("Призрак: {0} с", "Ghost: {0}s"),
             ["hud.build"] = ("Построить «{0}» за {1}", "Build {0} for {1}"),
             ["hud.upgrade"] = ("Улучшить «{0}» до ур.{1} за {2}", "Upgrade {0} to lv.{1} for {2}"),
             ["hud.victory"] = ("Победа!", "Victory!"),
@@ -82,7 +82,7 @@ namespace Duck
             ["banner.chest"] = ("Элитный сундук!\nБонусные навыки", "Elite chest!\nBonus skills"),
             ["banner.rage"] = ("Момент ярости!\nВраги ускорились", "Rage moment!\nEnemies are faster"),
             ["banner.attack"] = ("Монстры атакуют!", "Monsters attack!"),
-            ["banner.duck_down"] = ("Утку подбили!\nВозвращение через {0} с", "Duck is down!\nBack in {0}s"),
+            ["banner.duck_down"] = ("Утку подбили!\nВоскрешение через {0} с", "Duck is down!\nReviving in {0}s"),
 
             // World pop-ups
             ["fx.built"] = ("Построено!", "Built!"),

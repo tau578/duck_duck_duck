@@ -9,6 +9,8 @@ namespace Duck
         public Transform target;
         public float height = 2f;
         public bool hideWhenFull = true;
+        [Tooltip("A timer rather than health: no hit flash and no low-value colour.")]
+        public bool plain;
 
         RectTransform fill;
         Image fillImage;
@@ -64,7 +66,7 @@ namespace Duck
         public void Set(float normalized)
         {
             normalized = Mathf.Clamp01(normalized);
-            if (normalized < value) flash = 1f;
+            if (normalized < value && !plain) flash = 1f;
             value = normalized;
         }
 
@@ -87,7 +89,7 @@ namespace Duck
 
             fill.localScale = new Vector3(value, 1f, 1f);
             flash = Mathf.MoveTowards(flash, 0f, Time.deltaTime * 6f);
-            Color baseColor = value < 0.3f ? lowColor : fullColor;
+            Color baseColor = value < 0.3f && !plain ? lowColor : fullColor;
             fillImage.color = Color.Lerp(baseColor, Color.white, flash);
         }
     }
