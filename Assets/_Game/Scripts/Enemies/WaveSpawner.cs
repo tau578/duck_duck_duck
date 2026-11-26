@@ -34,7 +34,7 @@ namespace Duck
             bool autoLevel = gm == null || gm.chapter == null || gm.chapter.autoLevel;
             int duckLevel = autoLevel && SkillSystem.Instance != null ? SkillSystem.Instance.Level : 1;
             int workshop = autoLevel ? MetaUpgrades.TotalLevels : 0;
-            NightHpMultiplier = hpMultiplier
+            NightHpMultiplier = hpMultiplier * wave.hpMultiplier
                 * (1f + hpPerDuckLevel * Mathf.Max(0, duckLevel - freeDuckLevels))
                 * (1f + hpPerWorkshopLevel * workshop);
             float countScale = 1f + countPerWorkshopLevel * workshop;

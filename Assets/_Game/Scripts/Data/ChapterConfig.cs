@@ -20,6 +20,8 @@ namespace Duck
     public class WaveConfig
     {
         public WaveKind kind;
+        [Tooltip("Enemy HP multiplier of this night: later nights are tougher, so the duck does not outgrow them.")]
+        public float hpMultiplier = 1f;
         public SpawnGroup[] groups;
 
         public int CountOnPath(int path)

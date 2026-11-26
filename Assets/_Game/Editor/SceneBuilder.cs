@@ -275,10 +275,10 @@ namespace Duck.EditorTools
                 c.displayNameEn = "Chapter 1. Wasteland";
                 // Curve measured on the original's first chapter (docs/chapter1_balance.md).
                 c.startCoins = 9;               // original: 10, minus 2 for the base that we give for free, plus 1 for our pricier mine
-                c.enemyHpMultiplier = 0.8f;     // zombie 17.6 HP = 2 duck hits
-                c.enemyDamageMultiplier = 0.15f; // tutorial: the original barely scratches the duck and the base
-                c.enemySpeedMultiplier = 0.65f; // the horde is met far from the base, as in the original
-                c.bossHpMultiplier = 0.7f;      // boss lives about 30-50 s
+                c.enemyHpMultiplier = 0.7f;     // zombie 15.4 HP = 2 duck hits
+                c.enemyDamageMultiplier = 0.18f; // the horde that reaches the base is felt, but gives time to react
+                c.enemySpeedMultiplier = 0.7f;   // the horde is met far from the base, as in the original
+                c.bossHpMultiplier = 0.75f;     // boss lives about 30-50 s
                 c.rewardGears = 60;
                 c.maxBuildingLevel = 99;
                 c.xpScale = 1f;
@@ -321,7 +321,10 @@ namespace Duck.EditorTools
                 c.displayName = "Глава 2. Ночь летучих мышей";
                 c.displayNameEn = "Chapter 2. Night of Bats";
                 c.startCoins = 8;
-                c.enemyHpMultiplier = 1.6f;
+                c.enemyHpMultiplier = 1.05f;
+                c.enemyDamageMultiplier = 0.23f;
+                c.enemySpeedMultiplier = 0.75f;
+                c.bossHpMultiplier = 0.6f;
                 c.rewardGears = 90;
                 c.maxBuildingLevel = 3;
                 c.xpScale = 2.36f;
@@ -341,7 +344,7 @@ namespace Duck.EditorTools
                         new SpawnGroup { enemy = d.runner, count = 6, pathIndex = 1, interval = 0.5f, delay = 12f },
                         new SpawnGroup { enemy = d.bat, count = 6, pathIndex = 0, interval = 0.6f, delay = 15f },
                     }},
-                    new WaveConfig { kind = WaveKind.Normal, groups = new[]
+                    new WaveConfig { kind = WaveKind.Normal, hpMultiplier = 1.1f, groups = new[]
                     {
                         new SpawnGroup { enemy = d.zombie, count = 40, pathIndex = 0, interval = 0.36f },
                         new SpawnGroup { enemy = d.zombie, count = 34, pathIndex = 1, interval = 0.36f, delay = 5f },
@@ -349,7 +352,7 @@ namespace Duck.EditorTools
                         new SpawnGroup { enemy = d.runner, count = 18, pathIndex = 1, interval = 0.32f, delay = 12f },
                         new SpawnGroup { enemy = d.bat, count = 12, pathIndex = 0, interval = 0.4f, delay = 16f },
                     }},
-                    new WaveConfig { kind = WaveKind.Elite, groups = new[]
+                    new WaveConfig { kind = WaveKind.Elite, hpMultiplier = 1.15f, groups = new[]
                     {
                         new SpawnGroup { enemy = d.zombie, count = 75, pathIndex = 0, interval = 0.23f },
                         new SpawnGroup { enemy = d.zombie, count = 63, pathIndex = 1, interval = 0.23f, delay = 3f },
@@ -358,7 +361,7 @@ namespace Duck.EditorTools
                         new SpawnGroup { enemy = d.runner, count = 29, pathIndex = 0, interval = 0.3f, delay = 12f },
                         new SpawnGroup { enemy = d.bat, count = 23, pathIndex = 1, interval = 0.3f, delay = 14f },
                     }},
-                    new WaveConfig { kind = WaveKind.Boss, groups = new[]
+                    new WaveConfig { kind = WaveKind.Boss, hpMultiplier = 1.2f, groups = new[]
                     {
                         new SpawnGroup { enemy = d.zombie, count = 86, pathIndex = 0, interval = 0.2f },
                         new SpawnGroup { enemy = d.ogre, count = 1, pathIndex = 0, interval = 0f, delay = 6f },
@@ -376,7 +379,10 @@ d.chapter3 = LoadOrCreate<ChapterConfig>($"{DataFolder}/Chapter_3.asset", reset,
                 c.displayName = "Глава 3. Двойной фронт";
                 c.displayNameEn = "Chapter 3. Two Fronts";
                 c.startCoins = 10;
-                c.enemyHpMultiplier = 1.7f;
+                c.enemyHpMultiplier = 1.22f;
+                c.enemyDamageMultiplier = 0.4f;
+                c.enemySpeedMultiplier = 0.75f;
+                c.bossHpMultiplier = 0.6f;
                 c.rewardGears = 120;
                 c.maxBuildingLevel = 99;
                 c.xpScale = 2.36f;
@@ -393,27 +399,27 @@ d.chapter3 = LoadOrCreate<ChapterConfig>($"{DataFolder}/Chapter_3.asset", reset,
                         new SpawnGroup { enemy = d.zombie, count = 30, pathIndex = 1, interval = 0.45f },
                         new SpawnGroup { enemy = d.zombie, count = 30, pathIndex = 2, interval = 0.45f, delay = 3f },
                     }},
-                    new WaveConfig { kind = WaveKind.Normal, groups = new[]
+                    new WaveConfig { kind = WaveKind.Normal, hpMultiplier = 1.05f, groups = new[]
                     {
                         new SpawnGroup { enemy = d.zombie, count = 50, pathIndex = 0, interval = 0.3f },
                         new SpawnGroup { enemy = d.beetle, count = 12, pathIndex = 2, interval = 0.8f, delay = 4f },
                         new SpawnGroup { enemy = d.runner, count = 25, pathIndex = 1, interval = 0.3f, delay = 8f },
                     }},
-                    new WaveConfig { kind = WaveKind.Elite, groups = new[]
+                    new WaveConfig { kind = WaveKind.Elite, hpMultiplier = 1.12f, groups = new[]
                     {
                         new SpawnGroup { enemy = d.zombie, count = 60, pathIndex = 1, interval = 0.25f },
                         new SpawnGroup { enemy = d.zombie, count = 60, pathIndex = 2, interval = 0.25f, delay = 2f },
                         new SpawnGroup { enemy = d.brute, count = 3, pathIndex = 0, interval = 4f, delay = 6f },
                         new SpawnGroup { enemy = d.bat, count = 20, pathIndex = 0, interval = 0.3f, delay = 12f },
                     }},
-                    new WaveConfig { kind = WaveKind.Elite, groups = new[]
+                    new WaveConfig { kind = WaveKind.Elite, hpMultiplier = 1.2f, groups = new[]
                     {
                         new SpawnGroup { enemy = d.zombie, count = 70, pathIndex = 0, interval = 0.2f },
                         new SpawnGroup { enemy = d.zombie, count = 70, pathIndex = 1, interval = 0.2f, delay = 3f },
                         new SpawnGroup { enemy = d.beetle, count = 20, pathIndex = 2, interval = 0.5f, delay = 6f },
                         new SpawnGroup { enemy = d.brute, count = 3, pathIndex = 2, interval = 3f, delay = 10f },
                     }},
-                    new WaveConfig { kind = WaveKind.Boss, groups = new[]
+                    new WaveConfig { kind = WaveKind.Boss, hpMultiplier = 1.28f, groups = new[]
                     {
                         new SpawnGroup { enemy = d.zombie, count = 70, pathIndex = 0, interval = 0.2f },
                         new SpawnGroup { enemy = d.queen, count = 1, pathIndex = 0, interval = 0f, delay = 6f },
@@ -783,6 +789,7 @@ d.chapter3 = LoadOrCreate<ChapterConfig>($"{DataFolder}/Chapter_3.asset", reset,
             airImg.color = new Color(0.15f, 0.2f, 0.3f);
             var airBtn = airRt.gameObject.AddComponent<Button>();
             airBtn.targetGraphic = airImg;
+            // Charge ring around the button, bomber icon on top.
             var airFill = UIRect("Charge", airRt, Vector2.zero, Vector2.one);
             airFill.offsetMin = new Vector2(-12f, -12f);
             airFill.offsetMax = new Vector2(12f, 12f);
@@ -793,7 +800,6 @@ d.chapter3 = LoadOrCreate<ChapterConfig>($"{DataFolder}/Chapter_3.asset", reset,
             airFillImg.fillOrigin = (int)Image.Origin360.Top;
             airFillImg.color = new Color(1f, 0.8f, 0.2f);
             airFillImg.raycastTarget = false;
-            // Charge ring around the button, bomber icon on top.
             var airIcon = UIRect("Icon", airRt, new Vector2(0.08f, 0.08f), new Vector2(0.92f, 0.92f));
             var airIconImg = airIcon.gameObject.AddComponent<Image>();
             airIconImg.sprite = IconSprite("airstrike_icon", BomberPixel);
@@ -802,13 +808,13 @@ d.chapter3 = LoadOrCreate<ChapterConfig>($"{DataFolder}/Chapter_3.asset", reset,
             air.button = airBtn;
             air.fill = airFill;
             air.buttonImage = airImg;
+            air.icon = airIconImg;
             air.label = airLabel;
 
             // XP bar at the bottom of the top band.
             var xpBg = UIRect("XP", c, new Vector2(0f, 1f), new Vector2(1f, 1f));
             xpBg.pivot = new Vector2(0.5f, 1f);
             xpBg.offsetMin = new Vector2(40f, -300f);
-            air.icon = airIconImg;
             xpBg.offsetMax = new Vector2(-40f, -282f);
             var xpBgImg = xpBg.gameObject.AddComponent<Image>();
             xpBgImg.color = new Color(0f, 0f, 0f, 0.6f);
@@ -1072,12 +1078,6 @@ d.chapter3 = LoadOrCreate<ChapterConfig>($"{DataFolder}/Chapter_3.asset", reset,
 
         // ================= helpers =================
 
-        static void EnsureFolder(string path)
-        {
-            if (AssetDatabase.IsValidFolder(path)) return;
-            string parent = System.IO.Path.GetDirectoryName(path).Replace('\\', '/');
-            EnsureFolder(parent);
-            AssetDatabase.CreateFolder(parent, System.IO.Path.GetFileName(path));
         // ================= generated icons =================
 
         /// <summary>Draws a square icon from a per-pixel function (coordinates -60..60, y down) and saves it as a sprite.</summary>
@@ -1139,6 +1139,12 @@ d.chapter3 = LoadOrCreate<ChapterConfig>($"{DataFolder}/Chapter_3.asset", reset,
             return (q - new Vector2(27f, 5f)).magnitude < 5f ? new Color(1f, 0.79f, 0.16f) : Color.white;
         }
 
+        static void EnsureFolder(string path)
+        {
+            if (AssetDatabase.IsValidFolder(path)) return;
+            string parent = System.IO.Path.GetDirectoryName(path).Replace('\\', '/');
+            EnsureFolder(parent);
+            AssetDatabase.CreateFolder(parent, System.IO.Path.GetFileName(path));
         }
 
         static RectTransform UIRect(string name, Transform parent, Vector2 anchorMin, Vector2 anchorMax)
