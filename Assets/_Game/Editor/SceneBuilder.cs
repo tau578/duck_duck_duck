@@ -215,7 +215,7 @@ namespace Duck.EditorTools
                 c.type = BuildingType.Base; c.displayName = "База"; c.displayNameEn = "Base"; c.halfExtents = new Vector2(1.5f, 1.4f); c.wallOnly = false;
                 c.levels = new[]
                 {
-                    new BuildingLevel { cost = 0, hp = 700, income = 4 },
+                    new BuildingLevel { cost = 0, hp = 700, income = 5 },
                     new BuildingLevel { cost = 8, hp = 950, income = 7 },
                     new BuildingLevel { cost = 12, hp = 1300, income = 12 },
                 };
@@ -274,7 +274,7 @@ namespace Duck.EditorTools
             {
                 c.displayName = "Глава 1. Пустошь";
                 c.displayNameEn = "Chapter 1. Wasteland";
-                c.startCoins = 7;
+                c.startCoins = 8;
                 c.enemyHpMultiplier = 1f;
                 c.rewardGears = 60;
                 c.newsRu = "";

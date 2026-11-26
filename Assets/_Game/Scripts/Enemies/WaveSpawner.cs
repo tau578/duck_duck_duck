@@ -11,8 +11,10 @@ namespace Duck
         public float hpMultiplier = 1f;
 
         [Header("Auto-leveling (enemies catch up with the player, about halfway)")]
-        [Tooltip("Enemy HP per duck level above 1, applied at the start of each night.")]
-        public float hpPerDuckLevel = 0.04f;
+        [Tooltip("Enemy HP per duck level above the free ones, applied at the start of each night.")]
+        public float hpPerDuckLevel = 0.03f;
+        [Tooltip("Duck levels that are free: scaling starts above this level.")]
+        public int freeDuckLevels = 3;
         [Tooltip("Enemy HP per Workshop level bought.")]
         public float hpPerWorkshopLevel = 0.06f;
         [Tooltip("Extra enemies per Workshop level bought (bosses are never multiplied).")]
@@ -31,7 +33,7 @@ namespace Duck
             int duckLevel = SkillSystem.Instance != null ? SkillSystem.Instance.Level : 1;
             int workshop = MetaUpgrades.TotalLevels;
             NightHpMultiplier = hpMultiplier
-                * (1f + hpPerDuckLevel * (duckLevel - 1))
+                * (1f + hpPerDuckLevel * Mathf.Max(0, duckLevel - freeDuckLevels))
                 * (1f + hpPerWorkshopLevel * workshop);
             float countScale = 1f + countPerWorkshopLevel * workshop;
 
