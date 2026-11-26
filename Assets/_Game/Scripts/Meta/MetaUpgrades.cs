@@ -22,6 +22,12 @@ namespace Duck
 
         public static int Level(int i) => SaveSystem.Upgrade(i);
 
+        /// <summary>All Workshop levels bought, for enemy auto-leveling.</summary>
+        public static int TotalLevels
+        {
+            get { int n = 0; for (int i = 0; i < All.Length; i++) n += Level(i); return n; }
+        }
+
         public static float DuckDamageMultiplier => 1f + 0.15f * Level(0);
         public static float BuildingHpMultiplier => 1f + 0.15f * Level(1);
         public static int BonusStartCoins => 2 * Level(2);

@@ -10,24 +10,57 @@ namespace Duck
         public List<EnemyPath> paths = new List<EnemyPath>();
         public float hpMultiplier = 1f;
 
+        [Header("Auto-leveling (enemies catch up with the player, about halfway)")]
+        [Tooltip("Enemy HP per duck level above 1, applied at the start of each night.")]
+        public float hpPerDuckLevel = 0.04f;
+        [Tooltip("Enemy HP per Workshop level bought.")]
+        public float hpPerWorkshopLevel = 0.06f;
+        [Tooltip("Extra enemies per Workshop level bought (bosses are never multiplied).")]
+        public float countPerWorkshopLevel = 0.04f;
+
+        /// <summary>HP multiplier of the current night, chapter multiplier included.</summary>
+        public float NightHpMultiplier { get; private set; } = 1f;
+        /// <summary>Enemies the current night will spawn in total.</summary>
+        public int NightEnemyCount { get; private set; }
+
         int running;
         public bool IsSpawning => running > 0;
 
         public void StartWave(WaveConfig wave)
         {
-            foreach (var g in wave.groups) StartCoroutine(SpawnGroup(g));
+            int duckLevel = SkillSystem.Instance != null ? SkillSystem.Instance.Level : 1;
+            int workshop = MetaUpgrades.TotalLevels;
+            NightHpMultiplier = hpMultiplier
+                * (1f + hpPerDuckLevel * (duckLevel - 1))
+                * (1f + hpPerWorkshopLevel * workshop);
+            float countScale = 1f + countPerWorkshopLevel * workshop;
+
+            NightEnemyCount = 0;
+            foreach (var g in wave.groups)
+            {
+                int count = ScaledCount(g, countScale);
+                NightEnemyCount += count;
+                StartCoroutine(SpawnGroup(g, count));
+            }
+            Airstrike.Instance?.OnNightStart(NightEnemyCount);
         }
 
-        IEnumerator SpawnGroup(SpawnGroup g)
+        static int ScaledCount(SpawnGroup g, float scale)
+        {
+            if (g.enemy != null && g.enemy.isBoss) return g.count;
+            return Mathf.Max(g.count, Mathf.RoundToInt(g.count * scale));
+        }
+
+        IEnumerator SpawnGroup(SpawnGroup g, int count)
         {
             running++;
             if (g.delay > 0f) yield return new WaitForSeconds(g.delay);
             var road = paths[Mathf.Clamp(g.pathIndex, 0, paths.Count - 1)];
-            for (int i = 0; i < g.count; i++)
+            for (int i = 0; i < count; i++)
             {
                 Vector3 jitter = new Vector3(Random.Range(-1.2f, 1.2f), 0f, Random.Range(-0.8f, 0.8f));
                 var go = Pool.Spawn(GameAssets.I.enemyPrefab, road.Spawn + jitter, Quaternion.identity);
-                go.GetComponent<Enemy>().Init(g.enemy, road, hpMultiplier);
+                go.GetComponent<Enemy>().Init(g.enemy, road, NightHpMultiplier);
                 if (g.interval > 0f) yield return new WaitForSeconds(g.interval);
             }
             running--;

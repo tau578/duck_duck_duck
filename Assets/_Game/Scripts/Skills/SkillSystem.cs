@@ -33,7 +33,9 @@ namespace Duck
         public int Level { get; private set; } = 1;
         public int Xp { get; private set; }
         /// <summary>First level after ~10 kills, then x1.25 per level (analysis 10.6).</summary>
-        public int XpToNext => Mathf.RoundToInt(10f * Mathf.Pow(1.25f, Level - 1));
+        public int XpToNext => Mathf.RoundToInt(10f * XpScale * Mathf.Pow(1.25f, Level - 1));
+        /// <summary>Levels come 15% slower than the first tuning (1 / 0.85).</summary>
+        public const float XpScale = 1.18f;
 
         public readonly List<SkillDef> All = new List<SkillDef>
         {

@@ -13,6 +13,9 @@ namespace Duck
     {
         public static Airstrike Instance { get; private set; }
 
+        [Tooltip("Share of the current night's enemies to kill for one charge, so a stronger duck does not get more strikes.")]
+        [Range(0.1f, 1f)] public float chargeShare = 0.35f;
+        public int minKillsToCharge = 15;
         public int killsToCharge = 25;
         public int passes = 1;
         public int bombsPerPass = 9;
@@ -53,6 +56,14 @@ namespace Duck
                 Sfx.Play(SfxId.Build, 0.9f, 0f, 0f);
                 DamageNumbers.ShowText(DuckController.Instance.transform.position + Vector3.up, Loc.T("air.ready"), new Color(0.5f, 0.9f, 1f), 50);
             }
+        }
+
+        /// <summary>Charge size follows the night's size: about two strikes per night at most.</summary>
+        public void OnNightStart(int enemiesThisNight)
+        {
+            float was = Charge01;
+            killsToCharge = Mathf.Max(minKillsToCharge, Mathf.RoundToInt(enemiesThisNight * chargeShare));
+            charge = Mathf.RoundToInt(was * killsToCharge); // keep a carried-over charge as a share
         }
 
         public void Trigger()

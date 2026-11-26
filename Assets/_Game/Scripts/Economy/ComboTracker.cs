@@ -13,7 +13,7 @@ namespace Duck
         public float window = 0.45f;
         public int minCombo = 3;
         [Tooltip("Max coins from combos per night.")]
-        public int maxCoinsPerNight = 4;
+        public int maxCoinsPerNight = 0;
 
         int coinsThisNight;
         GamePhase lastPhase;
