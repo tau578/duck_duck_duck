@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Duck.ChapterConfig
   displayName: "\u0413\u043B\u0430\u0432\u0430 1. \u041F\u0443\u0441\u0442\u043E\u0448\u044C"
   displayNameEn: Chapter 1. Wasteland
-  startCoins: 6
+  startCoins: 7
   enemyHpMultiplier: 1
   rewardGears: 60
   newsRu: 
@@ -23,43 +23,43 @@ MonoBehaviour:
   - kind: 0
     groups:
     - enemy: {fileID: 11400000, guid: 9174eaf695eff06479afd995c6bb4460, type: 2}
-      count: 22
+      count: 18
       pathIndex: 0
-      interval: 0.7
+      interval: 0.8
       delay: 0
     - enemy: {fileID: 11400000, guid: 75e0e1b25de7b5a4abfe99d0ef8d0414, type: 2}
-      count: 8
+      count: 4
       pathIndex: 0
-      interval: 0.5
-      delay: 10
+      interval: 0.6
+      delay: 12
   - kind: 0
     groups:
     - enemy: {fileID: 11400000, guid: 9174eaf695eff06479afd995c6bb4460, type: 2}
-      count: 36
+      count: 32
       pathIndex: 0
-      interval: 0.38
+      interval: 0.42
       delay: 0
     - enemy: {fileID: 11400000, guid: 75e0e1b25de7b5a4abfe99d0ef8d0414, type: 2}
-      count: 16
+      count: 14
       pathIndex: 0
-      interval: 0.3
+      interval: 0.32
       delay: 8
     - enemy: {fileID: 11400000, guid: a54f9b4d72a233e4192d90b6c8632664, type: 2}
-      count: 2
+      count: 1
       pathIndex: 0
-      interval: 5
+      interval: 0
       delay: 12
     - enemy: {fileID: 11400000, guid: 9174eaf695eff06479afd995c6bb4460, type: 2}
-      count: 26
+      count: 22
       pathIndex: 0
-      interval: 0.3
+      interval: 0.33
       delay: 18
   - kind: 2
     groups:
     - enemy: {fileID: 11400000, guid: 9174eaf695eff06479afd995c6bb4460, type: 2}
-      count: 38
+      count: 34
       pathIndex: 0
-      interval: 0.33
+      interval: 0.36
       delay: 0
     - enemy: {fileID: 11400000, guid: b128115beaf3bae4ea0c207be83a6d53, type: 2}
       count: 1
@@ -72,12 +72,12 @@ MonoBehaviour:
       interval: 5
       delay: 10
     - enemy: {fileID: 11400000, guid: 75e0e1b25de7b5a4abfe99d0ef8d0414, type: 2}
-      count: 20
+      count: 17
       pathIndex: 0
-      interval: 0.28
+      interval: 0.3
       delay: 14
     - enemy: {fileID: 11400000, guid: 9174eaf695eff06479afd995c6bb4460, type: 2}
-      count: 38
+      count: 34
       pathIndex: 0
-      interval: 0.27
+      interval: 0.29
       delay: 20
