@@ -265,7 +265,7 @@ namespace Duck.EditorTools
             d.runner = MakeEnemy("Enemy_Runner", reset, "Бегун", "Runner", 14, 3.2f, 6, 0.8f, 0.9f, 0.8f, new Color(0.85f, 0.55f, 0.25f), 0.2f, 1);
             d.bat = MakeEnemy("Enemy_Bat", reset, "Летучая мышь", "Bat", 15, 2.6f, 6, 1f, 0.9f, 0.7f, new Color(0.5f, 0.3f, 0.6f), 0.2f, 1, c => c.flying = true);
             d.brute = MakeEnemy("Enemy_Brute", reset, "Громила в бочке", "Barrel Brute", 420, 1.1f, 25, 1.2f, 1.2f, 1.6f, new Color(0.4f, 0.4f, 0.45f), 1f, 3, c => { c.isElite = true; c.knockResist = 0.7f; c.xp = 5; });
-            d.ogre = MakeEnemy("Enemy_Ogre", reset, "Огр", "Ogre", 3500, 1.0f, 60, 1.5f, 1.6f, 2.6f, new Color(0.3f, 0.45f, 0.25f), 1f, 5, c => { c.isBoss = true; c.knockResist = 0.95f; c.aggroRange = 3.5f; c.xp = 20; });
+            d.ogre = MakeEnemy("Enemy_Ogre", reset, "Огр", "Ogre", 2600, 1.0f, 60, 1.5f, 1.6f, 2.6f, new Color(0.3f, 0.45f, 0.25f), 1f, 5, c => { c.isBoss = true; c.knockResist = 0.95f; c.aggroRange = 3.5f; c.xp = 20; });
 
             d.beetle = MakeEnemy("Enemy_Beetle", reset, "Бронежук", "Armored Beetle", 70, 1.3f, 14, 1.2f, 1f, 1.3f, new Color(0.35f, 0.3f, 0.25f), 0.3f, 1, c => { c.knockResist = 0.6f; c.xp = 2; });
             d.queen = MakeEnemy("Enemy_Queen", reset, "Матка роя", "Swarm Queen", 7000, 0.9f, 70, 1.4f, 1.8f, 3f, new Color(0.5f, 0.25f, 0.55f), 1f, 8, c => { c.isBoss = true; c.knockResist = 0.97f; c.aggroRange = 3.5f; c.xp = 30; });
@@ -290,18 +290,18 @@ namespace Duck.EditorTools
                     }},
                     new WaveConfig { kind = WaveKind.Normal, groups = new[]
                     {
-                        new SpawnGroup { enemy = d.zombie, count = 32, pathIndex = 0, interval = 0.42f },
-                        new SpawnGroup { enemy = d.runner, count = 14, pathIndex = 0, interval = 0.32f, delay = 8f },
-                        new SpawnGroup { enemy = d.brute, count = 1, pathIndex = 0, interval = 0f, delay = 12f },
-                        new SpawnGroup { enemy = d.zombie, count = 22, pathIndex = 0, interval = 0.33f, delay = 18f },
+                        new SpawnGroup { enemy = d.zombie, count = 24, pathIndex = 0, interval = 0.5f },
+                        new SpawnGroup { enemy = d.runner, count = 8, pathIndex = 0, interval = 0.4f, delay = 9f },
+                        new SpawnGroup { enemy = d.brute, count = 1, pathIndex = 0, interval = 0f, delay = 15f },
+                        new SpawnGroup { enemy = d.zombie, count = 12, pathIndex = 0, interval = 0.45f, delay = 20f },
                     }},
                     new WaveConfig { kind = WaveKind.Boss, groups = new[]
                     {
-                        new SpawnGroup { enemy = d.zombie, count = 34, pathIndex = 0, interval = 0.36f },
+                        new SpawnGroup { enemy = d.zombie, count = 26, pathIndex = 0, interval = 0.42f },
                         new SpawnGroup { enemy = d.ogre, count = 1, pathIndex = 0, interval = 0f, delay = 5f },
-                        new SpawnGroup { enemy = d.brute, count = 2, pathIndex = 0, interval = 5f, delay = 10f },
-                        new SpawnGroup { enemy = d.runner, count = 17, pathIndex = 0, interval = 0.3f, delay = 14f },
-                        new SpawnGroup { enemy = d.zombie, count = 34, pathIndex = 0, interval = 0.29f, delay = 20f },
+                        new SpawnGroup { enemy = d.brute, count = 1, pathIndex = 0, interval = 0f, delay = 12f },
+                        new SpawnGroup { enemy = d.runner, count = 12, pathIndex = 0, interval = 0.35f, delay = 15f },
+                        new SpawnGroup { enemy = d.zombie, count = 24, pathIndex = 0, interval = 0.35f, delay = 22f },
                     }},
                 };
             });
