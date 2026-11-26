@@ -324,7 +324,10 @@ namespace Duck.EditorTools
             {
                 c.displayName = "Глава 2. Ночь летучих мышей";
                 c.displayNameEn = "Chapter 2. Night of Bats";
-                c.startCoins = 2;
+                // Money as in the original's second chapter (docs/power_balance.md): a mine or defense on day 1.
+                c.startCoins = 4;
+                c.buildCosts = new[] { 0, 4, 0, 0, 0 }; // base, mine, tower, wall, barracks
+                c.maxMineLevel = 1;
                 c.enemyHpMultiplier = 1.05f;
                 c.enemyDamageMultiplier = 0.23f;
                 c.enemySpeedMultiplier = 0.75f;

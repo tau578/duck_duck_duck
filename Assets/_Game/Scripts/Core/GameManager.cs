@@ -135,8 +135,7 @@ namespace Duck
             int income = 0;
             foreach (var s in slots)
             {
-                if (s.Current == null) continue;
-                s.OnDawn();
+                if (s.OnDawn() || s.Current == null) continue;
                 int inc = s.Current.Income;
                 if (inc > 0)
                 {
@@ -156,7 +155,11 @@ namespace Duck
             SetPhase(GamePhase.Night);
             NightTime = 0f;
             BossAnnounced = false;
-            foreach (var s in slots) s.SetDayMode(false);
+            foreach (var s in slots)
+            {
+                s.OnNightfall();
+                s.SetDayMode(false);
+            }
             foreach (var ind in indicators) ind.Hide();
             Lighting(false);
             spawner.StartWave(CurrentWave);

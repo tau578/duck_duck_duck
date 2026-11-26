@@ -34,6 +34,8 @@ namespace Duck
         public bool Flying => Config != null && Config.flying;
         public float Radius { get; private set; } = 0.4f;
         public float Mass { get; private set; } = 1f;
+        /// <summary>The building this enemy is attacking right now, if any.</summary>
+        public Building TargetBuilding => targetBuilding;
 
         Vector3[] path;
         int waypoint;

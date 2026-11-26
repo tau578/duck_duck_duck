@@ -45,6 +45,8 @@ namespace Duck
         public int rewardGears = 60;
         [Tooltip("Highest level any building may reach in this chapter (keeps the early base modest).")]
         public int maxBuildingLevel = 99;
+        [Tooltip("Lower level limit for gold mines; 0 = same as other buildings.")]
+        public int maxMineLevel = 0;
 
         [Header("Systems per chapter (chapter 1 keeps the block11 tuning the player liked)")]
         [Tooltip("XP needed per duck level is multiplied by this.")]

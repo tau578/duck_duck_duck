@@ -5,7 +5,8 @@ namespace Duck
 {
     /// <summary>
     /// Infantry soldier from the Barracks. Holds a post in front of the wall, charges ground enemies nearby,
-    /// blocks them in melee and returns to its post. Enemies stop to fight it.
+    /// blocks them in melee and returns to its post. With nothing to fight nearby it runs to defend the base.
+    /// Enemies stop to fight it.
     /// </summary>
     public class Ally : MonoBehaviour
     {
@@ -15,6 +16,8 @@ namespace Duck
         const float Speed = 3.4f;
         const float Aggro = 4.5f;
         const float Leash = 6f;
+        /// <summary>An enemy this close to the base is a threat worth leaving the post for.</summary>
+        const float BaseGuard = 4f;
         const float MeleeRange = 0.9f;
         const float AttackInterval = 0.8f;
 
@@ -114,6 +117,7 @@ namespace Duck
                 {
                     var e = em.Nearest(pos, Aggro, false);
                     if (e != null && (e.transform.position - post).sqrMagnitude < Leash * Leash) target = e;
+                    else target = BaseAttacker(em, pos);
                 }
             }
 
@@ -156,6 +160,26 @@ namespace Duck
             flash = Mathf.MoveTowards(flash, 0f, dt * 6f);
             visual.localPosition = new Vector3(0f, Mathf.Abs(Mathf.Sin(walkPhase)) * 0.1f, lunge * 0.3f);
             visual.localScale = Vector3.one * (1f + flash * 0.15f);
+        }
+
+        /// <summary>Nearest ground enemy that is hitting the base or closing in on it, however far from the post.</summary>
+        static Enemy BaseAttacker(EnemyManager em, Vector3 from)
+        {
+            var gm = GameManager.Instance;
+            var home = gm != null && gm.baseSlot != null ? gm.baseSlot.Current : null;
+            if (home == null || !home.IsAlive) return null;
+            Enemy best = null;
+            float bestSq = float.MaxValue;
+            for (int i = 0; i < em.Alive.Count; i++)
+            {
+                var e = em.Alive[i];
+                if (e.Flying) continue;
+                Vector3 at = e.transform.position;
+                if (e.TargetBuilding != home && home.DistanceTo(at) - e.Radius > BaseGuard) continue;
+                float sq = (at - from).sqrMagnitude;
+                if (sq < bestSq) { bestSq = sq; best = e; }
+            }
+            return best;
         }
 
         void Face(Vector3 dir, float dt)

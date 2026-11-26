@@ -17,12 +17,17 @@ namespace Duck
         public int Level { get; private set; }
         public Building Current { get; private set; }
         public bool CanUpgrade => Level < Mathf.Min(config.MaxLevel, ChapterLevelCap);
-        static int ChapterLevelCap
+        /// <summary>Level the building had when the night began: a destroyed one comes back with it at dawn.</summary>
+        int levelAtNightfall;
+        int ChapterLevelCap
         {
             get
             {
                 var gm = GameManager.Instance;
-                return gm != null && gm.chapter != null ? gm.chapter.maxBuildingLevel : 99;
+                var chapter = gm != null ? gm.chapter : null;
+                if (chapter == null) return 99;
+                bool mineCap = config.type == BuildingType.Mine && chapter.maxMineLevel > 0;
+                return mineCap ? Mathf.Min(chapter.maxMineLevel, chapter.maxBuildingLevel) : chapter.maxBuildingLevel;
             }
         }
         /// <summary>Price of the next level (levels[Level] is level Level+1).</summary>
@@ -146,13 +151,28 @@ namespace Duck
             Refresh();
         }
 
-        public void OnDawn()
+        public void OnNightfall() => levelAtNightfall = Level;
+
+        /// <summary>
+        /// Repairs the building. One destroyed during the night is rebuilt for free at its old level;
+        /// returns true then, because a rebuilt building pays nothing this morning.
+        /// </summary>
+        public bool OnDawn()
         {
-            if (Current == null) return;
+            if (Level < levelAtNightfall)
+            {
+                SetLevel(levelAtNightfall, false);
+                PushDuckOut();
+                string text = Loc.T(Current.Income > 0 ? "fx.restored_unpaid" : "fx.restored");
+                DamageNumbers.ShowText(transform.position + Vector3.up, text, new Color(0.5f, 1f, 0.5f), 40);
+                return true;
+            }
+            if (Current == null) return false;
             Current.Health.HealFull();
             Current.RefreshBar();
             var barracks = Current.GetComponent<Barracks>();
             if (barracks != null) barracks.OnDawn();
+            return false;
         }
 
         void Refresh()
