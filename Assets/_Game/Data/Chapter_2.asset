@@ -52,30 +52,30 @@ MonoBehaviour:
   - kind: 0
     groups:
     - enemy: {fileID: 11400000, guid: 9174eaf695eff06479afd995c6bb4460, type: 2}
-      count: 53
+      count: 40
       pathIndex: 0
-      interval: 0.3
+      interval: 0.36
       delay: 0
     - enemy: {fileID: 11400000, guid: 9174eaf695eff06479afd995c6bb4460, type: 2}
-      count: 44
+      count: 34
       pathIndex: 1
-      interval: 0.3
-      delay: 4
+      interval: 0.36
+      delay: 5
     - enemy: {fileID: 11400000, guid: a54f9b4d72a233e4192d90b6c8632664, type: 2}
       count: 1
       pathIndex: 1
       interval: 0
       delay: 8
     - enemy: {fileID: 11400000, guid: 75e0e1b25de7b5a4abfe99d0ef8d0414, type: 2}
-      count: 25
+      count: 18
       pathIndex: 1
-      interval: 0.28
-      delay: 10
+      interval: 0.32
+      delay: 12
     - enemy: {fileID: 11400000, guid: 86e8559952c41e94a8377d7f0872ea04, type: 2}
-      count: 17
+      count: 12
       pathIndex: 0
-      interval: 0.35
-      delay: 14
+      interval: 0.4
+      delay: 16
   - kind: 1
     groups:
     - enemy: {fileID: 11400000, guid: 9174eaf695eff06479afd995c6bb4460, type: 2}
