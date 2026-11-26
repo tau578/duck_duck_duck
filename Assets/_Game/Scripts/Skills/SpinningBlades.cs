@@ -7,10 +7,10 @@ namespace Duck
     public class SpinningBlades : MonoBehaviour
     {
         public float spinSpeed = 220f;
-        public float hitInterval = 0.3f;
+        public float hitInterval = 0.5f;
 
         int level;
-        float radius = 2.2f, damage = 12f, angle;
+        float radius = 2.2f, damage = 8f, angle;
         readonly List<Transform> blades = new List<Transform>();
         readonly Dictionary<Enemy, float> lastHit = new Dictionary<Enemy, float>();
         Transform root;
@@ -18,9 +18,9 @@ namespace Duck
         public void SetLevel(int lv)
         {
             level = lv;
-            int count = lv <= 1 ? 2 : lv == 2 ? 3 : 4;
+            int count = lv <= 1 ? 2 : 3;
             radius = lv >= 2 ? 2.6f : 2.2f;
-            damage = lv >= 3 ? 24f : 12f;
+            damage = lv >= 3 ? 13f : 8f;
             Color c = lv >= 3 ? new Color(1f, 0.8f, 0.2f) : new Color(0.8f, 0.85f, 0.9f);
 
             if (root == null) root = new GameObject("Blades").transform;

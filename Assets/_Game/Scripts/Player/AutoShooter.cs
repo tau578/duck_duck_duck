@@ -17,6 +17,8 @@ namespace Duck
         public int pierce;
         public float spreadDegrees = 8f;
         public float damageMultiplier = 1f;
+        [Tooltip("Damage of one bullet when the shot has several.")]
+        public float bulletDamageShare = 1f;
 
         public Transform muzzle;
         public Transform gun;
@@ -88,7 +90,7 @@ namespace Duck
             {
                 float angle = bulletsPerShot > 1 ? (i - (bulletsPerShot - 1) * 0.5f) * spreadDegrees : Random.Range(-2f, 2f);
                 bool crit = Random.value < critChance;
-                float dmg = damage * damageMultiplier * (crit ? critMultiplier : 1f);
+                float dmg = damage * damageMultiplier * bulletDamageShare * (crit ? critMultiplier : 1f);
                 Bullet.Fire(from, Quaternion.Euler(0f, angle, 0f) * direction, dmg, crit, knockback * (crit ? 1.6f : 1f), bulletSpeed, pierce);
             }
 

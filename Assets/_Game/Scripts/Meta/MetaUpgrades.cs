@@ -28,7 +28,7 @@ namespace Duck
             get { int n = 0; for (int i = 0; i < All.Length; i++) n += Level(i); return n; }
         }
 
-        public static float DuckDamageMultiplier => 1f + 0.15f * Level(0);
+        public static float DuckDamageMultiplier => 1f + 0.08f * Level(0);
         public static float BuildingHpMultiplier => 1f + 0.15f * Level(1);
         public static int BonusStartCoins => 2 * Level(2);
         public static int BonusAirstrikeLevels => Level(3);

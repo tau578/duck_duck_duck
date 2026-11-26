@@ -178,8 +178,10 @@ namespace Duck
             switch (s.id)
             {
                 case "double_shot":
+                    // Every extra bullet is weaker: x1.4 / x1.8 damage, then the awakening pierces one enemy.
                     shooter.bulletsPerShot = 1 + Mathf.Min(n, 2);
-                    if (n >= 3) shooter.pierce = 2;
+                    shooter.bulletDamageShare = n <= 1 ? 0.7f : 0.6f;
+                    if (n >= 3) shooter.pierce = 1;
                     break;
                 case "blades":
                     Get<SpinningBlades>(duck).SetLevel(n);
@@ -188,10 +190,10 @@ namespace Duck
                     Get<MeteorSkill>(duck).SetLevel(n);
                     break;
                 case "rapid":
-                    shooter.fireRate = baseFireRate * (1f + 0.15f * n);
+                    shooter.fireRate = baseFireRate * (1f + 0.1f * n);
                     break;
                 case "power":
-                    shooter.damageMultiplier = MetaUpgrades.DuckDamageMultiplier * (1f + 0.15f * n);
+                    shooter.damageMultiplier = MetaUpgrades.DuckDamageMultiplier * (1f + 0.1f * n);
                     break;
                 case "fortify":
                     BuildingHpMultiplier = MetaUpgrades.BuildingHpMultiplier * (1f + 0.25f * n);

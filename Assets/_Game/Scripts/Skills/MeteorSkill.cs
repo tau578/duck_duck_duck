@@ -6,8 +6,8 @@ namespace Duck
     /// <summary>Every few seconds meteors fall on random enemies near the duck: warning ring, fall, explosion.</summary>
     public class MeteorSkill : MonoBehaviour
     {
-        public float interval = 4f;
-        public float damage = 60f;
+        public float interval = 5f;
+        public float damage = 45f;
         public float searchRadius = 12f;
 
         int level, count = 1;
@@ -16,7 +16,7 @@ namespace Duck
         public void SetLevel(int lv)
         {
             level = lv;
-            count = lv <= 1 ? 1 : lv == 2 ? 2 : 4;
+            count = lv <= 1 ? 1 : lv == 2 ? 2 : 3;
             radius = lv >= 3 ? 2.6f : 2f;
         }
 

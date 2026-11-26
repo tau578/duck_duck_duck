@@ -64,6 +64,7 @@ namespace Duck
                     Enemy.HitFromDuckGun = false;
                     Sfx.Play(SfxId.Hit, 0.3f, 0.2f, 0.03f);
                     if (crit) CameraFollow.Shake(0.06f);
+                    damage *= 0.5f; // a pierced bullet hits the next enemy for half
                     if (pierce-- <= 0)
                     {
                         Pool.Despawn(gameObject);
