@@ -33,6 +33,7 @@ namespace Duck
         Vector3 knock;
         float attackTimer, retargetTimer, flashTimer, dieTimer, lunge, walkPhase;
         Building targetBuilding;
+        Ally targetAlly;
         bool chasePlayer;
         Renderer[] renderers;
         Material[] baseMaterials;
@@ -194,7 +195,19 @@ namespace Duck
             bool busy = false;
             var duck = PlayerHealth.Instance;
 
-            if (targetBuilding != null && targetBuilding.IsAlive)
+            if (targetAlly != null && targetAlly.IsAlive && targetBuilding == null)
+            {
+                // Infantry blocks the way: stop and fight it.
+                busy = true;
+                Face(targetAlly.transform.position - pos, dt);
+                if (attackTimer <= 0f)
+                {
+                    attackTimer = Config.attackInterval;
+                    lunge = 1f;
+                    targetAlly.TakeDamage(Config.damage);
+                }
+            }
+            else if (targetBuilding != null && targetBuilding.IsAlive)
             {
                 busy = true;
                 Face(targetBuilding.transform.position - pos, dt);
@@ -236,6 +249,19 @@ namespace Duck
         void FindTarget(Vector3 pos)
         {
             targetBuilding = null;
+            targetAlly = null;
+            if (!Flying)
+            {
+                float bestAlly = Config.attackRange + Ally.Radius + Radius;
+                var allies = Ally.All;
+                for (int i = 0; i < allies.Count; i++)
+                {
+                    Vector3 d = allies[i].transform.position - pos;
+                    d.y = 0f;
+                    float m = d.magnitude;
+                    if (m < bestAlly) { bestAlly = m; targetAlly = allies[i]; }
+                }
+            }
             float best = Config.attackRange + 0.05f;
             var all = Building.All;
             for (int i = 0; i < all.Count; i++)

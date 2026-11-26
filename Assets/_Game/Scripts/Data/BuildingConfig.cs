@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Duck
 {
-    public enum BuildingType { Base, Mine, Tower, Wall }
+    public enum BuildingType { Base, Mine, Tower, Wall, Barracks }
 
     [Serializable]
     public class BuildingLevel
@@ -17,6 +17,10 @@ namespace Duck
         public float fireRate;
         public float range;
         public int shots = 1;
+        [Header("Barracks")]
+        public int allies;
+        public float allyHp;
+        public float allyDamage;
     }
 
     [CreateAssetMenu(menuName = "Duck/Building Config")]

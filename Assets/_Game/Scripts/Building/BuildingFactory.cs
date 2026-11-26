@@ -39,6 +39,7 @@ namespace Duck
                 case BuildingType.Mine: BuildMine(visual, level); break;
                 case BuildingType.Tower: BuildTower(visual, level, b); break;
                 case BuildingType.Wall: BuildWall(visual, level, cfg); break;
+                case BuildingType.Barracks: BuildBarracks(visual, level); break;
             }
 
             b.Init(cfg, level, slot, Height(cfg.type, level) + 0.5f);
@@ -104,6 +105,17 @@ namespace Duck
             muzzle.localPosition = new Vector3(0, 0.05f, 1.05f);
             b.turretHead = head;
             b.muzzle = muzzle;
+        }
+
+        static void BuildBarracks(Transform v, int level)
+        {
+            Color body = level >= 2 ? Stone : Wood;
+            P(PrimitiveType.Cube, v, body, new Vector3(0, 0.55f, 0), new Vector3(1.8f, 1.1f, 1.4f));
+            var roof = P(PrimitiveType.Cube, v, new Color(0.25f, 0.4f, 0.75f), new Vector3(0, 1.25f, 0), new Vector3(1.2f, 1.2f, 1.5f));
+            roof.transform.localRotation = Quaternion.Euler(0, 0, 45f);
+            P(PrimitiveType.Cube, v, Dark, new Vector3(0, 0.4f, 0.71f), new Vector3(0.5f, 0.8f, 0.05f));
+            P(PrimitiveType.Cylinder, v, Dark, new Vector3(-0.7f, 1.9f, 0.5f), new Vector3(0.05f, 0.6f, 0.05f));
+            P(PrimitiveType.Cube, v, new Color(0.35f, 0.6f, 1f), new Vector3(-0.5f, 2.3f, 0.5f), new Vector3(0.4f, 0.25f, 0.03f));
         }
 
         static void BuildWall(Transform v, int level, BuildingConfig cfg)

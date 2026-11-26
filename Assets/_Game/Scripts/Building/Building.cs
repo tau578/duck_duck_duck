@@ -35,6 +35,7 @@ namespace Duck
             bar = WorldBar.Create(transform, barHeight, cfg.type == BuildingType.Base ? 2.4f : 1.5f, new Color(0.3f, 0.85f, 0.3f), true);
             pop = 1f;
             All.Add(this);
+            if (cfg.type == BuildingType.Barracks) gameObject.AddComponent<Barracks>();
         }
 
         void OnDestroy()

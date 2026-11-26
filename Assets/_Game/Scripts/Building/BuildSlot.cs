@@ -10,6 +10,8 @@ namespace Duck
         [Tooltip("Slot appears from this chapter on.")]
         public int minChapter = 1;
         public GameObject marker;
+        [Tooltip("Barracks only: where the squad stands guard.")]
+        public Vector3 rallyPoint;
 
         public int Level { get; private set; }
         public Building Current { get; private set; }
@@ -112,6 +114,8 @@ namespace Duck
             if (Current == null) return;
             Current.Health.HealFull();
             Current.RefreshBar();
+            var barracks = Current.GetComponent<Barracks>();
+            if (barracks != null) barracks.OnDawn();
         }
 
         void Refresh()

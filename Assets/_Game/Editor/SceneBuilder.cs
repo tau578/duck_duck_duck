@@ -33,7 +33,7 @@ namespace Duck.EditorTools
 
         class Data
         {
-            public BuildingConfig baseCfg, mine, tower, wall;
+            public BuildingConfig baseCfg, mine, tower, wall, barracks;
             public EnemyConfig zombie, runner, bat, brute, ogre, beetle, queen;
             public ChapterConfig chapter1, chapter2, chapter3;
         }
@@ -80,13 +80,17 @@ namespace Duck.EditorTools
             // Building slots (fixed places like in the original).
             var slotsRoot = new GameObject("Slots").transform;
             gm.baseSlot = CreateSlot(slotsRoot, data.baseCfg, new Vector3(0, 0, 0), 1);
+            // Chapter 1 starts small: one mine, two tower spots, the wall and one barracks.
             CreateSlot(slotsRoot, data.mine, new Vector3(-4.5f, 0, -1.5f), 0);
-            CreateSlot(slotsRoot, data.mine, new Vector3(4.5f, 0, -1.5f), 0);
             CreateSlot(slotsRoot, data.tower, new Vector3(-3f, 0, 4.5f), 0);
             CreateSlot(slotsRoot, data.tower, new Vector3(3f, 0, 4.5f), 0);
-            CreateSlot(slotsRoot, data.tower, new Vector3(-3f, 0, 8f), 0);
-            CreateSlot(slotsRoot, data.tower, new Vector3(3f, 0, 8f), 0);
             CreateSlot(slotsRoot, data.wall, new Vector3(0, 0, 10.5f), 0);
+            CreateSlot(slotsRoot, data.barracks, new Vector3(-5.5f, 0, 7f), 0).rallyPoint = new Vector3(0f, 0f, 9.2f);
+            // Chapter 2: second mine, front towers, second barracks guarding the east road.
+            CreateSlot(slotsRoot, data.mine, new Vector3(4.5f, 0, -1.5f), 0, 2);
+            CreateSlot(slotsRoot, data.tower, new Vector3(-3f, 0, 8f), 0, 2);
+            CreateSlot(slotsRoot, data.tower, new Vector3(3f, 0, 8f), 0, 2);
+            CreateSlot(slotsRoot, data.barracks, new Vector3(5.5f, 0, 7f), 0, 2).rallyPoint = new Vector3(3.5f, 0f, 13.4f);
             // Chapter 2 opens the east road: more tower spots there.
             CreateSlot(slotsRoot, data.tower, new Vector3(6f, 0, 12f), 0, 2);
             CreateSlot(slotsRoot, data.tower, new Vector3(9f, 0, 17.5f), 0, 2);
@@ -247,11 +251,21 @@ namespace Duck.EditorTools
                 };
             });
 
+            d.barracks = LoadOrCreate<BuildingConfig>($"{DataFolder}/Building_Barracks.asset", reset, c =>
+            {
+                c.type = BuildingType.Barracks; c.displayName = "Казарма"; c.displayNameEn = "Barracks"; c.halfExtents = new Vector2(0.9f, 0.7f); c.wallOnly = false;
+                c.levels = new[]
+                {
+                    new BuildingLevel { cost = 1, hp = 200, allies = 3, allyHp = 60, allyDamage = 7 },
+                    new BuildingLevel { cost = 3, hp = 320, allies = 6, allyHp = 90, allyDamage = 10 },
+                };
+            });
+
             d.zombie = MakeEnemy("Enemy_Zombie", reset, "Зомби", "Zombie", 22, 1.8f, 10, 1f, 0.9f, 1f, new Color(0.45f, 0.65f, 0.35f), 0.2f, 1);
             d.runner = MakeEnemy("Enemy_Runner", reset, "Бегун", "Runner", 14, 3.2f, 6, 0.8f, 0.9f, 0.8f, new Color(0.85f, 0.55f, 0.25f), 0.2f, 1);
             d.bat = MakeEnemy("Enemy_Bat", reset, "Летучая мышь", "Bat", 15, 2.6f, 6, 1f, 0.9f, 0.7f, new Color(0.5f, 0.3f, 0.6f), 0.2f, 1, c => c.flying = true);
             d.brute = MakeEnemy("Enemy_Brute", reset, "Громила в бочке", "Barrel Brute", 420, 1.1f, 25, 1.2f, 1.2f, 1.6f, new Color(0.4f, 0.4f, 0.45f), 1f, 3, c => { c.isElite = true; c.knockResist = 0.7f; c.xp = 5; });
-            d.ogre = MakeEnemy("Enemy_Ogre", reset, "Огр", "Ogre", 6000, 1.0f, 60, 1.5f, 1.6f, 2.6f, new Color(0.3f, 0.45f, 0.25f), 1f, 5, c => { c.isBoss = true; c.knockResist = 0.95f; c.aggroRange = 3.5f; c.xp = 20; });
+            d.ogre = MakeEnemy("Enemy_Ogre", reset, "Огр", "Ogre", 3500, 1.0f, 60, 1.5f, 1.6f, 2.6f, new Color(0.3f, 0.45f, 0.25f), 1f, 5, c => { c.isBoss = true; c.knockResist = 0.95f; c.aggroRange = 3.5f; c.xp = 20; });
 
             d.beetle = MakeEnemy("Enemy_Beetle", reset, "Бронежук", "Armored Beetle", 70, 1.3f, 14, 1.2f, 1f, 1.3f, new Color(0.35f, 0.3f, 0.25f), 0.3f, 1, c => { c.knockResist = 0.6f; c.xp = 2; });
             d.queen = MakeEnemy("Enemy_Queen", reset, "Матка роя", "Swarm Queen", 9000, 0.9f, 70, 1.4f, 1.8f, 3f, new Color(0.5f, 0.25f, 0.55f), 1f, 8, c => { c.isBoss = true; c.knockResist = 0.97f; c.aggroRange = 3.5f; c.xp = 30; });
@@ -265,27 +279,28 @@ namespace Duck.EditorTools
                 c.rewardGears = 60;
                 c.newsRu = "";
                 c.newsEn = "";
+                // Easy to win, but the horde should still press: a light first night, a real push, then the boss.
                 c.waves = new[]
                 {
                     new WaveConfig { kind = WaveKind.Normal, groups = new[]
                     {
-                        new SpawnGroup { enemy = d.zombie, count = 24, pathIndex = 0, interval = 0.55f },
-                        new SpawnGroup { enemy = d.runner, count = 6, pathIndex = 0, interval = 0.5f, delay = 10f },
+                        new SpawnGroup { enemy = d.zombie, count = 16, pathIndex = 0, interval = 0.9f },
+                        new SpawnGroup { enemy = d.runner, count = 4, pathIndex = 0, interval = 0.6f, delay = 12f },
                     }},
                     new WaveConfig { kind = WaveKind.Normal, groups = new[]
                     {
-                        new SpawnGroup { enemy = d.zombie, count = 45, pathIndex = 0, interval = 0.3f },
-                        new SpawnGroup { enemy = d.runner, count = 20, pathIndex = 0, interval = 0.25f, delay = 6f },
-                        new SpawnGroup { enemy = d.brute, count = 1, pathIndex = 0, interval = 0f, delay = 9f },
-                        new SpawnGroup { enemy = d.zombie, count = 40, pathIndex = 0, interval = 0.25f, delay = 16f },
+                        new SpawnGroup { enemy = d.zombie, count = 30, pathIndex = 0, interval = 0.45f },
+                        new SpawnGroup { enemy = d.runner, count = 12, pathIndex = 0, interval = 0.35f, delay = 8f },
+                        new SpawnGroup { enemy = d.brute, count = 1, pathIndex = 0, interval = 0f, delay = 12f },
+                        new SpawnGroup { enemy = d.zombie, count = 20, pathIndex = 0, interval = 0.35f, delay = 18f },
                     }},
                     new WaveConfig { kind = WaveKind.Boss, groups = new[]
                     {
-                        new SpawnGroup { enemy = d.zombie, count = 50, pathIndex = 0, interval = 0.25f },
+                        new SpawnGroup { enemy = d.zombie, count = 30, pathIndex = 0, interval = 0.4f },
                         new SpawnGroup { enemy = d.ogre, count = 1, pathIndex = 0, interval = 0f, delay = 5f },
-                        new SpawnGroup { enemy = d.brute, count = 2, pathIndex = 0, interval = 3f, delay = 8f },
-                        new SpawnGroup { enemy = d.runner, count = 20, pathIndex = 0, interval = 0.25f, delay = 12f },
-                        new SpawnGroup { enemy = d.zombie, count = 40, pathIndex = 0, interval = 0.25f, delay = 18f },
+                        new SpawnGroup { enemy = d.brute, count = 1, pathIndex = 0, interval = 0f, delay = 10f },
+                        new SpawnGroup { enemy = d.runner, count = 15, pathIndex = 0, interval = 0.3f, delay = 14f },
+                        new SpawnGroup { enemy = d.zombie, count = 30, pathIndex = 0, interval = 0.3f, delay = 20f },
                     }},
                 };
             });
