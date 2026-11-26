@@ -15,17 +15,17 @@ MonoBehaviour:
   displayName: "\u0413\u043B\u0430\u0432\u0430 1. \u041F\u0443\u0441\u0442\u043E\u0448\u044C"
   displayNameEn: Chapter 1. Wasteland
   startCoins: 9
-  enemyHpMultiplier: 0.8
+  enemyHpMultiplier: 0.7
   rewardGears: 60
   maxBuildingLevel: 99
   xpScale: 1
   comboCoinsPerNight: 4
   autoLevel: 0
-  airstrikeKills: 50
+  airstrikeKills: 0
   baseIncomeBonus: -1
-  enemyDamageMultiplier: 0.15
-  enemySpeedMultiplier: 0.65
-  bossHpMultiplier: 0.7
+  enemyDamageMultiplier: 0.18
+  enemySpeedMultiplier: 0.7
+  bossHpMultiplier: 0.75
   maxDuckLevel: 6
   xpPerLevel: 190000001900000019000000370000003c000000
   eliteChestPicks: 2
@@ -33,6 +33,7 @@ MonoBehaviour:
   newsEn: 
   waves:
   - kind: 0
+    hpMultiplier: 1
     groups:
     - enemy: {fileID: 11400000, guid: 9174eaf695eff06479afd995c6bb4460, type: 2}
       count: 57
@@ -40,6 +41,7 @@ MonoBehaviour:
       interval: 0.5
       delay: 0
   - kind: 0
+    hpMultiplier: 1
     groups:
     - enemy: {fileID: 11400000, guid: 9174eaf695eff06479afd995c6bb4460, type: 2}
       count: 80
@@ -62,6 +64,7 @@ MonoBehaviour:
       interval: 0.5
       delay: 19
   - kind: 2
+    hpMultiplier: 1
     groups:
     - enemy: {fileID: 11400000, guid: 9174eaf695eff06479afd995c6bb4460, type: 2}
       count: 65

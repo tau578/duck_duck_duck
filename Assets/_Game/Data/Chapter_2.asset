@@ -16,7 +16,7 @@ MonoBehaviour:
     \u043C\u044B\u0448\u0435\u0439"
   displayNameEn: Chapter 2. Night of Bats
   startCoins: 8
-  enemyHpMultiplier: 1.6
+  enemyHpMultiplier: 1.05
   rewardGears: 90
   maxBuildingLevel: 3
   xpScale: 2.36
@@ -24,9 +24,9 @@ MonoBehaviour:
   autoLevel: 1
   airstrikeKills: 0
   baseIncomeBonus: 1
-  enemyDamageMultiplier: 1
-  enemySpeedMultiplier: 1
-  bossHpMultiplier: 1
+  enemyDamageMultiplier: 0.23
+  enemySpeedMultiplier: 0.75
+  bossHpMultiplier: 0.6
   maxDuckLevel: 0
   xpPerLevel: 
   eliteChestPicks: 0
@@ -41,6 +41,7 @@ MonoBehaviour:
     new build spots and level 3 upgrades
   waves:
   - kind: 0
+    hpMultiplier: 1
     groups:
     - enemy: {fileID: 11400000, guid: 9174eaf695eff06479afd995c6bb4460, type: 2}
       count: 24
@@ -63,6 +64,7 @@ MonoBehaviour:
       interval: 0.6
       delay: 15
   - kind: 0
+    hpMultiplier: 1.1
     groups:
     - enemy: {fileID: 11400000, guid: 9174eaf695eff06479afd995c6bb4460, type: 2}
       count: 40
@@ -90,6 +92,7 @@ MonoBehaviour:
       interval: 0.4
       delay: 16
   - kind: 1
+    hpMultiplier: 1.15
     groups:
     - enemy: {fileID: 11400000, guid: 9174eaf695eff06479afd995c6bb4460, type: 2}
       count: 75
@@ -122,6 +125,7 @@ MonoBehaviour:
       interval: 0.3
       delay: 14
   - kind: 2
+    hpMultiplier: 1.2
     groups:
     - enemy: {fileID: 11400000, guid: 9174eaf695eff06479afd995c6bb4460, type: 2}
       count: 86

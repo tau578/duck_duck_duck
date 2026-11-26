@@ -16,7 +16,7 @@ MonoBehaviour:
     \u0444\u0440\u043E\u043D\u0442"
   displayNameEn: Chapter 3. Two Fronts
   startCoins: 10
-  enemyHpMultiplier: 1.7
+  enemyHpMultiplier: 1.22
   rewardGears: 120
   maxBuildingLevel: 99
   xpScale: 2.36
@@ -24,9 +24,9 @@ MonoBehaviour:
   autoLevel: 1
   airstrikeKills: 0
   baseIncomeBonus: 1
-  enemyDamageMultiplier: 1
-  enemySpeedMultiplier: 1
-  bossHpMultiplier: 1
+  enemyDamageMultiplier: 0.4
+  enemySpeedMultiplier: 0.75
+  bossHpMultiplier: 0.6
   maxDuckLevel: 0
   xpPerLevel: 
   eliteChestPicks: 0
@@ -39,6 +39,7 @@ MonoBehaviour:
     skill
   waves:
   - kind: 0
+    hpMultiplier: 1
     groups:
     - enemy: {fileID: 11400000, guid: 9174eaf695eff06479afd995c6bb4460, type: 2}
       count: 30
@@ -51,6 +52,7 @@ MonoBehaviour:
       interval: 0.45
       delay: 3
   - kind: 0
+    hpMultiplier: 1.05
     groups:
     - enemy: {fileID: 11400000, guid: 9174eaf695eff06479afd995c6bb4460, type: 2}
       count: 50
@@ -68,6 +70,7 @@ MonoBehaviour:
       interval: 0.3
       delay: 8
   - kind: 1
+    hpMultiplier: 1.12
     groups:
     - enemy: {fileID: 11400000, guid: 9174eaf695eff06479afd995c6bb4460, type: 2}
       count: 60
@@ -90,6 +93,7 @@ MonoBehaviour:
       interval: 0.3
       delay: 12
   - kind: 1
+    hpMultiplier: 1.2
     groups:
     - enemy: {fileID: 11400000, guid: 9174eaf695eff06479afd995c6bb4460, type: 2}
       count: 70
@@ -112,6 +116,7 @@ MonoBehaviour:
       interval: 3
       delay: 10
   - kind: 2
+    hpMultiplier: 1.28
     groups:
     - enemy: {fileID: 11400000, guid: 9174eaf695eff06479afd995c6bb4460, type: 2}
       count: 70
