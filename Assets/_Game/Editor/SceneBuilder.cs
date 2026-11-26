@@ -215,9 +215,9 @@ namespace Duck.EditorTools
                 c.type = BuildingType.Base; c.displayName = "База"; c.displayNameEn = "Base"; c.halfExtents = new Vector2(1.5f, 1.4f); c.wallOnly = false;
                 c.levels = new[]
                 {
-                    new BuildingLevel { cost = 0, hp = 350, income = 4 },
-                    new BuildingLevel { cost = 8, hp = 550, income = 7 },
-                    new BuildingLevel { cost = 12, hp = 850, income = 12 },
+                    new BuildingLevel { cost = 0, hp = 700, income = 4 },
+                    new BuildingLevel { cost = 8, hp = 950, income = 7 },
+                    new BuildingLevel { cost = 12, hp = 1300, income = 12 },
                 };
             });
             d.mine = LoadOrCreate<BuildingConfig>($"{DataFolder}/Building_Mine.asset", reset, c =>
@@ -309,7 +309,7 @@ namespace Duck.EditorTools
             {
                 c.displayName = "Глава 2. Ночь летучих мышей";
                 c.displayNameEn = "Chapter 2. Night of Bats";
-                c.startCoins = 8;
+                c.startCoins = 9;
                 c.enemyHpMultiplier = 1.4f;
                 c.rewardGears = 90;
                 c.newsRu = "вторая дорога с востока, летучие мыши летят над стеной, навык «Вращающиеся лезвия», 3 новых места для построек";
