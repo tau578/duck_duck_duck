@@ -15,8 +15,8 @@ MonoBehaviour:
   displayName: "\u0413\u043B\u0430\u0432\u0430 2. \u041D\u043E\u0447\u044C \u043B\u0435\u0442\u0443\u0447\u0438\u0445
     \u043C\u044B\u0448\u0435\u0439"
   displayNameEn: Chapter 2. Night of Bats
-  startCoins: 9
-  enemyHpMultiplier: 1.4
+  startCoins: 8
+  enemyHpMultiplier: 1.6
   rewardGears: 90
   newsRu: "\u0432\u0442\u043E\u0440\u0430\u044F \u0434\u043E\u0440\u043E\u0433\u0430
     \u0441 \u0432\u043E\u0441\u0442\u043E\u043A\u0430, \u043B\u0435\u0442\u0443\u0447\u0438\u0435
@@ -52,12 +52,12 @@ MonoBehaviour:
   - kind: 0
     groups:
     - enemy: {fileID: 11400000, guid: 9174eaf695eff06479afd995c6bb4460, type: 2}
-      count: 46
+      count: 53
       pathIndex: 0
       interval: 0.3
       delay: 0
     - enemy: {fileID: 11400000, guid: 9174eaf695eff06479afd995c6bb4460, type: 2}
-      count: 38
+      count: 44
       pathIndex: 1
       interval: 0.3
       delay: 4
@@ -67,24 +67,24 @@ MonoBehaviour:
       interval: 0
       delay: 8
     - enemy: {fileID: 11400000, guid: 75e0e1b25de7b5a4abfe99d0ef8d0414, type: 2}
-      count: 22
+      count: 25
       pathIndex: 1
       interval: 0.28
       delay: 10
     - enemy: {fileID: 11400000, guid: 86e8559952c41e94a8377d7f0872ea04, type: 2}
-      count: 15
+      count: 17
       pathIndex: 0
       interval: 0.35
       delay: 14
   - kind: 1
     groups:
     - enemy: {fileID: 11400000, guid: 9174eaf695eff06479afd995c6bb4460, type: 2}
-      count: 65
+      count: 75
       pathIndex: 0
       interval: 0.23
       delay: 0
     - enemy: {fileID: 11400000, guid: 9174eaf695eff06479afd995c6bb4460, type: 2}
-      count: 55
+      count: 63
       pathIndex: 1
       interval: 0.23
       delay: 3
@@ -99,19 +99,19 @@ MonoBehaviour:
       interval: 4
       delay: 10
     - enemy: {fileID: 11400000, guid: 75e0e1b25de7b5a4abfe99d0ef8d0414, type: 2}
-      count: 25
+      count: 29
       pathIndex: 0
       interval: 0.3
       delay: 12
     - enemy: {fileID: 11400000, guid: 86e8559952c41e94a8377d7f0872ea04, type: 2}
-      count: 20
+      count: 23
       pathIndex: 1
       interval: 0.3
       delay: 14
   - kind: 2
     groups:
     - enemy: {fileID: 11400000, guid: 9174eaf695eff06479afd995c6bb4460, type: 2}
-      count: 75
+      count: 86
       pathIndex: 0
       interval: 0.2
       delay: 0
@@ -121,22 +121,27 @@ MonoBehaviour:
       interval: 0
       delay: 6
     - enemy: {fileID: 11400000, guid: 9174eaf695eff06479afd995c6bb4460, type: 2}
-      count: 75
+      count: 86
       pathIndex: 1
       interval: 0.2
       delay: 3
     - enemy: {fileID: 11400000, guid: a54f9b4d72a233e4192d90b6c8632664, type: 2}
-      count: 3
+      count: 4
       pathIndex: 1
       interval: 4
       delay: 10
+    - enemy: {fileID: 11400000, guid: a54f9b4d72a233e4192d90b6c8632664, type: 2}
+      count: 1
+      pathIndex: 0
+      interval: 0
+      delay: 12
     - enemy: {fileID: 11400000, guid: 75e0e1b25de7b5a4abfe99d0ef8d0414, type: 2}
-      count: 20
+      count: 23
       pathIndex: 1
       interval: 0.3
       delay: 14
     - enemy: {fileID: 11400000, guid: 86e8559952c41e94a8377d7f0872ea04, type: 2}
-      count: 30
+      count: 34
       pathIndex: 0
       interval: 0.28
       delay: 16
