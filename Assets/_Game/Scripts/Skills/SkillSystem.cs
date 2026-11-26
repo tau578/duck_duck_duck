@@ -91,6 +91,18 @@ namespace Duck
             TryShowChoice();
         }
 
+        void Update()
+        {
+            // The last kill can level the duck up in the same frame the chapter ends: never keep a skill choice over the result screen.
+            if (!showing) return;
+            var gm = GameManager.Instance;
+            if (gm == null || (gm.Phase != GamePhase.Victory && gm.Phase != GamePhase.Defeat)) return;
+            if (picker != null) picker.Cancel();
+            showing = false;
+            pendingChoices = 0;
+            TimeControl.Resume();
+        }
+
         void TryShowChoice()
         {
             if (showing || pendingChoices <= 0 || picker == null) return;

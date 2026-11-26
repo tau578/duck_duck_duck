@@ -61,6 +61,14 @@ namespace Duck
             for (int i = 0; i < cards.Length; i++) cards[i].transform.localScale = Vector3.one * s;
         }
 
+        /// <summary>Close without picking (the run ended while the choice was open).</summary>
+        public void Cancel()
+        {
+            options = null;
+            onPick = null;
+            gameObject.SetActive(false);
+        }
+
         void Pick(int index)
         {
             if (options == null || index >= options.Count) return;
