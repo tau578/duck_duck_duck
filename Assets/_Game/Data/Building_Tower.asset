@@ -25,6 +25,9 @@ MonoBehaviour:
     fireRate: 1.6
     range: 7.5
     shots: 1
+    allies: 0
+    allyHp: 0
+    allyDamage: 0
   - cost: 2
     hp: 200
     income: 0
@@ -32,6 +35,9 @@ MonoBehaviour:
     fireRate: 2
     range: 8
     shots: 1
+    allies: 0
+    allyHp: 0
+    allyDamage: 0
   - cost: 4
     hp: 300
     income: 0
@@ -39,3 +45,6 @@ MonoBehaviour:
     fireRate: 2
     range: 8.5
     shots: 3
+    allies: 0
+    allyHp: 0
+    allyDamage: 0

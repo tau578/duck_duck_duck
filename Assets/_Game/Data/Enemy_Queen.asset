@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Duck.EnemyConfig
   displayName: "\u041C\u0430\u0442\u043A\u0430 \u0440\u043E\u044F"
   displayNameEn: Swarm Queen
-  maxHp: 9000
+  maxHp: 7000
   speed: 0.9
   damage: 70
   attackInterval: 1.4

@@ -25,6 +25,9 @@ MonoBehaviour:
     fireRate: 0
     range: 0
     shots: 1
+    allies: 0
+    allyHp: 0
+    allyDamage: 0
   - cost: 6
     hp: 220
     income: 5
@@ -32,3 +35,6 @@ MonoBehaviour:
     fireRate: 0
     range: 0
     shots: 1
+    allies: 0
+    allyHp: 0
+    allyDamage: 0
