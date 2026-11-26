@@ -29,17 +29,24 @@ namespace Duck
 
         public SkillPicker picker;
         public int maxLevel = 15;
+        public int MaxLevel => Chapter != null && Chapter.maxDuckLevel > 0 ? Chapter.maxDuckLevel : maxLevel;
+        static ChapterConfig Chapter => GameManager.Instance != null ? GameManager.Instance.chapter : null;
+        bool eliteChestOpened;
 
         public int Level { get; private set; } = 1;
         public int Xp { get; private set; }
-        /// <summary>First level after ~10 kills, then x1.25 per level (analysis 10.6).</summary>
-        public int XpToNext => Mathf.RoundToInt(10f * XpScale * Mathf.Pow(1.25f, Level - 1));
-        static float XpScale
+        /// <summary>The chapter's XP table if it has one, otherwise first level after ~10 kills, then x1.25 per level.</summary>
+        public int XpToNext
         {
             get
             {
-                var gm = GameManager.Instance;
-                return gm != null && gm.chapter != null ? gm.chapter.xpScale : 1f;
+                var ch = Chapter;
+                float scale = ch != null ? ch.xpScale : 1f;
+                var table = ch != null ? ch.xpPerLevel : null;
+                float need = table != null && table.Length > 0
+                    ? table[Mathf.Min(Level - 1, table.Length - 1)]
+                    : 10f * Mathf.Pow(1.25f, Level - 1);
+                return Mathf.Max(1, Mathf.RoundToInt(need * scale));
             }
         }
 
@@ -87,9 +94,16 @@ namespace Duck
 
         void OnEnemyKilled(Enemy e)
         {
-            if (Level >= maxLevel) return;
+            if (e.Config.isElite && !eliteChestOpened && Chapter != null && Chapter.eliteChestPicks > 0)
+            {
+                eliteChestOpened = true;
+                pendingChoices += Chapter.eliteChestPicks;
+                HUD.Instance?.Banner(Loc.T("banner.chest"), new Color(1f, 0.85f, 0.2f), 2f);
+                TryShowChoice();
+            }
+            if (Level >= MaxLevel) return;
             Xp += Mathf.Max(1, e.Config.xp);
-            while (Xp >= XpToNext && Level < maxLevel)
+            while (Xp >= XpToNext && Level < MaxLevel)
             {
                 Xp -= XpToNext;
                 Level++;

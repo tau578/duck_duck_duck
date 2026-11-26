@@ -274,40 +274,45 @@ namespace Duck.EditorTools
             {
                 c.displayName = "Глава 1. Пустошь";
                 c.displayNameEn = "Chapter 1. Wasteland";
-                c.startCoins = 7;
-                c.enemyHpMultiplier = 1f;
+                // Curve measured on the original's first chapter (docs/chapter1_balance.md).
+                c.startCoins = 9;               // original: 10, minus 2 for the base that we give for free, plus 1 for our pricier mine
+                c.enemyHpMultiplier = 0.8f;     // zombie 17.6 HP = 2 duck hits
+                c.enemyDamageMultiplier = 0.15f; // tutorial: the original barely scratches the duck and the base
+                c.enemySpeedMultiplier = 0.65f; // the horde is met far from the base, as in the original
+                c.bossHpMultiplier = 0.7f;      // boss lives about 30-50 s
                 c.rewardGears = 60;
                 c.maxBuildingLevel = 99;
-                // Chapter 1 = the block11 tuning Сергей liked: no auto-leveling, block11 XP, combo coins and airstrike.
                 c.xpScale = 1f;
+                c.xpPerLevel = new[] { 25, 25, 25, 55, 60 };
+                c.maxDuckLevel = 6;             // reached at the start of the boss night
+                c.eliteChestPicks = 2;
                 c.comboCoinsPerNight = 4;
                 c.autoLevel = false;
-                c.airstrikeKills = 25;
-                c.baseIncomeBonus = 0;
+                c.airstrikeKills = 50;          // twice the enemies, so twice the charge
+                c.baseIncomeBonus = -1;         // base 3 + mine 3 = 6 coins per dawn
                 c.newsRu = "";
                 c.newsEn = "";
-                // Easy to win, but the horde should still press: a light first night, a real push, then the boss.
+                // 57 -> 121 -> 172 enemies, nights of about 35 / 40 / 50 s, elite on night 2, boss 18 s into night 3.
                 c.waves = new[]
                 {
                     new WaveConfig { kind = WaveKind.Normal, groups = new[]
                     {
-                        new SpawnGroup { enemy = d.zombie, count = 18, pathIndex = 0, interval = 0.8f },
-                        new SpawnGroup { enemy = d.runner, count = 4, pathIndex = 0, interval = 0.6f, delay = 12f },
+                        new SpawnGroup { enemy = d.zombie, count = 57, pathIndex = 0, interval = 0.5f },
                     }},
                     new WaveConfig { kind = WaveKind.Normal, groups = new[]
                     {
-                        new SpawnGroup { enemy = d.zombie, count = 32, pathIndex = 0, interval = 0.42f },
-                        new SpawnGroup { enemy = d.runner, count = 14, pathIndex = 0, interval = 0.32f, delay = 8f },
-                        new SpawnGroup { enemy = d.brute, count = 1, pathIndex = 0, interval = 0f, delay = 12f },
-                        new SpawnGroup { enemy = d.zombie, count = 22, pathIndex = 0, interval = 0.33f, delay = 18f },
+                        new SpawnGroup { enemy = d.zombie, count = 80, pathIndex = 0, interval = 0.3f },
+                        new SpawnGroup { enemy = d.zombie, count = 20, pathIndex = 0, interval = 0.5f, delay = 6f },
+                        new SpawnGroup { enemy = d.brute, count = 1, pathIndex = 0, interval = 0f, delay = 15f },
+                        new SpawnGroup { enemy = d.runner, count = 20, pathIndex = 0, interval = 0.5f, delay = 19f },
                     }},
                     new WaveConfig { kind = WaveKind.Boss, groups = new[]
                     {
-                        new SpawnGroup { enemy = d.zombie, count = 34, pathIndex = 0, interval = 0.36f },
-                        new SpawnGroup { enemy = d.ogre, count = 1, pathIndex = 0, interval = 0f, delay = 5f },
-                        new SpawnGroup { enemy = d.brute, count = 2, pathIndex = 0, interval = 5f, delay = 10f },
-                        new SpawnGroup { enemy = d.runner, count = 17, pathIndex = 0, interval = 0.3f, delay = 14f },
-                        new SpawnGroup { enemy = d.zombie, count = 34, pathIndex = 0, interval = 0.29f, delay = 20f },
+                        new SpawnGroup { enemy = d.zombie, count = 65, pathIndex = 0, interval = 0.42f },
+                        new SpawnGroup { enemy = d.zombie, count = 65, pathIndex = 0, interval = 0.42f, delay = 3f },
+                        new SpawnGroup { enemy = d.brute, count = 1, pathIndex = 0, interval = 0f, delay = 6f },
+                        new SpawnGroup { enemy = d.runner, count = 40, pathIndex = 0, interval = 0.45f, delay = 12f },
+                        new SpawnGroup { enemy = d.ogre, count = 1, pathIndex = 0, interval = 0f, delay = 18f },
                     }},
                 };
             });

@@ -179,7 +179,7 @@ namespace Duck
             var sk = SkillSystem.Instance;
             if (sk != null && xpFill != null)
             {
-                bool max = sk.Level >= sk.maxLevel;
+                bool max = sk.Level >= sk.MaxLevel;
                 xpFill.localScale = new Vector3(max ? 1f : Mathf.Clamp01(sk.Xp / (float)sk.XpToNext), 1f, 1f);
                 levelText.text = max ? $"Lv. MAX" : Loc.F("hud.level", sk.Level, sk.Xp, sk.XpToNext);
             }

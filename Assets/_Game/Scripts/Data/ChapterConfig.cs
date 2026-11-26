@@ -55,6 +55,18 @@ namespace Duck
         public int airstrikeKills = 0;
         [Tooltip("Extra coins the base pays at dawn in this chapter.")]
         public int baseIncomeBonus = 0;
+        [Tooltip("Enemy damage multiplier for this chapter.")]
+        public float enemyDamageMultiplier = 1f;
+        [Tooltip("Enemy walking speed multiplier for this chapter.")]
+        public float enemySpeedMultiplier = 1f;
+        [Tooltip("Extra HP multiplier for the boss only.")]
+        public float bossHpMultiplier = 1f;
+        [Tooltip("Highest duck level in a battle; 0 = the SkillSystem default.")]
+        public int maxDuckLevel = 0;
+        [Tooltip("XP for each duck level (the last value repeats); empty = the default curve.")]
+        public int[] xpPerLevel = new int[0];
+        [Tooltip("Free skill picks for the first elite killed in a battle (the original's elite chest).")]
+        public int eliteChestPicks = 0;
         [TextArea] public string newsRu;
         [TextArea] public string newsEn;
         public string News => Loc.Pick(newsRu, newsEn);

@@ -22,6 +22,8 @@ namespace Duck
         public EnemyConfig Config { get; private set; }
         public float Hp { get; private set; }
         public float MaxHp { get; private set; }
+        public float Damage { get; private set; }
+        float moveSpeed;
         public bool IsAlive => Hp > 0f;
         public bool Flying => Config != null && Config.flying;
         public float Radius { get; private set; } = 0.4f;
@@ -41,9 +43,11 @@ namespace Duck
         WorldBar bar;
         float baseY;
 
-        public void Init(EnemyConfig cfg, EnemyPath road, float hpMultiplier)
+        public void Init(EnemyConfig cfg, EnemyPath road, float hpMultiplier, float damageMultiplier = 1f, float speedMultiplier = 1f)
         {
             Config = cfg;
+            Damage = cfg.damage * damageMultiplier;
+            moveSpeed = cfg.speed * speedMultiplier;
             MaxHp = cfg.maxHp * hpMultiplier;
             Hp = MaxHp;
             Radius = 0.4f * cfg.scale;
@@ -204,7 +208,7 @@ namespace Duck
                 {
                     attackTimer = Config.attackInterval;
                     lunge = 1f;
-                    targetAlly.TakeDamage(Config.damage);
+                    targetAlly.TakeDamage(Damage);
                 }
             }
             else if (targetBuilding != null && targetBuilding.IsAlive)
@@ -215,7 +219,7 @@ namespace Duck
                 {
                     attackTimer = Config.attackInterval;
                     lunge = 1f;
-                    targetBuilding.TakeDamage(Config.damage);
+                    targetBuilding.TakeDamage(Damage);
                 }
             }
             else if (chasePlayer && duck != null && duck.IsAlive)
@@ -230,7 +234,7 @@ namespace Duck
                     {
                         attackTimer = Config.attackInterval;
                         lunge = 1f;
-                        duck.TakeDamage(Config.damage);
+                        duck.TakeDamage(Damage);
                     }
                 }
                 else
@@ -309,7 +313,7 @@ namespace Duck
         {
             if (to.sqrMagnitude < 0.0001f) return;
             Vector3 dir = to.normalized;
-            pos += dir * (Config.speed * SpeedMultiplier * dt);
+            pos += dir * (moveSpeed * SpeedMultiplier * dt);
             Face(dir, dt);
         }
 

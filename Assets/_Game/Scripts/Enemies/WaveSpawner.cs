@@ -64,7 +64,11 @@ namespace Duck
             {
                 Vector3 jitter = new Vector3(Random.Range(-1.2f, 1.2f), 0f, Random.Range(-0.8f, 0.8f));
                 var go = Pool.Spawn(GameAssets.I.enemyPrefab, road.Spawn + jitter, Quaternion.identity);
-                go.GetComponent<Enemy>().Init(g.enemy, road, NightHpMultiplier);
+                var gm = GameManager.Instance;
+                var ch = gm != null ? gm.chapter : null;
+                go.GetComponent<Enemy>().Init(g.enemy, road,
+                    NightHpMultiplier * (ch != null && g.enemy.isBoss ? ch.bossHpMultiplier : 1f),
+                    ch != null ? ch.enemyDamageMultiplier : 1f, ch != null ? ch.enemySpeedMultiplier : 1f);
                 if (g.interval > 0f) yield return new WaitForSeconds(g.interval);
             }
             running--;
