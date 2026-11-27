@@ -397,8 +397,8 @@ d.chapter3 = LoadOrCreate<ChapterConfig>($"{DataFolder}/Chapter_3.asset", reset,
                 c.autoLevel = true;
                 c.airstrikeKills = 0;
                 c.baseIncomeBonus = 0;
-                c.newsRu = "третья дорога с запада, бронежуки держат удар, босс Матка роя, навык «Метеор»";
-                c.newsEn = "a third road from the west, armored beetles, the Swarm Queen boss, Meteor skill";
+                c.newsRu = "третья дорога с запада, бронежуки держат удар, босс Матка роя";
+                c.newsEn = "a third road from the west, armored beetles, the Swarm Queen boss";
                 c.waves = new[]
                 {
                     new WaveConfig { kind = WaveKind.Normal, groups = new[]

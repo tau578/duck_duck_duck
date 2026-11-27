@@ -64,6 +64,17 @@ namespace Duck
         /// <summary>"Last stand": a battered base takes less damage, so a close call can still be turned around.</summary>
         const float LastStandBelow = 0.35f, LastStandDamage = 0.3f;
 
+        /// <summary>Damage it can still take, "last stand" included.</summary>
+        public float EffectiveHp
+        {
+            get
+            {
+                if (Config.type != BuildingType.Base) return Health.Current;
+                float stand = Mathf.Min(Health.Current, Health.max * LastStandBelow);
+                return Health.Current - stand + stand / LastStandDamage;
+            }
+        }
+
         public void TakeDamage(float amount)
         {
             if (Config.type == BuildingType.Base && Health.Normalized < LastStandBelow) amount *= LastStandDamage;

@@ -24,6 +24,10 @@ namespace Duck
         public Transform gun;
         public GameObject muzzleFlash;
 
+        /// <summary>Expected damage per second with every bullet hitting.</summary>
+        public float Dps => damage * damageMultiplier * bulletDamageShare * bulletsPerShot * fireRate
+            * (1f + critChance * (critMultiplier - 1f));
+
         DuckController duck;
         Enemy target;
         float fireTimer, retarget, flashTimer, recoil;

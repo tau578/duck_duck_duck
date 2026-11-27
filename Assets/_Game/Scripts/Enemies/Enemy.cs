@@ -36,6 +36,10 @@ namespace Duck
         public float Mass { get; private set; } = 1f;
         /// <summary>The building this enemy is attacking right now, if any.</summary>
         public Building TargetBuilding => targetBuilding;
+        /// <summary>Current walking speed.</summary>
+        public float Speed => moveSpeed * SpeedMultiplier;
+        /// <summary>Running total of enemy HP taken by all sources (only differences are meaningful).</summary>
+        public static float DamageDealt { get; private set; }
 
         Vector3[] path;
         int waypoint;
@@ -113,6 +117,7 @@ namespace Duck
         public void TakeHit(float damage, Vector3 direction, bool crit, float knockback)
         {
             if (!IsAlive) return;
+            DamageDealt += Mathf.Min(damage, Hp);
             Hp -= damage;
             DamageNumbers.Damage(transform.position + Vector3.up * (baseY + Config.scale), damage, crit);
             Flash();

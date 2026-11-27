@@ -35,6 +35,7 @@ namespace Duck
         /// <summary>The elite chest: its free picks come after its own animation and before level-up picks.</summary>
         bool eliteChestOpened, chestToReveal;
         int chestPicks, chestTotal;
+        bool rescue;
         ChestReveal reveal;
 
         public int Level { get; private set; } = 1;
@@ -58,7 +59,6 @@ namespace Duck
         {
             new SkillDef { id = "double_shot", maxStars = 3, awakenAt = 3, color = new Color(1f, 0.75f, 0.2f) },
             new SkillDef { id = "blades", maxStars = 3, awakenAt = 3, minChapter = 2, color = new Color(0.75f, 0.8f, 0.9f) },
-            new SkillDef { id = "meteor", maxStars = 3, minChapter = 3, color = new Color(1f, 0.45f, 0.2f) },
             new SkillDef { id = "rapid", maxStars = 3, passive = true, color = new Color(0.4f, 0.8f, 1f) },
             new SkillDef { id = "power", maxStars = 3, passive = true, color = new Color(1f, 0.35f, 0.35f) },
             new SkillDef { id = "fortify", maxStars = 2, passive = true, color = new Color(0.6f, 0.5f, 0.35f) },
@@ -80,6 +80,7 @@ namespace Duck
         void Start()
         {
             EnemyManager.EnemyKilled += OnEnemyKilled;
+            gameObject.AddComponent<RescueChest>();
             var duck = DuckController.Instance;
             shooter = duck != null ? duck.GetComponent<AutoShooter>() : null;
             if (shooter != null)
@@ -95,6 +96,17 @@ namespace Duck
         }
 
         public int Stars(SkillDef s) => stars.TryGetValue(s.id, out int n) ? n : 0;
+
+        /// <summary>A chest with two bonuses for a losing night: the duck's health first, then a free choice.</summary>
+        public bool GrantRescueChest()
+        {
+            if (showing || chestPicks > 0 || picker == null) return false;
+            rescue = true;
+            chestPicks = chestTotal = 2;
+            chestToReveal = true;
+            TryShowChoice();
+            return true;
+        }
 
         void OnEnemyKilled(Enemy e)
         {
@@ -128,6 +140,7 @@ namespace Duck
             if (reveal != null) reveal.Close();
             showing = false;
             pendingChoices = chestPicks = 0;
+            rescue = false;
             chestToReveal = false;
             TimeControl.Resume();
         }
@@ -138,8 +151,9 @@ namespace Duck
             var gm = GameManager.Instance;
             if (gm != null && (gm.Phase == GamePhase.Victory || gm.Phase == GamePhase.Defeat)) return;
 
-            var options = PickOptions(3);
-            if (options.Count == 0) { pendingChoices = chestPicks = 0; chestToReveal = false; return; }
+            bool healthFirst = rescue && chestPicks == chestTotal;
+            var options = healthFirst ? All.FindAll(s => s.id == "vitality") : PickOptions(3, rescue && chestPicks > 0 ? "vitality" : null);
+            if (options.Count == 0) { pendingChoices = chestPicks = 0; chestToReveal = rescue = false; return; }
             showing = true;
             TimeControl.Pause();
 
@@ -162,6 +176,7 @@ namespace Duck
             {
                 heading = Loc.F("chest.pick", chestTotal - chestPicks + 1, chestTotal);
                 chestPicks--;
+                if (chestPicks == 0) rescue = false;
             }
             else
             {
@@ -171,11 +186,11 @@ namespace Duck
             picker.Show(options, this, OnPicked, heading);
         }
 
-        List<SkillDef> PickOptions(int count)
+        List<SkillDef> PickOptions(int count, string without = null)
         {
             var pool = new List<SkillDef>();
             int chapter = GameManager.Instance != null ? GameManager.Instance.ChapterNumber : 1;
-            foreach (var s in All) if (Stars(s) < s.maxStars && s.minChapter <= chapter) pool.Add(s);
+            foreach (var s in All) if (s.id != without && Stars(s) < s.maxStars && s.minChapter <= chapter) pool.Add(s);
             var result = new List<SkillDef>();
             while (result.Count < count && pool.Count > 0)
             {
@@ -218,9 +233,6 @@ namespace Duck
                 case "blades":
                     Get<SpinningBlades>(duck).SetLevel(n);
                     break;
-                case "meteor":
-                    Get<MeteorSkill>(duck).SetLevel(n);
-                    break;
                 case "rapid":
                     shooter.fireRate = baseFireRate * (1f + 0.1f * n);
                     break;
@@ -232,7 +244,10 @@ namespace Duck
                     foreach (var b in Building.All) if (b.IsAlive) b.ApplyHpMultiplier();
                     break;
                 case "vitality":
-                    PlayerHealth.Instance?.SetMaxHp(100f + 25f * n);
+                    var health = PlayerHealth.Instance;
+                    if (health == null) break;
+                    health.SetMaxHp(100f + 25f * n);
+                    if (health.IsGhost) health.HealFull(); // the bonus brings a fallen duck back at once
                     break;
             }
         }

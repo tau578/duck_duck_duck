@@ -154,10 +154,6 @@ namespace Duck
             ["skill.blades.1"] = ("2 лезвия кружат вокруг утки", "2 blades orbit the duck"),
             ["skill.blades.2"] = ("+1 лезвие, радиус больше", "+1 blade, wider orbit"),
             ["skill.blades.3"] = ("Золотые лезвия: урон +60%", "Golden blades: +60% damage"),
-            ["skill.meteor.name"] = ("Метеор", "Meteor"),
-            ["skill.meteor.1"] = ("Раз в 8 с метеор падает на врага", "Every 8s a meteor hits an enemy"),
-            ["skill.meteor.2"] = ("+1 метеор", "+1 meteor"),
-            ["skill.meteor.3"] = ("Метеорный дождь: 3 метеора, шире взрыв", "Meteor shower: 3 meteors, bigger blast"),
             ["skill.rapid.name"] = ("Скорострельность", "Rapid Fire"),
             ["skill.rapid.1"] = ("+10% скорость стрельбы", "+10% fire rate"),
             ["skill.rapid.2"] = ("+10% скорость стрельбы", "+10% fire rate"),
@@ -172,6 +168,8 @@ namespace Duck
             ["skill.vitality.name"] = ("Живучесть", "Vitality"),
             ["skill.vitality.1"] = ("+25 ОЗ утки, полное лечение", "+25 duck HP, full heal"),
             ["skill.vitality.2"] = ("+25 ОЗ утки, полное лечение", "+25 duck HP, full heal"),
+            ["skill.vitality.3"] = ("+25 ОЗ утки, полное лечение", "+25 duck HP, full heal"),
+            ["skill.vitality.4"] = ("+25 ОЗ утки, полное лечение", "+25 duck HP, full heal"),
         };
     }
 }

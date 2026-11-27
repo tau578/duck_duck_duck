@@ -31,6 +31,54 @@ namespace Duck
         int running;
         public bool IsSpawning => running > 0;
 
+        /// <summary>Enemies of one group still to come.</summary>
+        class Pending
+        {
+            public SpawnGroup group;
+            public int left;
+            public float nextAt;
+        }
+
+        readonly List<Pending> pending = new List<Pending>();
+
+        public int PendingCount
+        {
+            get
+            {
+                int n = 0;
+                foreach (var p in pending) n += p.left;
+                return n;
+            }
+        }
+
+        /// <summary>Calls back for every enemy yet to spawn: config, seconds until it appears, seconds it walks, HP, damage.</summary>
+        public void ForEachPending(System.Action<EnemyConfig, float, float, float, float> visit)
+        {
+            var gm = GameManager.Instance;
+            var ch = gm != null ? gm.chapter : null;
+            foreach (var p in pending)
+            {
+                var cfg = p.group.enemy;
+                var road = Road(p.group);
+                float length = 0f;
+                for (int i = 1; i < road.points.Length; i++) length += Vector3.Distance(road.points[i - 1], road.points[i]);
+                float walk = length / Mathf.Max(0.1f, cfg.speed * (ch != null ? ch.enemySpeedMultiplier : 1f) * Enemy.SpeedMultiplier);
+                float hp = cfg.maxHp * HpMultiplierFor(cfg);
+                float damage = cfg.damage * (ch != null ? ch.enemyDamageMultiplier : 1f);
+                float wait = Mathf.Max(0f, p.nextAt - Time.time);
+                for (int i = 0; i < p.left; i++) visit(cfg, wait + i * p.group.interval, walk, hp, damage);
+            }
+        }
+
+        EnemyPath Road(SpawnGroup g) => paths[Mathf.Clamp(g.pathIndex, 0, paths.Count - 1)];
+
+        float HpMultiplierFor(EnemyConfig cfg)
+        {
+            var gm = GameManager.Instance;
+            var ch = gm != null ? gm.chapter : null;
+            return NightHpMultiplier * (ch != null && cfg.isBoss ? ch.bossHpMultiplier : 1f);
+        }
+
         public void StartWave(WaveConfig wave)
         {
             var gm = GameManager.Instance;
@@ -43,6 +91,7 @@ namespace Duck
             float countScale = 1f + countPerWorkshopLevel * workshop;
 
             NightEnemyCount = 0;
+            pending.Clear();
             foreach (var g in wave.groups)
             {
                 int count = ScaledCount(g, countScale);
@@ -61,6 +110,8 @@ namespace Duck
         IEnumerator SpawnGroup(SpawnGroup g, int count)
         {
             running++;
+            var coming = new Pending { group = g, left = count, nextAt = Time.time + g.delay };
+            pending.Add(coming);
             bool boss = g.enemy != null && g.enemy.isBoss;
             float warning = boss ? Mathf.Min(g.delay, BossWarningLead) : 0f;
             if (g.delay > warning) yield return new WaitForSeconds(g.delay - warning);
@@ -69,7 +120,7 @@ namespace Duck
                 GameManager.Instance?.AnnounceBoss();
                 if (warning > 0f) yield return new WaitForSeconds(warning);
             }
-            var road = paths[Mathf.Clamp(g.pathIndex, 0, paths.Count - 1)];
+            var road = Road(g);
             for (int i = 0; i < count; i++)
             {
                 Vector3 jitter = new Vector3(Random.Range(-1.2f, 1.2f), 0f, Random.Range(-0.8f, 0.8f));
@@ -77,8 +128,10 @@ namespace Duck
                 var gm = GameManager.Instance;
                 var ch = gm != null ? gm.chapter : null;
                 go.GetComponent<Enemy>().Init(g.enemy, road,
-                    NightHpMultiplier * (ch != null && g.enemy.isBoss ? ch.bossHpMultiplier : 1f),
+                    HpMultiplierFor(g.enemy),
                     ch != null ? ch.enemyDamageMultiplier : 1f, ch != null ? ch.enemySpeedMultiplier : 1f);
+                coming.left--;
+                coming.nextAt = Time.time + g.interval;
                 if (g.interval > 0f) yield return new WaitForSeconds(g.interval);
             }
             running--;
@@ -88,6 +141,7 @@ namespace Duck
         {
             StopAllCoroutines();
             running = 0;
+            pending.Clear();
         }
     }
 }
