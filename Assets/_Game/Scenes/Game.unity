@@ -9349,8 +9349,8 @@ MonoBehaviour:
   hpMultiplier: 1
   hpPerDuckLevel: 0.03
   freeDuckLevels: 3
-  hpPerWorkshopLevel: 0.06
-  countPerWorkshopLevel: 0.04
+  hpPerWorkshopLevel: 0.03
+  countPerWorkshopLevel: 0
 --- !u!114 &960974599
 MonoBehaviour:
   m_ObjectHideFlags: 0

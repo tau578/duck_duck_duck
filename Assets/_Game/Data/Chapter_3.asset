@@ -15,16 +15,17 @@ MonoBehaviour:
   displayName: "\u0413\u043B\u0430\u0432\u0430 3. \u0414\u0432\u043E\u0439\u043D\u043E\u0439
     \u0444\u0440\u043E\u043D\u0442"
   displayNameEn: Chapter 3. Two Fronts
-  startCoins: 2
+  startCoins: 4
   enemyHpMultiplier: 1.22
   rewardGears: 120
   maxBuildingLevel: 3
+  maxMineLevel: 0
   xpScale: 2.36
   comboCoinsPerNight: 0
   autoLevel: 1
   airstrikeKills: 0
   baseIncomeBonus: 0
-  enemyDamageMultiplier: 0.4
+  enemyDamageMultiplier: 0.3
   enemySpeedMultiplier: 0.75
   bossHpMultiplier: 0.6
   maxDuckLevel: 0
@@ -44,22 +45,22 @@ MonoBehaviour:
     hpMultiplier: 1
     groups:
     - enemy: {fileID: 11400000, guid: 9174eaf695eff06479afd995c6bb4460, type: 2}
-      count: 30
+      count: 24
       pathIndex: 1
-      interval: 0.45
+      interval: 0.55
       delay: 0
     - enemy: {fileID: 11400000, guid: 9174eaf695eff06479afd995c6bb4460, type: 2}
-      count: 30
+      count: 24
       pathIndex: 2
-      interval: 0.45
+      interval: 0.55
       delay: 3
   - kind: 0
     hpMultiplier: 1.05
     groups:
     - enemy: {fileID: 11400000, guid: 9174eaf695eff06479afd995c6bb4460, type: 2}
-      count: 50
+      count: 43
       pathIndex: 0
-      interval: 0.3
+      interval: 0.35
       delay: 0
     - enemy: {fileID: 11400000, guid: 4c78713b1b463b14d885e82fc6b99a76, type: 2}
       count: 12
@@ -67,9 +68,9 @@ MonoBehaviour:
       interval: 0.8
       delay: 4
     - enemy: {fileID: 11400000, guid: 75e0e1b25de7b5a4abfe99d0ef8d0414, type: 2}
-      count: 25
+      count: 20
       pathIndex: 1
-      interval: 0.3
+      interval: 0.38
       delay: 8
   - kind: 1
     hpMultiplier: 1.12

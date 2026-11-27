@@ -385,9 +385,9 @@ d.chapter3 = LoadOrCreate<ChapterConfig>($"{DataFolder}/Chapter_3.asset", reset,
             {
                 c.displayName = "Глава 3. Двойной фронт";
                 c.displayNameEn = "Chapter 3. Two Fronts";
-                c.startCoins = 2;
+                c.startCoins = 4;
                 c.enemyHpMultiplier = 1.22f;
-                c.enemyDamageMultiplier = 0.4f;
+                c.enemyDamageMultiplier = 0.3f;
                 c.enemySpeedMultiplier = 0.75f;
                 c.bossHpMultiplier = 0.6f;
                 c.rewardGears = 120;
@@ -403,14 +403,14 @@ d.chapter3 = LoadOrCreate<ChapterConfig>($"{DataFolder}/Chapter_3.asset", reset,
                 {
                     new WaveConfig { kind = WaveKind.Normal, groups = new[]
                     {
-                        new SpawnGroup { enemy = d.zombie, count = 30, pathIndex = 1, interval = 0.45f },
-                        new SpawnGroup { enemy = d.zombie, count = 30, pathIndex = 2, interval = 0.45f, delay = 3f },
+                        new SpawnGroup { enemy = d.zombie, count = 24, pathIndex = 1, interval = 0.55f },
+                        new SpawnGroup { enemy = d.zombie, count = 24, pathIndex = 2, interval = 0.55f, delay = 3f },
                     }},
                     new WaveConfig { kind = WaveKind.Normal, hpMultiplier = 1.05f, groups = new[]
                     {
-                        new SpawnGroup { enemy = d.zombie, count = 50, pathIndex = 0, interval = 0.3f },
+                        new SpawnGroup { enemy = d.zombie, count = 43, pathIndex = 0, interval = 0.35f },
                         new SpawnGroup { enemy = d.beetle, count = 12, pathIndex = 2, interval = 0.8f, delay = 4f },
-                        new SpawnGroup { enemy = d.runner, count = 25, pathIndex = 1, interval = 0.3f, delay = 8f },
+                        new SpawnGroup { enemy = d.runner, count = 20, pathIndex = 1, interval = 0.38f, delay = 8f },
                     }},
                     new WaveConfig { kind = WaveKind.Elite, hpMultiplier = 1.12f, groups = new[]
                     {

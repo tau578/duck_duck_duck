@@ -16,9 +16,9 @@ namespace Duck
         [Tooltip("Duck levels that are free: scaling starts above this level.")]
         public int freeDuckLevels = 3;
         [Tooltip("Enemy HP per Workshop level bought.")]
-        public float hpPerWorkshopLevel = 0.06f;
+        public float hpPerWorkshopLevel = 0.03f;
         [Tooltip("Extra enemies per Workshop level bought (bosses are never multiplied).")]
-        public float countPerWorkshopLevel = 0.04f;
+        public float countPerWorkshopLevel = 0f;
 
         /// <summary>HP multiplier of the current night, chapter multiplier included.</summary>
         public float NightHpMultiplier { get; private set; } = 1f;
