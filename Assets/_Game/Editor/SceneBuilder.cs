@@ -403,37 +403,37 @@ d.chapter3 = LoadOrCreate<ChapterConfig>($"{DataFolder}/Chapter_3.asset", reset,
                 {
                     new WaveConfig { kind = WaveKind.Normal, groups = new[]
                     {
-                        new SpawnGroup { enemy = d.zombie, count = 24, pathIndex = 1, interval = 0.55f },
-                        new SpawnGroup { enemy = d.zombie, count = 24, pathIndex = 2, interval = 0.55f, delay = 3f },
+                        new SpawnGroup { enemy = d.zombie, count = 28, pathIndex = 1, interval = 0.55f },
+                        new SpawnGroup { enemy = d.zombie, count = 28, pathIndex = 2, interval = 0.55f, delay = 3f },
                     }},
                     new WaveConfig { kind = WaveKind.Normal, hpMultiplier = 1.05f, groups = new[]
                     {
-                        new SpawnGroup { enemy = d.zombie, count = 43, pathIndex = 0, interval = 0.35f },
-                        new SpawnGroup { enemy = d.beetle, count = 12, pathIndex = 2, interval = 0.8f, delay = 4f },
-                        new SpawnGroup { enemy = d.runner, count = 20, pathIndex = 1, interval = 0.38f, delay = 8f },
+                        new SpawnGroup { enemy = d.zombie, count = 49, pathIndex = 0, interval = 0.35f },
+                        new SpawnGroup { enemy = d.beetle, count = 14, pathIndex = 2, interval = 0.8f, delay = 4f },
+                        new SpawnGroup { enemy = d.runner, count = 23, pathIndex = 1, interval = 0.38f, delay = 8f },
                     }},
                     new WaveConfig { kind = WaveKind.Elite, hpMultiplier = 1.12f, groups = new[]
                     {
-                        new SpawnGroup { enemy = d.zombie, count = 60, pathIndex = 1, interval = 0.25f },
-                        new SpawnGroup { enemy = d.zombie, count = 60, pathIndex = 2, interval = 0.25f, delay = 2f },
+                        new SpawnGroup { enemy = d.zombie, count = 69, pathIndex = 1, interval = 0.25f },
+                        new SpawnGroup { enemy = d.zombie, count = 69, pathIndex = 2, interval = 0.25f, delay = 2f },
                         new SpawnGroup { enemy = d.brute, count = 3, pathIndex = 0, interval = 4f, delay = 6f },
-                        new SpawnGroup { enemy = d.bat, count = 20, pathIndex = 0, interval = 0.3f, delay = 12f },
+                        new SpawnGroup { enemy = d.bat, count = 23, pathIndex = 0, interval = 0.3f, delay = 12f },
                     }},
                     new WaveConfig { kind = WaveKind.Elite, hpMultiplier = 1.2f, groups = new[]
                     {
-                        new SpawnGroup { enemy = d.zombie, count = 70, pathIndex = 0, interval = 0.2f },
-                        new SpawnGroup { enemy = d.zombie, count = 70, pathIndex = 1, interval = 0.2f, delay = 3f },
-                        new SpawnGroup { enemy = d.beetle, count = 20, pathIndex = 2, interval = 0.5f, delay = 6f },
+                        new SpawnGroup { enemy = d.zombie, count = 81, pathIndex = 0, interval = 0.2f },
+                        new SpawnGroup { enemy = d.zombie, count = 81, pathIndex = 1, interval = 0.2f, delay = 3f },
+                        new SpawnGroup { enemy = d.beetle, count = 23, pathIndex = 2, interval = 0.5f, delay = 6f },
                         new SpawnGroup { enemy = d.brute, count = 3, pathIndex = 2, interval = 3f, delay = 10f },
                     }},
                     new WaveConfig { kind = WaveKind.Boss, hpMultiplier = 1.28f, groups = new[]
                     {
-                        new SpawnGroup { enemy = d.zombie, count = 70, pathIndex = 0, interval = 0.2f },
+                        new SpawnGroup { enemy = d.zombie, count = 81, pathIndex = 0, interval = 0.2f },
                         new SpawnGroup { enemy = d.queen, count = 1, pathIndex = 0, interval = 0f, delay = 6f },
-                        new SpawnGroup { enemy = d.zombie, count = 60, pathIndex = 1, interval = 0.22f, delay = 4f },
-                        new SpawnGroup { enemy = d.zombie, count = 60, pathIndex = 2, interval = 0.22f, delay = 8f },
-                        new SpawnGroup { enemy = d.bat, count = 30, pathIndex = 1, interval = 0.3f, delay = 14f },
-                        new SpawnGroup { enemy = d.beetle, count = 20, pathIndex = 2, interval = 0.5f, delay = 18f },
+                        new SpawnGroup { enemy = d.zombie, count = 69, pathIndex = 1, interval = 0.22f, delay = 4f },
+                        new SpawnGroup { enemy = d.zombie, count = 69, pathIndex = 2, interval = 0.22f, delay = 8f },
+                        new SpawnGroup { enemy = d.bat, count = 35, pathIndex = 1, interval = 0.3f, delay = 14f },
+                        new SpawnGroup { enemy = d.beetle, count = 23, pathIndex = 2, interval = 0.5f, delay = 18f },
                     }},
                 };
             });
