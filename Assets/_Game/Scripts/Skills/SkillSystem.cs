@@ -36,6 +36,8 @@ namespace Duck
         bool eliteChestOpened, chestToReveal;
         int chestPicks, chestTotal;
         bool rescue;
+        /// <summary>Rescue chests given in this chapter.</summary>
+        public int RescueChests { get; private set; }
         ChestReveal reveal;
 
         public int Level { get; private set; } = 1;
@@ -61,7 +63,7 @@ namespace Duck
             new SkillDef { id = "blades", maxStars = 3, awakenAt = 3, minChapter = 2, color = new Color(0.75f, 0.8f, 0.9f) },
             new SkillDef { id = "rapid", maxStars = 3, passive = true, color = new Color(0.4f, 0.8f, 1f) },
             new SkillDef { id = "power", maxStars = 3, passive = true, color = new Color(1f, 0.35f, 0.35f) },
-            new SkillDef { id = "fortify", maxStars = 2, passive = true, color = new Color(0.6f, 0.5f, 0.35f) },
+            new SkillDef { id = "fortify", maxStars = 1, passive = true, color = new Color(0.6f, 0.5f, 0.35f) },
             new SkillDef { id = "vitality", maxStars = 2, passive = true, color = new Color(0.4f, 0.9f, 0.4f) },
         };
 
@@ -102,6 +104,7 @@ namespace Duck
         {
             if (showing || chestPicks > 0 || picker == null) return false;
             rescue = true;
+            RescueChests++;
             chestPicks = chestTotal = 2;
             chestToReveal = true;
             TryShowChoice();
@@ -240,7 +243,7 @@ namespace Duck
                     shooter.damageMultiplier = MetaUpgrades.DuckDamageMultiplier * (1f + 0.1f * n);
                     break;
                 case "fortify":
-                    BuildingHpMultiplier = MetaUpgrades.BuildingHpMultiplier * (1f + 0.25f * n);
+                    BuildingHpMultiplier = MetaUpgrades.BuildingHpMultiplier * (1f + 0.1f * n);
                     foreach (var b in Building.All) if (b.IsAlive) b.ApplyHpMultiplier();
                     break;
                 case "vitality":

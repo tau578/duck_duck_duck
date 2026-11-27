@@ -54,6 +54,7 @@ namespace Duck
         GameObject model;
         WorldBar bar;
         float baseY;
+        float summonTimer;
 
         public void Init(EnemyConfig cfg, EnemyPath road, float hpMultiplier, float damageMultiplier = 1f, float speedMultiplier = 1f)
         {
@@ -75,6 +76,7 @@ namespace Duck
             targetBuilding = null;
             chasePlayer = false;
             baseY = cfg.flying ? 1.6f : 0f;
+            summonTimer = cfg.summonInterval;
 
             SetupModel(cfg);
             visual.localScale = Vector3.one * cfg.scale;
@@ -113,6 +115,9 @@ namespace Duck
             baseMaterials = new Material[renderers.Length];
             for (int i = 0; i < renderers.Length; i++) baseMaterials[i] = renderers[i].sharedMaterial;
         }
+
+        /// <summary>A summoned enemy continues the road from where its caller stands.</summary>
+        public void FollowFrom(Enemy caller) => waypoint = caller.waypoint;
 
         public void TakeHit(float damage, Vector3 direction, bool crit, float knockback)
         {
@@ -192,6 +197,17 @@ namespace Duck
                 visual.localScale = new Vector3(1.3f - 0.3f * k, k, 1.3f - 0.3f * k) * Config.scale;
                 if (dieTimer <= 0f) Despawn();
                 return;
+            }
+
+            if (Config.summon != null)
+            {
+                summonTimer -= dt;
+                if (summonTimer <= 0f)
+                {
+                    summonTimer = Config.summonInterval;
+                    var gm = GameManager.Instance;
+                    if (gm != null && gm.Phase == GamePhase.Night) gm.spawner.Summon(this, path);
+                }
             }
 
             Vector3 pos = transform.position;

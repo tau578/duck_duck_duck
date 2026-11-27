@@ -23,6 +23,9 @@ MonoBehaviour:
   flying: 0
   isElite: 0
   isBoss: 1
+  summon: {fileID: 11400000, guid: 9174eaf695eff06479afd995c6bb4460, type: 2}
+  summonCount: 6
+  summonInterval: 8
   scale: 3
   knockResist: 0.97
   bodyColor: {r: 0.5, g: 0.25, b: 0.55, a: 1}

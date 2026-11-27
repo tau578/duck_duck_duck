@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 namespace Duck
 {
-    /// <summary>Small FPS label for device testing.</summary>
+    /// <summary>Small FPS label for device testing; hidden in release builds.</summary>
     public class FpsCounter : MonoBehaviour
     {
         public Text label;
@@ -11,6 +11,11 @@ namespace Duck
 
         int frames;
         float timer;
+
+        void Awake()
+        {
+            if (!Debug.isDebugBuild) gameObject.SetActive(false);
+        }
 
         void Update()
         {

@@ -91,6 +91,7 @@ namespace Duck
             float countScale = 1f + countPerWorkshopLevel * workshop;
 
             NightEnemyCount = 0;
+            Summoned = 0;
             pending.Clear();
             foreach (var g in wave.groups)
             {
@@ -135,6 +136,29 @@ namespace Duck
                 if (g.interval > 0f) yield return new WaitForSeconds(g.interval);
             }
             running--;
+        }
+
+        /// <summary>Enemies called by a boss during this night.</summary>
+        public int Summoned { get; private set; }
+
+        /// <summary>Reinforcements appear around the caller and walk on along its road.</summary>
+        public void Summon(Enemy caller, Vector3[] road)
+        {
+            var cfg = caller.Config.summon;
+            var ch = GameManager.Instance != null ? GameManager.Instance.chapter : null;
+            var path = paths.Find(p => p.points == road);
+            if (path == null) return;
+            for (int i = 0; i < caller.Config.summonCount; i++)
+            {
+                float a = i * Mathf.PI * 2f / caller.Config.summonCount;
+                Vector3 at = caller.transform.position + new Vector3(Mathf.Cos(a), 0f, Mathf.Sin(a)) * (caller.Radius + 0.8f);
+                var enemy = Pool.Spawn(GameAssets.I.enemyPrefab, at, caller.transform.rotation).GetComponent<Enemy>();
+                enemy.Init(cfg, path, HpMultiplierFor(cfg),
+                    ch != null ? ch.enemyDamageMultiplier : 1f, ch != null ? ch.enemySpeedMultiplier : 1f);
+                enemy.FollowFrom(caller);
+                Summoned++;
+            }
+            DamageNumbers.ShowText(caller.transform.position + Vector3.up * 3f, Loc.T("fx.summon"), new Color(0.85f, 0.5f, 1f), 52);
         }
 
         public void StopAll()

@@ -19,6 +19,10 @@ namespace Duck
         public bool flying;
         public bool isElite;
         public bool isBoss;
+        [Tooltip("Reinforcements called while alive (boss). Empty = none.")]
+        public EnemyConfig summon;
+        public int summonCount;
+        public float summonInterval = 8f;
         public float scale = 1f;
         [Range(0f, 1f)] public float knockResist;
         public Color bodyColor = new Color(0.45f, 0.65f, 0.35f);

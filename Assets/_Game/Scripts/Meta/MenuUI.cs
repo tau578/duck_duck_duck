@@ -63,6 +63,7 @@ namespace Duck
             }
             resetButton.onClick.AddListener(() => { SaveSystem.ResetAll(); Refresh(); });
             cheatButton.onClick.AddListener(() => { SaveSystem.Data.gears += 100; SaveSystem.Save(); Refresh(); });
+            cheatButton.gameObject.SetActive(Debug.isDebugBuild); // free gears: editor and development builds only
 
             playButton.onClick.AddListener(() => ShowPage(levelsPage));
             workshopButton.onClick.AddListener(() => ShowPage(workshopPage));

@@ -47,6 +47,7 @@ namespace Duck
         void Awake()
         {
             Instance = this;
+            gameObject.AddComponent<RunLog>();
             GameAssets.I = assets;
             HitStop.ResetState();
             Enemy.SpeedMultiplier = 1f;
@@ -73,6 +74,7 @@ namespace Duck
         /// <summary>Called by the menu: reload the scene clean and start the chapter.</summary>
         public void PlayChapter(int index)
         {
+            GetComponent<RunLog>().Abandon();
             GameSession.PendingChapter = index;
             TimeControl.Reset();
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
@@ -125,12 +127,7 @@ namespace Duck
             ShowIndicators(CurrentWave);
             Lighting(true);
 
-            if (first)
-            {
-                string news = string.IsNullOrEmpty(chapter.News) ? "" : "\n" + Loc.F("banner.news", chapter.News);
-                HUD.Instance?.Banner(Loc.F("banner.start", chapter.Name) + news, Color.white, 4.5f);
-                return;
-            }
+            if (first) return; // no dawn, no income: the chapter starts without a banner
 
             int income = 0;
             foreach (var s in slots)
@@ -231,6 +228,7 @@ namespace Duck
 
         public void ToMenu()
         {
+            GetComponent<RunLog>().Abandon();
             GameSession.PendingChapter = -1;
             TimeControl.Reset();
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);

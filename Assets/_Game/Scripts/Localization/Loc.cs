@@ -75,7 +75,6 @@ namespace Duck
             ["hud.defeat_sub"] = ("Продержались {0} из {1} волн", "Survived {0} of {1} waves"),
 
             // Banners
-            ["banner.start"] = ("{0}\nСтрой оборону и жми «В бой!»", "{0}\nBuild your defense and press FIGHT!"),
             ["banner.dawn"] = ("Рассвет! +{0} монет\nВолна {1} из {2} впереди", "Dawn! +{0} coins\nWave {1} of {2} ahead"),
             ["banner.boss"] = ("БОСС!", "BOSS!"),
             ["banner.elite"] = ("Элитный враг приближается!", "Elite enemy incoming!"),
@@ -89,6 +88,7 @@ namespace Duck
             ["fx.destroyed"] = ("{0}: разрушено", "{0} destroyed"),
             ["fx.restored"] = ("Восстановлено", "Rebuilt"),
             ["fx.restored_unpaid"] = ("Восстановлено, без дохода", "Rebuilt, no income"),
+            ["fx.summon"] = ("Матка зовёт стаю!", "The queen calls the swarm!"),
             ["fx.combo"] = ("КОМБО x{0}!  +{1}", "COMBO x{0}!  +{1}"),
             ["fx.back"] = ("Снова в строю!", "Back in action!"),
             ["slot.empty"] = ("{0}\n{1} мон.", "{0}\n{1} coins"),
@@ -163,8 +163,7 @@ namespace Duck
             ["skill.power.2"] = ("+10% урон утки", "+10% duck damage"),
             ["skill.power.3"] = ("+10% урон утки", "+10% duck damage"),
             ["skill.fortify.name"] = ("Укрепления", "Fortify"),
-            ["skill.fortify.1"] = ("+25% прочность построек, полный ремонт", "+25% building HP, full repair"),
-            ["skill.fortify.2"] = ("+25% прочность построек, полный ремонт", "+25% building HP, full repair"),
+            ["skill.fortify.1"] = ("+10% прочность построек, полный ремонт", "+10% building HP, full repair"),
             ["skill.vitality.name"] = ("Живучесть", "Vitality"),
             ["skill.vitality.1"] = ("+25 ОЗ утки, полное лечение", "+25 duck HP, full heal"),
             ["skill.vitality.2"] = ("+25 ОЗ утки, полное лечение", "+25 duck HP, full heal"),

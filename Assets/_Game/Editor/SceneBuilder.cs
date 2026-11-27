@@ -268,7 +268,7 @@ namespace Duck.EditorTools
             d.ogre = MakeEnemy("Enemy_Ogre", reset, "Огр", "Ogre", 3500, 1.0f, 60, 1.5f, 1.6f, 2.6f, new Color(0.3f, 0.45f, 0.25f), 1f, 5, c => { c.isBoss = true; c.knockResist = 0.95f; c.aggroRange = 3.5f; c.xp = 20; });
 
             d.beetle = MakeEnemy("Enemy_Beetle", reset, "Бронежук", "Armored Beetle", 70, 1.3f, 14, 1.2f, 1f, 1.3f, new Color(0.35f, 0.3f, 0.25f), 0.3f, 1, c => { c.knockResist = 0.6f; c.xp = 2; });
-            d.queen = MakeEnemy("Enemy_Queen", reset, "Матка роя", "Swarm Queen", 7000, 0.9f, 70, 1.4f, 1.8f, 3f, new Color(0.5f, 0.25f, 0.55f), 1f, 8, c => { c.isBoss = true; c.knockResist = 0.97f; c.aggroRange = 3.5f; c.xp = 30; });
+            d.queen = MakeEnemy("Enemy_Queen", reset, "Матка роя", "Swarm Queen", 7000, 0.9f, 70, 1.4f, 1.8f, 3f, new Color(0.5f, 0.25f, 0.55f), 1f, 8, c => { c.isBoss = true; c.knockResist = 0.97f; c.aggroRange = 3.5f; c.xp = 30; c.summon = d.zombie; c.summonCount = 6; c.summonInterval = 8f; });
 
             d.chapter1 = LoadOrCreate<ChapterConfig>($"{DataFolder}/Chapter_1.asset", reset, c =>
             {
@@ -386,10 +386,10 @@ d.chapter3 = LoadOrCreate<ChapterConfig>($"{DataFolder}/Chapter_3.asset", reset,
                 c.displayName = "Глава 3. Двойной фронт";
                 c.displayNameEn = "Chapter 3. Two Fronts";
                 c.startCoins = 4;
-                c.enemyHpMultiplier = 1.22f;
+                c.enemyHpMultiplier = 1.34f;
                 c.enemyDamageMultiplier = 0.3f;
                 c.enemySpeedMultiplier = 0.75f;
-                c.bossHpMultiplier = 0.6f;
+                c.bossHpMultiplier = 0.4f;
                 c.rewardGears = 120;
                 c.maxBuildingLevel = 3;
                 c.xpScale = 2.36f;
@@ -429,7 +429,7 @@ d.chapter3 = LoadOrCreate<ChapterConfig>($"{DataFolder}/Chapter_3.asset", reset,
                     new WaveConfig { kind = WaveKind.Boss, hpMultiplier = 1.28f, groups = new[]
                     {
                         new SpawnGroup { enemy = d.zombie, count = 81, pathIndex = 0, interval = 0.2f },
-                        new SpawnGroup { enemy = d.queen, count = 1, pathIndex = 0, interval = 0f, delay = 6f },
+                        new SpawnGroup { enemy = d.queen, count = 1, pathIndex = 0, interval = 0f, delay = 18f },
                         new SpawnGroup { enemy = d.zombie, count = 69, pathIndex = 1, interval = 0.22f, delay = 4f },
                         new SpawnGroup { enemy = d.zombie, count = 69, pathIndex = 2, interval = 0.22f, delay = 8f },
                         new SpawnGroup { enemy = d.bat, count = 35, pathIndex = 1, interval = 0.3f, delay = 14f },

@@ -44,6 +44,7 @@ namespace Duck
         readonly HashSet<Enemy> struck = new HashSet<Enemy>();
 
         public bool Ready => !used && !flying && charge >= killsToCharge;
+        public bool Used => used;
         public float Charge01 => used ? 0f : Mathf.Clamp01(charge / (float)killsToCharge);
 
         void Awake() { Instance = this; }
